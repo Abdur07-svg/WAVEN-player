@@ -923,7 +923,6 @@ class AppController {
         window.addEventListener("touchcancel", onTouchEnd, { passive: false });
       }, { passive: false });
     });
-    });
   }
 
   _bindKeyboardShortcuts() {
