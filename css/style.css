@@ -3788,8 +3788,11 @@ input:checked + .slider-round:before {
 .immersive-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
-  background: #07080b;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  background: #07090e;
+  background-color: #07090e !important;
   display: none;
   overflow: hidden;
 }
@@ -3801,11 +3804,13 @@ input:checked + .slider-round:before {
 .immersive-ambient-bg {
   position: absolute;
   inset: -20px;
+  background-color: #07090e;
   background-size: cover;
   background-position: center;
-  filter: blur(80px) saturate(220%) brightness(0.38);
+  filter: blur(80px) saturate(220%) brightness(0.42);
   transform: scale(1.15);
   z-index: 1;
+  pointer-events: none;
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

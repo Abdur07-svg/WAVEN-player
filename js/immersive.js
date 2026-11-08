@@ -177,12 +177,13 @@ class ImmersiveModeManager {
     if (bgLayer) {
       bgLayer.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
       bgLayer.style.backgroundImage = `url('${art}')`;
-      bgLayer.style.backgroundColor = pal.c1;
+      bgLayer.style.backgroundColor = "#07090e";
     }
     const overlay = document.getElementById("immersive-player-overlay");
     if (overlay) {
-      overlay.style.transition = "background 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
-      overlay.style.background = `radial-gradient(ellipse 120% 85% at 50% 28%, ${pal.c1}35 0%, ${pal.c2}18 55%, rgba(6, 8, 13, 0.94) 100%)`;
+      overlay.style.transition = "background-image 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
+      overlay.style.backgroundColor = "#07090e";
+      overlay.style.backgroundImage = `radial-gradient(ellipse 120% 85% at 50% 28%, ${pal.c1}45 0%, ${pal.c2}22 50%, #07090e 90%)`;
       overlay.style.setProperty("--immersive-accent", pal.c1);
       overlay.style.setProperty("--immersive-glow", pal.glow);
     }
