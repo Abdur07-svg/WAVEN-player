@@ -360,40 +360,88 @@ class ImmersiveModeManager {
 
       if (isPlaying && volume > 0) {
         const curTime = window.player?.audio?.currentTime || 0;
-        // Derive unique musical tempo from current track title so each song pulses with its own rhythm
-        const trackTitle = window.player?.state?.currentTrack?.title || "music";
-        let hash = 0;
-        for (let c = 0; c < trackTitle.length; c++) hash = (hash * 31 + trackTitle.charCodeAt(c)) & 0xffff;
-        const bpm = 120 + (hash % 16); // 120-136 musical BPM
+        const track = window.player?.state?.currentTrack;
+        const trackTitle = (track?.title || "music").toLowerCase();
+        const trackArtist = (typeof track?.artist === 'string' ? track.artist : (track?.artist?.name || '')).toLowerCase();
+        const fullMeta = `${trackTitle} ${trackArtist}`;
+
+        // 1. Intelligent Genre & Tempo Profile
+        let bpm = 116;
+        let energyFactor = 1.0;
+        let bassBias = 1.0;
+
+        if (fullMeta.match(/remix|edm|dance|house|club|techno|electro|party|drop|festival/)) {
+          bpm = 128;
+          energyFactor = 1.25;
+          bassBias = 1.35;
+        } else if (fullMeta.match(/acoustic|unplugged|piano|slow|sad|lo-?fi|chill|sleep|night|ambient|guitar|calm/)) {
+          bpm = 74;
+          energyFactor = 0.72;
+          bassBias = 0.85;
+        } else if (fullMeta.match(/hip-?hop|trap|rap|drill|r&b|soul|groove/)) {
+          bpm = 88;
+          energyFactor = 1.15;
+          bassBias = 1.45;
+        } else if (fullMeta.match(/rock|metal|punk|fast|live|drum|band/)) {
+          bpm = 142;
+          energyFactor = 1.20;
+          bassBias = 1.10;
+        } else {
+          let hash = 0;
+          for (let c = 0; c < fullMeta.length; c++) hash = ((hash << 5) - hash + fullMeta.charCodeAt(c)) | 0;
+          bpm = 100 + (Math.abs(hash) % 36); // Natural 100 - 135 BPM range
+        }
+
+        // 2. Song Intro / Dynamic Section Envelope
+        let introRamp = 1.0;
+        if (curTime < 6.0) {
+          introRamp = 0.45 + (curTime / 6.0) * 0.55;
+        }
+
+        // 3. Musical Beat Clocks & Micro-Rhythms
         const beatClock = curTime * (bpm / 60);
         const beatFrac = beatClock - Math.floor(beatClock);
         const eighthFrac = (beatClock * 2) - Math.floor(beatClock * 2);
         const sixteenthFrac = (beatClock * 4) - Math.floor(beatClock * 4);
 
-        // Dynamic multi-band acoustic energy
-        const kickPulse = Math.pow(Math.max(0, 1 - beatFrac * 2.2), 3);
-        const snarePulse = Math.pow(Math.max(0, 1 - Math.abs(beatFrac - 0.5) * 3.2), 2.5);
-        const eighthPulse = Math.pow(Math.max(0, 1 - eighthFrac * 2.4), 2);
-        const hihatPulse = Math.pow(Math.max(0, 1 - sixteenthFrac * 2.2), 1.8);
+        const beatNum = Math.floor(beatClock) % 4; // 0 (downbeat), 1 (backbeat), 2 (mid), 3 (pickup)
+        const isDownbeat = (beatNum === 0);
+        const isBackbeat = (beatNum === 1 || beatNum === 3);
 
+        const kickImpact = isDownbeat ? 1.0 : (beatNum === 2 ? 0.75 : 0.42);
+        const kickPulse = Math.pow(Math.max(0, 1 - beatFrac * 2.6), 3.0) * kickImpact;
+        const snarePulse = isBackbeat ? Math.pow(Math.max(0, 1 - beatFrac * 2.8), 2.4) : 0.15;
+        const eighth = Math.pow(Math.max(0, 1 - eighthFrac * 2.4), 2.0);
+        const shimmer = Math.pow(Math.max(0, 1 - sixteenthFrac * 2.2), 1.8);
+
+        // 4. Smooth Continuous Gaussian Multi-Band Envelope
+        // Entirely seamless — zero hard boundaries or section dividing
         for (let i = 0; i < numBars; i++) {
-          let amp = 0;
-          if (i < 10) {
-            // Bass & Sub kicks
-            const wave = Math.sin(curTime * 8 + i * 0.4) * 0.15;
-            amp = kickPulse * 0.88 + eighthPulse * 0.22 + wave + 0.14;
-          } else if (i < 24) {
-            // Vocals, Leads, and Snares
-            const wave = Math.sin(curTime * 12 + i * 0.6) * 0.22;
-            amp = snarePulse * 0.72 + kickPulse * 0.28 + wave + 0.12;
-          } else {
-            // Cymbals, Percussion & Highs
-            const wave = Math.sin(curTime * 18 + i * 0.8) * 0.28;
-            amp = hihatPulse * 0.65 + wave + 0.10;
-          }
-          const taper = 1.0 - (i / numBars) * 0.24;
-          targetValues[i] = Math.max(5, amp * 230 * taper * volume);
-          const speed = targetValues[i] > barValues[i] ? 0.46 : 0.22;
+          const norm = i / (numBars - 1); // 0.0 to 1.0 continuum
+
+          const wSub = Math.exp(-Math.pow((norm - 0.08) / 0.16, 2));
+          const wBass = Math.exp(-Math.pow((norm - 0.22) / 0.18, 2));
+          const wLowMid = Math.exp(-Math.pow((norm - 0.44) / 0.20, 2));
+          const wHighMid = Math.exp(-Math.pow((norm - 0.68) / 0.20, 2));
+          const wAir = Math.exp(-Math.pow((norm - 0.88) / 0.18, 2));
+
+          const waveA = Math.sin(curTime * 6.5 - norm * 5.0) * 0.08;
+          const waveB = Math.cos(curTime * 10.2 + norm * 8.0) * 0.06;
+
+          const bandEnergy = (wSub * kickPulse * 0.65 * bassBias) +
+                             (wBass * (kickPulse * 0.55 + eighth * 0.18) * bassBias) +
+                             (wLowMid * (snarePulse * 0.48 + eighth * 0.15)) +
+                             (wHighMid * (snarePulse * 0.38 + shimmer * 0.30)) +
+                             (wAir * shimmer * 0.45);
+
+          const ambient = (wSub * 0.10) + (wBass * 0.12) + (wLowMid * 0.14) + (wHighMid * 0.12) + (wAir * 0.10);
+          const spectralRoll = 1.0 - norm * 0.25;
+          const totalRaw = (bandEnergy + ambient + waveA + waveB) * energyFactor * introRamp * spectralRoll;
+          const finalVal = Math.max(6, Math.min(248, totalRaw * volume * 220));
+
+          targetValues[i] = finalVal;
+
+          const speed = targetValues[i] > barValues[i] ? 0.48 : 0.20;
           barValues[i] += (targetValues[i] - barValues[i]) * speed;
         }
       } else {
