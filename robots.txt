@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /admin
-Disallow: /settings
 
-Sitemap: https://ar7music.example.com/sitemap.xml
+Sitemap: https://abdur07-svg.github.io/WAVEN-player/sitemap.xml
