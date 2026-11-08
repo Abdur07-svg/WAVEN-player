@@ -735,14 +735,20 @@ class AppController {
     document.querySelectorAll(".seek-bar-track").forEach(track => {
       let isSeeking = false;
       let lastFraction = 0;
+      let lastTouchTime = 0;
 
       const getSeekFraction = (e) => {
         const rect = track.getBoundingClientRect();
+        if (!rect || rect.width <= 0) return null;
         const touch = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
-        const clientX = e.clientX !== undefined ? e.clientX : (touch ? touch.clientX : null);
-        if (clientX === null || isNaN(clientX)) return null;
-        const fraction = Math.max(0, Math.min((clientX - rect.left) / rect.width, 1));
-        return fraction;
+        let clientX = null;
+        if (touch && typeof touch.clientX === "number") {
+          clientX = touch.clientX;
+        } else if (typeof e.clientX === "number" && !isNaN(e.clientX)) {
+          clientX = e.clientX;
+        }
+        if (clientX === null) return null;
+        return Math.max(0, Math.min((clientX - rect.left) / rect.width, 1));
       };
 
       const updateVisualPreview = (fraction) => {
@@ -757,7 +763,12 @@ class AppController {
         }
       };
 
+      // Desktop mouse events (ignores synthetic mouse events following touch)
       track.addEventListener("mousedown", (e) => {
+        if (Date.now() - lastTouchTime < 800) {
+          e.preventDefault();
+          return;
+        }
         isSeeking = true;
         if (window.player) window.player.startScrubbing();
         const initialF = getSeekFraction(e);
@@ -792,8 +803,9 @@ class AppController {
         window.addEventListener("mouseup", onMouseUp);
       });
 
-      // Touch events for mobile devices
+      // Mobile Touch events
       track.addEventListener("touchstart", (e) => {
+        lastTouchTime = Date.now();
         isSeeking = true;
         if (window.player) window.player.startScrubbing();
         const initialF = getSeekFraction(e);
@@ -803,7 +815,11 @@ class AppController {
         }
 
         const onTouchMove = (moveEvent) => {
+          lastTouchTime = Date.now();
           if (!isSeeking) return;
+          if (moveEvent.cancelable) {
+            moveEvent.preventDefault();
+          }
           const f = getSeekFraction(moveEvent);
           if (f !== null) {
             lastFraction = f;
@@ -812,6 +828,10 @@ class AppController {
         };
 
         const onTouchEnd = (endEvent) => {
+          lastTouchTime = Date.now();
+          if (endEvent.cancelable) {
+            endEvent.preventDefault();
+          }
           if (isSeeking) {
             isSeeking = false;
             const f = getSeekFraction(endEvent);
@@ -825,23 +845,36 @@ class AppController {
           window.removeEventListener("touchcancel", onTouchEnd);
         };
 
-        window.addEventListener("touchmove", onTouchMove, { passive: true });
-        window.addEventListener("touchend", onTouchEnd);
-        window.addEventListener("touchcancel", onTouchEnd);
-      }, { passive: true });
+        window.addEventListener("touchmove", onTouchMove, { passive: false });
+        window.addEventListener("touchend", onTouchEnd, { passive: false });
+        window.addEventListener("touchcancel", onTouchEnd, { passive: false });
+      }, { passive: false });
     });
 
     // 2. Volume Sliders
     document.querySelectorAll(".volume-slider-track").forEach(track => {
       let isAdjusting = false;
+      let lastTouchTime = 0;
 
       const getVolumeFraction = (e) => {
         const rect = track.getBoundingClientRect();
-        const clientX = e.clientX ?? (e.touches && e.touches[0].clientX);
+        if (!rect || rect.width <= 0) return 0.5;
+        const touch = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+        let clientX = null;
+        if (touch && typeof touch.clientX === "number") {
+          clientX = touch.clientX;
+        } else if (typeof e.clientX === "number" && !isNaN(e.clientX)) {
+          clientX = e.clientX;
+        }
+        if (clientX === null) return 0.5;
         return Math.max(0, Math.min((clientX - rect.left) / rect.width, 1));
       };
 
       track.addEventListener("mousedown", (e) => {
+        if (Date.now() - lastTouchTime < 800) {
+          e.preventDefault();
+          return;
+        }
         isAdjusting = true;
         const f = getVolumeFraction(e);
         if (window.player) window.player.setVolume(f);
@@ -861,6 +894,35 @@ class AppController {
         window.addEventListener("mousemove", onMouseMove);
         window.addEventListener("mouseup", onMouseUp);
       });
+
+      track.addEventListener("touchstart", (e) => {
+        lastTouchTime = Date.now();
+        isAdjusting = true;
+        const f = getVolumeFraction(e);
+        if (window.player) window.player.setVolume(f);
+
+        const onTouchMove = (moveEvent) => {
+          lastTouchTime = Date.now();
+          if (!isAdjusting) return;
+          if (moveEvent.cancelable) moveEvent.preventDefault();
+          const vol = getVolumeFraction(moveEvent);
+          if (window.player) window.player.setVolume(vol);
+        };
+
+        const onTouchEnd = (endEvent) => {
+          lastTouchTime = Date.now();
+          if (endEvent.cancelable) endEvent.preventDefault();
+          isAdjusting = false;
+          window.removeEventListener("touchmove", onTouchMove);
+          window.removeEventListener("touchend", onTouchEnd);
+          window.removeEventListener("touchcancel", onTouchEnd);
+        };
+
+        window.addEventListener("touchmove", onTouchMove, { passive: false });
+        window.addEventListener("touchend", onTouchEnd, { passive: false });
+        window.addEventListener("touchcancel", onTouchEnd, { passive: false });
+      }, { passive: false });
+    });
     });
   }
 

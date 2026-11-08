@@ -212,9 +212,15 @@ class ImmersiveModeManager {
     const trackBar = event.currentTarget || event.target.closest('.immersive-seek-track');
     if (!trackBar || !window.player) return;
     const rect = trackBar.getBoundingClientRect();
+    if (!rect || rect.width <= 0) return;
     const touch = (event.touches && event.touches[0]) || (event.changedTouches && event.changedTouches[0]);
-    const clientX = event.clientX !== undefined ? event.clientX : (touch ? touch.clientX : null);
-    if (clientX === null || isNaN(clientX)) return;
+    let clientX = null;
+    if (touch && typeof touch.clientX === "number") {
+      clientX = touch.clientX;
+    } else if (typeof event.clientX === "number" && !isNaN(event.clientX)) {
+      clientX = event.clientX;
+    }
+    if (clientX === null) return;
     const clickX = clientX - rect.left;
     const pct = Math.max(0, Math.min(1, clickX / rect.width));
 
@@ -227,12 +233,19 @@ class ImmersiveModeManager {
 
     let isSeeking = false;
     let lastFraction = 0;
+    let lastTouchTime = 0;
 
     const getFraction = (e) => {
       const rect = trackBar.getBoundingClientRect();
+      if (!rect || rect.width <= 0) return null;
       const touch = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
-      const clientX = e.clientX !== undefined ? e.clientX : (touch ? touch.clientX : null);
-      if (clientX === null || isNaN(clientX)) return null;
+      let clientX = null;
+      if (touch && typeof touch.clientX === "number") {
+        clientX = touch.clientX;
+      } else if (typeof e.clientX === "number" && !isNaN(e.clientX)) {
+        clientX = e.clientX;
+      }
+      if (clientX === null) return null;
       return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     };
 
@@ -248,8 +261,12 @@ class ImmersiveModeManager {
       }
     };
 
-    // Unified mouse scrubbing
+    // Unified mouse scrubbing (rejecting synthetic mousedown from touch)
     trackBar.addEventListener("mousedown", (e) => {
+      if (Date.now() - lastTouchTime < 800) {
+        e.preventDefault();
+        return;
+      }
       isSeeking = true;
       if (window.player) window.player.startScrubbing();
       const initialF = getFraction(e);
@@ -286,6 +303,7 @@ class ImmersiveModeManager {
 
     // Touch scrubbing for mobile
     trackBar.addEventListener("touchstart", (e) => {
+      lastTouchTime = Date.now();
       isSeeking = true;
       if (window.player) window.player.startScrubbing();
       const f = getFraction(e);
@@ -295,7 +313,9 @@ class ImmersiveModeManager {
       }
 
       const onTouchMove = (moveEv) => {
+        lastTouchTime = Date.now();
         if (!isSeeking) return;
+        if (moveEv.cancelable) moveEv.preventDefault();
         const mf = getFraction(moveEv);
         if (mf !== null) {
           lastFraction = mf;
@@ -304,6 +324,8 @@ class ImmersiveModeManager {
       };
 
       const onTouchEnd = (endEv) => {
+        lastTouchTime = Date.now();
+        if (endEv.cancelable) endEv.preventDefault();
         if (isSeeking) {
           isSeeking = false;
           const endf = getFraction(endEv);
@@ -317,10 +339,10 @@ class ImmersiveModeManager {
         window.removeEventListener("touchcancel", onTouchEnd);
       };
 
-      window.addEventListener("touchmove", onTouchMove, { passive: true });
-      window.addEventListener("touchend", onTouchEnd);
-      window.addEventListener("touchcancel", onTouchEnd);
-    }, { passive: true });
+      window.addEventListener("touchmove", onTouchMove, { passive: false });
+      window.addEventListener("touchend", onTouchEnd, { passive: false });
+      window.addEventListener("touchcancel", onTouchEnd, { passive: false });
+    }, { passive: false });
   }
 
   startVisualizer() {

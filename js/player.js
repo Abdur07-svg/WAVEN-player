@@ -82,6 +82,8 @@ class AudioPlayer {
     this.isScrubbing = false;
     this.wasPlayingBeforeScrub = false;
     this.pendingSeekTarget = null;
+    this._seekSafetyTimer = null;
+    this._lastSeekTime = 0;
 
     // Race-condition prevention generation token
     this._playRequestId = 0;
@@ -141,40 +143,7 @@ class AudioPlayer {
     });
 
     this.audio.addEventListener("seeked", () => {
-      // If rapid consecutive seeks were requested while the browser was decoding the previous seek
-      if (this.pendingSeekTarget !== null) {
-        const nextTarget = this.pendingSeekTarget;
-        this.pendingSeekTarget = null;
-        try {
-          this.audio.currentTime = nextTarget;
-        } catch (e) {
-          console.warn("[AudioPlayer] pending seek error:", e);
-        }
-        return;
-      }
-
-      this.state.isSeeking = false;
-      this.state.currentTime = this.audio.currentTime || 0;
-      this._updateProgressUI();
-      this._emit("seeked", { currentTime: this.state.currentTime });
-
-      if (window.mediaSessionManager) {
-        window.mediaSessionManager.updatePositionState(this.state.currentTime, this.state.duration);
-      }
-
-      // If playback was active before seeking, resume without pause
-      if (this.wasPlayingBeforeScrub || this.state.isPlaying) {
-        this.wasPlayingBeforeScrub = false;
-        if (this.audio.paused) {
-          this.audio.play()
-            .then(() => {
-              this.state.isPlaying = true;
-              this._updateUIState();
-              this._syncNativeNotification(true);
-            })
-            .catch(e => console.warn("[AudioPlayer] resume after seeked error:", e));
-        }
-      }
+      this._onSeekCompleted();
     });
 
     this.audio.addEventListener("waiting", () => {
@@ -190,6 +159,8 @@ class AudioPlayer {
     this.audio.addEventListener("playing", () => {
       this.state.isPlaying = true;
       this.state.isLoading = false;
+      this.state.isSeeking = false;
+      this.isScrubbing = false;
       this._emit("state_changed", this.state);
       this._updateUIState();
       this._syncNativeNotification(true);
@@ -203,7 +174,7 @@ class AudioPlayer {
       // When audio.currentTime is updated, Chromium and WebView media pipelines fire a transient
       // 'pause' or 'waiting' event while re-aligning decoders. If seeking, scrubbing, or loading, DO NOT treat
       // this as an intentional user pause!
-      if (this.audio.seeking || this.state.isSeeking || this.isScrubbing || this.state.isLoading || this.wasPlayingBeforeScrub) {
+      if (this.audio.seeking || this.state.isSeeking || this.isScrubbing || this.state.isLoading || this.wasPlayingBeforeScrub || (Date.now() - (this._lastSeekTime || 0) < 650)) {
         return;
       }
 
@@ -634,13 +605,19 @@ class AudioPlayer {
   startScrubbing() {
     this.isScrubbing = true;
     this.state.isSeeking = true;
-    this.wasPlayingBeforeScrub = Boolean(this.state.isPlaying || !this.audio.paused);
+    if (this.state.isPlaying || !this.audio.paused) {
+      this.wasPlayingBeforeScrub = true;
+    }
   }
 
   endScrubbing(fractionOrSeconds) {
     this.isScrubbing = false;
     let targetSeconds = 0;
-    const dur = this.state.duration || (this.audio && isFinite(this.audio.duration) ? this.audio.duration : 0);
+    const dur = (this.state.duration && isFinite(this.state.duration) && this.state.duration > 0)
+      ? this.state.duration
+      : ((this.audio && isFinite(this.audio.duration) && this.audio.duration > 0)
+          ? this.audio.duration
+          : (this.state.currentTrack?.duration || 0));
 
     if (fractionOrSeconds !== undefined && fractionOrSeconds !== null) {
       if (fractionOrSeconds >= 0 && fractionOrSeconds <= 1 && dur > 0) {
@@ -657,16 +634,35 @@ class AudioPlayer {
 
   seek(timeInSeconds) {
     if (isNaN(timeInSeconds) || !isFinite(timeInSeconds)) return;
-    const dur = this.state.duration || (this.audio && isFinite(this.audio.duration) ? this.audio.duration : 0);
+    const dur = (this.state.duration && isFinite(this.state.duration) && this.state.duration > 0)
+      ? this.state.duration
+      : ((this.audio && isFinite(this.audio.duration) && this.audio.duration > 0)
+          ? this.audio.duration
+          : (this.state.currentTrack?.duration || 0));
     const target = Math.max(0, Math.min(timeInSeconds, dur > 0 ? dur : timeInSeconds));
 
     this.state.currentTime = target;
+    this.state.isSeeking = true;
+    this._lastSeekTime = Date.now();
     this._updateProgressUI();
 
-    // If the track is currently playing or supposed to be playing, preserve playing state
+    // Preserve playing state if was playing
     if (this.state.isPlaying || !this.audio.paused) {
       this.wasPlayingBeforeScrub = true;
     }
+
+    // Clear previous safety recovery timer
+    if (this._seekSafetyTimer) {
+      clearTimeout(this._seekSafetyTimer);
+      this._seekSafetyTimer = null;
+    }
+
+    // Safety recovery: If seeked event never fires from native decoder within 450ms,
+    // force recovery so audio and UI never hang
+    this._seekSafetyTimer = setTimeout(() => {
+      this._seekSafetyTimer = null;
+      this._onSeekCompleted();
+    }, 450);
 
     // If audio is currently seeking in the browser media engine, queue this target
     // to avoid aborting the browser decoding pipeline with rapid consecutive seeks
@@ -676,9 +672,66 @@ class AudioPlayer {
     }
 
     try {
+      if (Math.abs(this.audio.currentTime - target) < 0.05) {
+        this._onSeekCompleted();
+        return;
+      }
       this.audio.currentTime = target;
     } catch (e) {
       console.warn("[AudioPlayer] seek currentTime set error:", e);
+      this._onSeekCompleted();
+    }
+  }
+
+  _onSeekCompleted() {
+    if (this._seekSafetyTimer) {
+      clearTimeout(this._seekSafetyTimer);
+      this._seekSafetyTimer = null;
+    }
+
+    // If rapid consecutive seeks were requested while the browser was decoding:
+    if (this.pendingSeekTarget !== null) {
+      const nextTarget = this.pendingSeekTarget;
+      this.pendingSeekTarget = null;
+      if (Math.abs(this.audio.currentTime - nextTarget) >= 0.05) {
+        this.seek(nextTarget);
+        return;
+      }
+    }
+
+    this.state.isSeeking = false;
+    this.isScrubbing = false;
+    this.state.currentTime = this.audio.currentTime || 0;
+    this._lastSeekTime = Date.now();
+    this._updateProgressUI();
+    this._emit("seeked", { currentTime: this.state.currentTime });
+
+    if (window.mediaSessionManager) {
+      window.mediaSessionManager.updatePositionState(this.state.currentTime, this.state.duration);
+    }
+
+    // If playback was active before seeking, resume guaranteed without stopping!
+    if (this.wasPlayingBeforeScrub || this.state.isPlaying) {
+      this.wasPlayingBeforeScrub = false;
+      this.state.isPlaying = true;
+      if (this.audio.paused) {
+        const playPromise = this.audio.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              this.state.isPlaying = true;
+              this.state.isLoading = false;
+              this._updateUIState();
+              this._syncNativeNotification(true);
+            })
+            .catch(e => {
+              console.warn("[AudioPlayer] resume after seeked catch:", e);
+            });
+        }
+      } else {
+        this._updateUIState();
+        this._syncNativeNotification(true);
+      }
     }
   }
 

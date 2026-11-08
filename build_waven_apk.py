@@ -1617,10 +1617,19 @@ public class MainActivity extends Activity {
 
                     // If afd failed, try openFileDescriptor directly
                     if (pfd == null) {
-                        pfd = getContentResolver().openFileDescriptor(contentUri, "r");
-                        if (pfd != null) {
-                            totalLen = pfd.getStatSize();
-                        }
+                        try {
+                            pfd = getContentResolver().openFileDescriptor(contentUri, "r");
+                            if (pfd != null) {
+                                totalLen = pfd.getStatSize();
+                            }
+                        } catch (Exception ignored) {}
+                    }
+
+                    if (pfd != null && totalLen <= 0) {
+                        try {
+                            long statSize = pfd.getStatSize();
+                            if (statSize > 0) totalLen = statSize;
+                        } catch (Throwable ignored) {}
                     }
 
                     if (pfd != null && totalLen <= 0) {
@@ -1817,7 +1826,7 @@ public class MainActivity extends Activity {
             respHeaders.put("Cache-Control", "no-cache, no-store, must-revalidate");
             respHeaders.put("Pragma", "no-cache");
             respHeaders.put("Expires", "0");
-            if (contentLen > 0) {
+            if (contentLen >= 0) {
                 respHeaders.put("Content-Length", String.valueOf(contentLen));
             }
 
