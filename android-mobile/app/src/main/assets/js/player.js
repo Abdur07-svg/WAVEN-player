@@ -130,7 +130,7 @@ class AudioPlayer {
       this.state.isLoading = false;
       this._emit("loading", { isLoading: false });
       // If state is supposed to be playing and audio paused (and not scrubbing), ensure it resumes
-      if (this.state.isPlaying && this.audio.paused && !this.isScrubbing && !this.state.isSeeking) {
+      if ((this.state.isPlaying || this.wasPlayingBeforeScrub) && this.audio.paused && !this.isScrubbing) {
         this.audio.play().catch(e => console.warn("[AudioPlayer] canplay resume error:", e));
       }
     });
@@ -163,7 +163,7 @@ class AudioPlayer {
       }
 
       // If playback was active before seeking, resume without pause
-      if (this.wasPlayingBeforeScrub) {
+      if (this.wasPlayingBeforeScrub || this.state.isPlaying) {
         this.wasPlayingBeforeScrub = false;
         if (this.audio.paused) {
           this.audio.play()
@@ -203,7 +203,7 @@ class AudioPlayer {
       // When audio.currentTime is updated, Chromium and WebView media pipelines fire a transient
       // 'pause' or 'waiting' event while re-aligning decoders. If seeking, scrubbing, or loading, DO NOT treat
       // this as an intentional user pause!
-      if (this.audio.seeking || this.state.isSeeking || this.isScrubbing || this.state.isLoading) {
+      if (this.audio.seeking || this.state.isSeeking || this.isScrubbing || this.state.isLoading || this.wasPlayingBeforeScrub) {
         return;
       }
 
@@ -634,7 +634,7 @@ class AudioPlayer {
   startScrubbing() {
     this.isScrubbing = true;
     this.state.isSeeking = true;
-    this.wasPlayingBeforeScrub = !this.audio.paused;
+    this.wasPlayingBeforeScrub = Boolean(this.state.isPlaying || !this.audio.paused);
   }
 
   endScrubbing(fractionOrSeconds) {
@@ -662,6 +662,11 @@ class AudioPlayer {
 
     this.state.currentTime = target;
     this._updateProgressUI();
+
+    // If the track is currently playing or supposed to be playing, preserve playing state
+    if (this.state.isPlaying || !this.audio.paused) {
+      this.wasPlayingBeforeScrub = true;
+    }
 
     // If audio is currently seeking in the browser media engine, queue this target
     // to avoid aborting the browser decoding pipeline with rapid consecutive seeks

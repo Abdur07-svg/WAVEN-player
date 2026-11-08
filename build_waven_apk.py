@@ -810,6 +810,26 @@ public class MainActivity extends Activity {
         }
 
         @Override
+        public long skip(long n) throws IOException {
+            if (n <= 0 || remaining <= 0) return 0;
+            long toSkip = Math.min(n, remaining);
+            long skipped = 0;
+            if (raf != null) {
+                long cur = raf.getFilePointer();
+                long maxSeek = raf.length();
+                long target = Math.min(cur + toSkip, maxSeek);
+                raf.seek(target);
+                skipped = target - cur;
+            } else if (is != null) {
+                skipped = is.skip(toSkip);
+            }
+            if (skipped > 0) {
+                remaining -= skipped;
+            }
+            return skipped;
+        }
+
+        @Override
         public int available() throws IOException {
             if (remaining <= 0) return 0;
             return (int) Math.min(remaining, 65536);
@@ -1656,11 +1676,30 @@ public class MainActivity extends Activity {
                 int dash = rVal.indexOf('-');
                 if (dash != -1) {
                     String sStr = rVal.substring(0, dash).trim();
-                    if (!sStr.isEmpty()) start = Long.parseLong(sStr);
                     String eStr = rVal.substring(dash + 1).trim();
-                    if (!eStr.isEmpty()) end = Long.parseLong(eStr);
+
+                    if (!sStr.isEmpty() && !eStr.isEmpty()) {
+                        start = Long.parseLong(sStr);
+                        end = Long.parseLong(eStr);
+                    } else if (!sStr.isEmpty() && eStr.isEmpty()) {
+                        start = Long.parseLong(sStr);
+                        end = totalLen - 1;
+                    } else if (sStr.isEmpty() && !eStr.isEmpty()) {
+                        // Suffix byte range (RFC 7233): bytes=-500 means the last 500 bytes of the file!
+                        long suffixLen = Long.parseLong(eStr);
+                        start = Math.max(0, totalLen - suffixLen);
+                        end = totalLen - 1;
+                    }
                     isRange = true;
                 }
+            }
+
+            // Range bounds validation
+            if (totalLen > 0 && start >= totalLen) {
+                Map<String, String> errHeaders = new HashMap<String, String>();
+                errHeaders.put("Content-Range", "bytes */" + totalLen);
+                errHeaders.put("Accept-Ranges", "bytes");
+                return new WebResourceResponse("audio/mpeg", null, 416, "Range Not Satisfiable", errHeaders, new java.io.ByteArrayInputStream(new byte[0]));
             }
 
             if (end < 0 || end >= totalLen) {
@@ -1676,26 +1715,42 @@ public class MainActivity extends Activity {
                 raf.seek(start);
                 is = new BoundedInputStream(raf, null, null, null, contentLen);
             } else if (pfd != null) {
-                FileInputStream fis = null;
-                boolean seekedViaOs = false;
+                long baseOffset = 0;
+                if (afd != null && afd.getStartOffset() > 0) {
+                    baseOffset = afd.getStartOffset();
+                }
+                long targetOffset = baseOffset + start;
+
+                FileInputStream fis = new FileInputStream(pfd.getFileDescriptor());
+                boolean seeked = false;
+
+                // Attempt 1: FileChannel position (Standard 64-bit instant seek)
                 try {
-                    android.system.Os.lseek(pfd.getFileDescriptor(), start, android.system.OsConstants.SEEK_SET);
-                    seekedViaOs = true;
+                    java.nio.channels.FileChannel channel = fis.getChannel();
+                    if (channel != null) {
+                        channel.position(targetOffset);
+                        seeked = true;
+                    }
                 } catch (Throwable ignored) {}
 
-                if (afd != null && !seekedViaOs) {
-                    fis = afd.createInputStream();
-                } else {
-                    fis = new FileInputStream(pfd.getFileDescriptor());
+                // Attempt 2: Os.lseek on FileDescriptor
+                if (!seeked) {
+                    try {
+                        android.system.Os.lseek(pfd.getFileDescriptor(), targetOffset, android.system.OsConstants.SEEK_SET);
+                        seeked = true;
+                    } catch (Throwable ignored) {}
                 }
 
-                if (!seekedViaOs && start > 0) {
+                // Attempt 3: Fast buffer skip fallback (using 64KB chunks instead of single byte reads)
+                if (!seeked && targetOffset > 0) {
                     long skipped = 0;
-                    while (skipped < start) {
-                        long s = fis.skip(start - skipped);
+                    byte[] skipBuf = new byte[65536];
+                    while (skipped < targetOffset) {
+                        long s = fis.skip(targetOffset - skipped);
                         if (s <= 0) {
-                            if (fis.read() == -1) break;
-                            s = 1;
+                            int r = fis.read(skipBuf, 0, (int) Math.min(skipBuf.length, targetOffset - skipped));
+                            if (r == -1) break;
+                            s = r;
                         }
                         skipped += s;
                     }
@@ -1705,11 +1760,13 @@ public class MainActivity extends Activity {
             } else if (is != null) {
                 if (start > 0) {
                     long skipped = 0;
+                    byte[] skipBuf = new byte[65536];
                     while (skipped < start) {
                         long s = is.skip(start - skipped);
                         if (s <= 0) {
-                            if (is.read() == -1) break;
-                            s = 1;
+                            int r = is.read(skipBuf, 0, (int) Math.min(skipBuf.length, start - skipped));
+                            if (r == -1) break;
+                            s = r;
                         }
                         skipped += s;
                     }
@@ -1719,7 +1776,7 @@ public class MainActivity extends Activity {
 
             if (is == null) return null;
 
-            // Determine MIME type
+            // Determine accurate MIME type
             String mime = "audio/mpeg";
             String fileExt = "";
             if (filePath != null && filePath.contains(".")) {
@@ -1735,16 +1792,18 @@ public class MainActivity extends Activity {
                 } catch (Exception ignored) {}
             }
 
-            if (mime.contains("mp3") || fileExt.equals(".mp3")) {
+            if (fileExt.equals(".mp3") || mime.contains("mp3")) {
                 mime = "audio/mpeg";
-            } else if (mime.contains("flac") || fileExt.equals(".flac")) {
+            } else if (fileExt.equals(".flac") || mime.contains("flac")) {
                 mime = "audio/flac";
-            } else if (mime.contains("wav") || fileExt.equals(".wav")) {
+            } else if (fileExt.equals(".wav") || mime.contains("wav")) {
                 mime = "audio/wav";
-            } else if (mime.contains("ogg") || mime.contains("opus") || fileExt.equals(".ogg") || fileExt.equals(".opus")) {
+            } else if (fileExt.equals(".ogg") || fileExt.equals(".opus") || mime.contains("ogg") || mime.contains("opus")) {
                 mime = "audio/ogg";
-            } else if (mime.contains("mp4") || mime.contains("m4a") || mime.contains("aac") || fileExt.equals(".m4a") || fileExt.equals(".aac")) {
+            } else if (fileExt.equals(".m4a") || mime.contains("m4a") || mime.contains("mp4")) {
                 mime = "audio/mp4";
+            } else if (fileExt.equals(".aac") || mime.contains("aac")) {
+                mime = "audio/aac";
             } else {
                 mime = "audio/mpeg";
             }
