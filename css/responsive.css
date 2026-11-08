@@ -1,0 +1,784 @@
+/* -------------------------------------------------------------
+   RESPONSIVE DESIGN BREAKPOINTS
+------------------------------------------------------------- */
+
+/* Laptops (< 1200px) */
+@media (max-width: 1200px) {
+  .waven-body-split {
+    grid-template-columns: 1fr 340px;
+    gap: 16px;
+  }
+  .waven-hub-cards-grid {
+    gap: 12px;
+  }
+  .waven-hub-card {
+    height: 190px;
+  }
+}
+
+/* Tablets (< 1040px): Right player collapses into sleek bottom bar */
+@media (max-width: 1040px) {
+  .waven-app {
+    padding: 0;
+  }
+
+  .waven-window {
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+
+  .waven-body-split {
+    grid-template-columns: 1fr;
+    margin-bottom: 0;
+  }
+
+  .waven-center-view {
+    padding-bottom: 84px;
+  }
+
+  .waven-player-card {
+    display: none;
+  }
+
+  .mini-player-container {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+}
+
+/* Mobile Screens (< 768px) */
+@media (max-width: 768px) {
+  /* 1. Header Navigation Bar (capsule nav) removed on mobile as requested */
+  .floating-capsule-nav {
+    display: none !important;
+  }
+
+  .waven-window {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 2. Side navigation dock displayed in the header */
+  .floating-dock {
+    display: flex !important;
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    left: auto;
+    transform: none;
+    width: auto;
+    height: 40px;
+    flex-direction: row;
+    padding: 3px 6px;
+    gap: 4px;
+    margin: 0;
+    z-index: 100;
+    background: rgba(18, 22, 32, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+    border-radius: var(--radius-full);
+  }
+
+  .floating-dock .dock-item {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    transition: background 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .floating-dock .dock-item:active {
+    transform: scale(0.9) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .floating-dock .dock-item.active {
+    background: rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.22) !important;
+  }
+
+  .floating-dock .dock-item svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .floating-dock .dock-avatar-btn {
+    width: 28px;
+    height: 28px;
+    margin-top: 0;
+    margin-left: 2px;
+  }
+
+  .waven-top-header {
+    height: 48px;
+    padding: 0 2px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .waven-brand {
+    z-index: 10;
+  }
+
+  .waven-main-layout {
+    padding: 10px 12px 0 12px;
+  }
+
+  .waven-body-split {
+    margin-bottom: 0 !important;
+  }
+
+  .waven-center-view {
+    padding-bottom: 84px !important;
+  }
+
+  .mini-player-container {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 16px !important;
+  }
+
+  .player-left-info {
+    flex: 1 !important;
+    min-width: 0 !important;
+    margin-right: 12px !important;
+  }
+
+  .mini-player-action-right {
+    display: flex !important;
+  }
+
+  /* Mobile Home Hub Cards — Modern Horizontal Swipe Carousel (Minimal Scroll) */
+  .waven-hub-cards-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 12px !important;
+    padding: 2px 2px 8px 2px !important;
+    margin-bottom: 6px !important;
+    scrollbar-width: none !important;
+  }
+  .waven-hub-cards-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .hub-carousel-dots {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin-top: -2px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .hub-dot {
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: var(--radius-full) !important;
+    background: rgba(255, 255, 255, 0.25) !important;
+    transition: all 0.22s ease !important;
+  }
+
+  .hub-dot.active {
+    width: 18px !important;
+    border-radius: 4px !important;
+    background: var(--accent-primary, #38bdf8) !important;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.5) !important;
+  }
+
+  .waven-hub-card {
+    flex: 0 0 84% !important;
+    max-width: 320px !important;
+    height: 132px !important;
+    scroll-snap-align: start !important;
+    padding: 10px 12px 12px !important;
+    border-radius: 16px !important;
+  }
+
+  .hub-card-title {
+    font-size: 0.88rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .hub-card-artist {
+    font-size: 0.74rem !important;
+  }
+
+  .hub-card-play-btn {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .hub-card-play-btn svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .hub-card-badge {
+    font-size: 0.65rem !important;
+    padding: 3px 8px !important;
+  }
+
+  .hub-card-heart {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .hub-card-heart svg {
+    width: 13px !important;
+    height: 13px !important;
+  }
+
+  .hub-card-info-row {
+    margin-top: 3px !important;
+    gap: 4px !important;
+  }
+
+  .hub-card-tag {
+    font-size: 0.6rem !important;
+    padding: 1px 5px !important;
+  }
+
+  .hub-card-dur {
+    font-size: 0.66rem !important;
+  }
+
+  /* Compact Home Feature Containers (Mood Studio & Forgotten Gems) */
+  .home-feature-container {
+    margin-bottom: 12px !important;
+  }
+
+  .mood-studio-wrapper,
+  .forgotten-gems-wrapper {
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .mood-studio-header,
+  .forgotten-gems-header {
+    margin-bottom: 8px !important;
+    gap: 6px !important;
+  }
+
+  .mood-studio-title,
+  .gems-title {
+    font-size: 0.98rem !important;
+  }
+
+  .mood-studio-hint {
+    display: none !important;
+  }
+
+  .mood-pills-row {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 3px !important;
+    gap: 6px !important;
+  }
+  .mood-pills-row::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .mood-pill-btn {
+    padding: 5px 9px !important;
+    font-size: 0.72rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .gems-tabs-row {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 4px !important;
+  }
+  .gems-tabs-row::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .gems-tab-btn {
+    padding: 4px 8px !important;
+    font-size: 0.7rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .gems-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+
+  .gem-track-card {
+    padding: 7px 9px !important;
+    gap: 8px !important;
+  }
+
+  .waven-tracklist-card {
+    padding: 8px 6px !important;
+    border-radius: 14px !important;
+  }
+
+  .streaming-arch-diagram {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .arch-arrow {
+    transform: rotate(90deg);
+    margin: 4px 0;
+  }
+
+  .waven-track-row {
+    padding: 8px 6px;
+  }
+
+  .track-row-dur {
+    margin-right: 8px;
+  }
+
+  /* Mobile Library Header & Actions Alignment */
+  .library-header-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .library-header-text {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .library-header-text .view-main-title {
+    font-size: 1.45rem !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    margin: 0 0 4px 0 !important;
+    line-height: 1.25 !important;
+  }
+
+  .library-header-text .view-main-subtitle {
+    font-size: 0.82rem !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    line-height: 1.4 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .library-header-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  /* Insights Header Layout on Mobile */
+  .insights-header-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+    width: 100% !important;
+  }
+
+  .insights-header-text {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .insights-main-title {
+    font-size: 1.45rem !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    line-height: 1.25 !important;
+    margin: 0 0 4px 0 !important;
+  }
+
+  .insights-main-subtitle {
+    font-size: 0.82rem !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    line-height: 1.4 !important;
+    color: #8b92a4 !important;
+    display: block !important;
+  }
+
+  .insights-header-actions {
+    display: flex !important;
+    width: auto !important;
+    align-self: flex-start !important;
+  }
+
+  .insights-action-btn {
+    width: auto !important;
+    padding: 7px 14px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .library-action-btn {
+    width: 100% !important;
+    padding: 9px 4px !important;
+    font-size: 0.76rem !important;
+    font-weight: 500 !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    text-align: center !important;
+    border-radius: var(--radius-full) !important;
+    white-space: nowrap !important;
+  }
+
+  .library-action-btn svg {
+    width: 14px !important;
+    height: 14px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Sleek swipeable subnav pills on mobile */
+  .library-subnav-row {
+    margin-bottom: 14px !important;
+  }
+
+  .subnav-pills {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding-bottom: 6px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .subnav-pills::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .filter-pill {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Music DNA Mobile Layout */
+  .insights-container {
+    gap: 14px !important;
+    padding-bottom: 24px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .dna-hero-card {
+    padding: 18px 14px !important;
+    border-radius: var(--radius-lg) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .dna-archetype-title {
+    font-size: 1.35rem !important;
+    line-height: 1.25 !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    margin: 8px 0 !important;
+  }
+
+  .dna-archetype-desc {
+    font-size: 0.84rem !important;
+    line-height: 1.45 !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .dna-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    margin-top: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .dna-stat-box {
+    padding: 10px 10px !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .dna-stat-val {
+    font-size: 1.15rem !important;
+    line-height: 1.2 !important;
+    word-break: break-word !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .dna-stat-lbl {
+    font-size: 0.68rem !important;
+    line-height: 1.2 !important;
+    word-break: break-word !important;
+    letter-spacing: 0.2px !important;
+  }
+
+  .insights-split-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .insights-card {
+    padding: 16px 14px !important;
+    border-radius: var(--radius-lg) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .insights-card-title {
+    font-size: 1.05rem !important;
+    word-break: break-word !important;
+  }
+
+  .insights-card-desc {
+    font-size: 0.78rem !important;
+    line-height: 1.35 !important;
+    word-break: break-word !important;
+  }
+
+  .histogram-bars-row {
+    height: 130px !important;
+    gap: 4px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .histogram-bar-track {
+    max-width: 24px !important;
+  }
+
+  .histogram-day-label {
+    font-size: 0.65rem !important;
+  }
+
+  .histogram-val-label {
+    font-size: 0.62rem !important;
+  }
+
+  .insights-track-row,
+  .insights-rank-row {
+    padding: 8px 10px !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .insights-track-meta,
+  .insights-rank-info {
+    min-width: 0 !important;
+    flex: 1 !important;
+    overflow: hidden !important;
+  }
+
+  .insights-track-title,
+  .insights-rank-name {
+    font-size: 0.84rem !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .insights-track-artist,
+  .insights-rank-sub {
+    font-size: 0.72rem !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  /* Immersive Listening Mobile Layout (< 768px) */
+  .immersive-glass-layer {
+    padding: 16px 18px 24px !important;
+    gap: 10px !important;
+    justify-content: space-between !important;
+    height: 100vh !important;
+    box-sizing: border-box !important;
+  }
+
+  .immersive-brand-badge {
+    font-size: 0.68rem !important;
+    padding: 5px 12px !important;
+    letter-spacing: 1px !important;
+  }
+
+  .immersive-center-content {
+    flex-direction: column !important;
+    gap: 14px !important;
+    padding: 6px 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 1 !important;
+  }
+
+  .immersive-artwork-wrapper {
+    width: 210px !important;
+    height: 210px !important;
+    max-width: 58vw !important;
+    max-height: 58vw !important;
+    border-radius: 24px !important;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.75) !important;
+  }
+
+  .immersive-visualizer-wrap {
+    height: 48px !important;
+    margin: 4px 0 8px !important;
+  }
+
+  .immersive-controls-wrap {
+    gap: 10px !important;
+  }
+
+  .immersive-meta-row {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .immersive-titles {
+    flex: 1 !important;
+    min-width: 0 !important;
+    margin-right: 12px !important;
+  }
+
+  .immersive-title {
+    font-size: 1.15rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .immersive-artist {
+    font-size: 0.82rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .immersive-format-tag {
+    font-size: 0.68rem !important;
+    padding: 3px 8px !important;
+  }
+
+  .immersive-seek-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .immersive-seek-track {
+    flex: 1 !important;
+    height: 8px !important;
+    border-radius: 4px !important;
+    position: relative !important;
+    cursor: pointer !important;
+    background: rgba(255, 255, 255, 0.16) !important;
+  }
+
+  .immersive-seek-fill {
+    height: 100% !important;
+    background: #ffffff !important;
+    border-radius: 4px !important;
+    width: 0%;
+  }
+
+  .immersive-seek-thumb {
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    position: absolute !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    left: 0%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .immersive-time {
+    font-size: 0.75rem !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+    min-width: 34px !important;
+  }
+
+  .immersive-btns-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 8px !important;
+    margin-top: 2px !important;
+  }
+
+  .waven-big-play-btn {
+    width: 58px !important;
+    height: 58px !important;
+  }
+
+  /* Mobile Modals (Lyrics Editor & Alerts) */
+  .modal-card {
+    padding: 18px 16px !important;
+    width: 92% !important;
+    max-height: 92vh !important;
+    box-sizing: border-box !important;
+  }
+
+  .modal-header {
+    gap: 10px !important;
+    margin-bottom: 14px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .modal-close-btn {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.95rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  .lyric-editor-subtitle {
+    max-width: 220px !important;
+  }
+}
+
+/* Reduced Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
