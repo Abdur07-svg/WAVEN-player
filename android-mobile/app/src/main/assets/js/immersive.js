@@ -23,28 +23,13 @@ class ImmersiveModeManager {
     });
 
     window.addEventListener("ar7:player_state_changed", (e) => {
-      if (e.detail && e.detail.isPlaying) {
-        this.setupAudioNodes();
-        if (this.audioCtx && this.audioCtx.state === "suspended") {
-          this.audioCtx.resume().catch(() => {});
-        }
-      }
-      if (this.isActive) {
+      if (this.isActive && e.detail) {
         this.updatePlayState(e.detail.isPlaying);
       }
     });
 
-    // Resume AudioContext on user interaction
-    const resumeAudio = () => {
-      if (this.audioCtx && this.audioCtx.state === "suspended") {
-        this.audioCtx.resume().catch(() => {});
-      }
-    };
-    document.addEventListener("click", resumeAudio, { passive: true });
-    document.addEventListener("keydown", resumeAudio, { passive: true });
-
     window.addEventListener("ar7:player_time_updated", (e) => {
-      if (this.isActive) {
+      if (this.isActive && e.detail) {
         this.updateProgress(e.detail.currentTime, e.detail.duration);
       }
     });
@@ -66,53 +51,12 @@ class ImmersiveModeManager {
     this._bindSeekTrack();
   }
 
-  setupAudioNodes() {
-    try {
-      const audioEl = window.player?.audio;
-      if (!audioEl) return false;
-
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContextClass) return false;
-
-      if (!this.audioCtx) {
-        this.audioCtx = new AudioContextClass();
-      }
-
-      if (this.audioCtx.state === "suspended") {
-        this.audioCtx.resume().catch(() => {});
-      }
-
-      if (!this.analyser) {
-        this.analyser = this.audioCtx.createAnalyser();
-        this.analyser.fftSize = 128; // 64 frequency bins
-        this.analyser.smoothingTimeConstant = 0.72; // fluid analog response
-        this.frequencyData = new Uint8Array(this.analyser.frequencyBinCount);
-      }
-
-      if (!audioEl._wavenAudioSource) {
-        audioEl._wavenAudioSource = this.audioCtx.createMediaElementSource(audioEl);
-        audioEl._wavenAudioSource.connect(this.analyser);
-        this.analyser.connect(this.audioCtx.destination);
-      }
-
-      return true;
-    } catch (e) {
-      console.warn("[Immersive] Web Audio API setup notice:", e);
-      return false;
-    }
-  }
-
   open() {
     const overlay = document.getElementById("immersive-player-overlay");
     if (!overlay) return;
 
     this.isActive = true;
     overlay.classList.add("active");
-
-    this.setupAudioNodes();
-    if (this.audioCtx && this.audioCtx.state === "suspended") {
-      this.audioCtx.resume().catch(() => {});
-    }
 
     const track = window.player?.state?.currentTrack;
     this.updateMetadata(track);
@@ -388,11 +332,6 @@ class ImmersiveModeManager {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    this.setupAudioNodes();
-    if (!this.frequencyData) {
-      this.frequencyData = new Uint8Array(64);
-    }
-
     const numBars = 36;
     const barValues = new Float32Array(numBars);
     const targetValues = new Float32Array(numBars);
@@ -419,59 +358,49 @@ class ImmersiveModeManager {
       const isMuted = Boolean(window.player && window.player.state && window.player.state.isMuted);
       const volume = isMuted ? 0 : (window.player?.state?.volume ?? 0.85);
 
-      // Check real audio frequency data from Web Audio API Analyser
-      let hasRealSignal = false;
-      if (this.analyser && isPlaying && volume > 0) {
-        if (this.audioCtx && this.audioCtx.state === "suspended") {
-          this.audioCtx.resume().catch(() => {});
-        }
-        this.analyser.getByteFrequencyData(this.frequencyData);
-        for (let k = 0; k < 20; k++) {
-          if (this.frequencyData[k] > 4) {
-            hasRealSignal = true;
-            break;
-          }
-        }
-      }
-
-      if (hasRealSignal) {
-        // Genuine Web Audio API real-time frequency spectrum directly synced with the song
-        for (let i = 0; i < numBars; i++) {
-          const binIndex = Math.min(63, Math.floor(Math.pow(i / (numBars - 1), 1.25) * 44));
-          const raw = this.frequencyData[binIndex] || 0;
-          const boost = 1.0 + (i / numBars) * 0.45;
-          targetValues[i] = Math.max(4, Math.min(255, raw * boost * volume));
-
-          const speed = targetValues[i] > barValues[i] ? 0.48 : 0.20;
-          barValues[i] += (targetValues[i] - barValues[i]) * speed;
-        }
-      } else if (isPlaying && volume > 0) {
-        // Rhythmically synced beat fallback locked directly to song timeline
+      if (isPlaying && volume > 0) {
         const curTime = window.player?.audio?.currentTime || 0;
-        const beatClock = curTime * 2.133; // 128 BPM
+        // Derive unique musical tempo from current track title so each song pulses with its own rhythm
+        const trackTitle = window.player?.state?.currentTrack?.title || "music";
+        let hash = 0;
+        for (let c = 0; c < trackTitle.length; c++) hash = (hash * 31 + trackTitle.charCodeAt(c)) & 0xffff;
+        const bpm = 120 + (hash % 16); // 120-136 musical BPM
+        const beatClock = curTime * (bpm / 60);
         const beatFrac = beatClock - Math.floor(beatClock);
+        const eighthFrac = (beatClock * 2) - Math.floor(beatClock * 2);
+        const sixteenthFrac = (beatClock * 4) - Math.floor(beatClock * 4);
+
+        // Dynamic multi-band acoustic energy
         const kickPulse = Math.pow(Math.max(0, 1 - beatFrac * 2.2), 3);
-        const snarePulse = Math.pow(Math.max(0, 1 - Math.abs(beatFrac - 0.5) * 3), 2);
+        const snarePulse = Math.pow(Math.max(0, 1 - Math.abs(beatFrac - 0.5) * 3.2), 2.5);
+        const eighthPulse = Math.pow(Math.max(0, 1 - eighthFrac * 2.4), 2);
+        const hihatPulse = Math.pow(Math.max(0, 1 - sixteenthFrac * 2.2), 1.8);
 
         for (let i = 0; i < numBars; i++) {
           let amp = 0;
           if (i < 10) {
-            amp = kickPulse * 0.95 + 0.15;
+            // Bass & Sub kicks
+            const wave = Math.sin(curTime * 8 + i * 0.4) * 0.15;
+            amp = kickPulse * 0.88 + eighthPulse * 0.22 + wave + 0.14;
           } else if (i < 24) {
-            amp = snarePulse * 0.75 + kickPulse * 0.35 + 0.12;
+            // Vocals, Leads, and Snares
+            const wave = Math.sin(curTime * 12 + i * 0.6) * 0.22;
+            amp = snarePulse * 0.72 + kickPulse * 0.28 + wave + 0.12;
           } else {
-            amp = Math.sin(curTime * 14 + i) * 0.35 + kickPulse * 0.25 + 0.1;
+            // Cymbals, Percussion & Highs
+            const wave = Math.sin(curTime * 18 + i * 0.8) * 0.28;
+            amp = hihatPulse * 0.65 + wave + 0.10;
           }
-          const curve = 1.0 - (i / numBars) * 0.28;
-          targetValues[i] = Math.max(6, amp * 220 * curve * volume);
-          const speed = targetValues[i] > barValues[i] ? 0.45 : 0.20;
+          const taper = 1.0 - (i / numBars) * 0.24;
+          targetValues[i] = Math.max(5, amp * 230 * taper * volume);
+          const speed = targetValues[i] > barValues[i] ? 0.46 : 0.22;
           barValues[i] += (targetValues[i] - barValues[i]) * speed;
         }
       } else {
-        // Paused: smoothly settle to 4px resting line
+        // Paused / idle resting state
         for (let i = 0; i < numBars; i++) {
           targetValues[i] = 4;
-          barValues[i] += (4 - barValues[i]) * 0.18;
+          barValues[i] += (4 - barValues[i]) * 0.16;
         }
       }
 

@@ -1659,6 +1659,9 @@ public class MainActivity extends Activity {
         requestAppPermissions();
 
         webView = findViewById(R.id.webView);
+        webView.setVerticalScrollBarEnabled(false);
+        webView.setHorizontalScrollBarEnabled(false);
+        webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);

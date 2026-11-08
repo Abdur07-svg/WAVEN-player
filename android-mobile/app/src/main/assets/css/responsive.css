@@ -50,6 +50,28 @@
 
 /* Mobile Screens (< 768px) */
 @media (max-width: 768px) {
+  /* Completely hide all scrollbars on mobile for a sleek native app feel */
+  *::-webkit-scrollbar,
+  .waven-center-view::-webkit-scrollbar,
+  .view::-webkit-scrollbar,
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+
+  * {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .waven-center-view {
+    padding-right: 0 !important;
+    scrollbar-width: none !important;
+  }
+
   /* 1. Header Navigation Bar (capsule nav) removed on mobile as requested */
   .floating-capsule-nav {
     display: none !important;
