@@ -1,0 +1,3 @@
+# Python dependencies for WAVEN Android Build Pipeline
+pillow>=10.0.0
+

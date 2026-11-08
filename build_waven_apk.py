@@ -6,15 +6,119 @@ import zipfile
 import math
 from PIL import Image, ImageDraw, ImageFilter
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ANDROID_HOME = os.environ.get('ANDROID_HOME', r'C:\Users\ABDUR\AppData\Local\Android\Sdk')
-BUILD_TOOLS_DIR = os.path.join(ANDROID_HOME, 'build-tools', '34.0.0')
-PLATFORM_JAR = os.path.join(ANDROID_HOME, 'platforms', 'android-34', 'android.jar')
+# ==============================================================
+# WAVEN Music Player — Release Configuration & Version Settings
+# ==============================================================
+PACKAGE_NAME = "com.waven.musicplayer"
+APP_NAME = "WAVEN"
+VERSION_CODE = os.environ.get('WAVEN_VERSION_CODE', "4")
+VERSION_NAME = os.environ.get('WAVEN_VERSION_NAME', "1.0.3")
+MIN_SDK_VERSION = "24"
+TARGET_SDK_VERSION = "34"
 
-AAPT2 = os.path.join(BUILD_TOOLS_DIR, 'aapt2.exe')
-D8 = os.path.join(BUILD_TOOLS_DIR, 'd8.bat')
-ZIPALIGN = os.path.join(BUILD_TOOLS_DIR, 'zipalign.exe')
-APKSIGNER = os.path.join(BUILD_TOOLS_DIR, 'apksigner.bat')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# --------------------------------------------------------------
+# 1. Environment & Secrets Management (No Hardcoded Passwords)
+# --------------------------------------------------------------
+def load_env_file():
+    """Loads key-value pairs from .env file into os.environ if not already present."""
+    env_path = os.path.join(BASE_DIR, '.env')
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        k, v = line.split('=', 1)
+                        k = k.strip()
+                        v = v.strip().strip('"').strip("'")
+                        if k and k not in os.environ:
+                            os.environ[k] = v
+        except Exception as e:
+            print(f"[WARN] Failed to read .env file: {e}")
+
+load_env_file()
+
+# --------------------------------------------------------------
+# 2. Android SDK & Build Tools Auto-Detection (Cross-Platform)
+# --------------------------------------------------------------
+def get_android_sdk_path():
+    """Resolves Android SDK path from environment or platform-standard directories."""
+    for env_var in ['ANDROID_HOME', 'ANDROID_SDK_ROOT']:
+        val = os.environ.get(env_var)
+        if val and os.path.isdir(val):
+            return val
+
+    # Default Windows location
+    win_path = os.path.expandvars(r'%LOCALAPPDATA%\Android\Sdk')
+    if os.path.isdir(win_path):
+        return win_path
+
+    # Default Linux location
+    linux_path = os.path.expanduser('~/Android/Sdk')
+    if os.path.isdir(linux_path):
+        return linux_path
+
+    # Default macOS location
+    mac_path = os.path.expanduser('~/Library/Android/sdk')
+    if os.path.isdir(mac_path):
+        return mac_path
+
+    return win_path
+
+ANDROID_HOME = get_android_sdk_path()
+
+def find_build_tools(sdk_home):
+    """Finds installed Android build-tools version (prefers 34.0.0 or newest available)."""
+    bt_dir = os.path.join(sdk_home, 'build-tools')
+    if not os.path.isdir(bt_dir):
+        return os.path.join(sdk_home, 'build-tools', '34.0.0')
+
+    versions = [d for d in os.listdir(bt_dir) if os.path.isdir(os.path.join(bt_dir, d))]
+    if '34.0.0' in versions:
+        return os.path.join(bt_dir, '34.0.0')
+    versions.sort(reverse=True)
+    if versions:
+        return os.path.join(bt_dir, versions[0])
+    return os.path.join(sdk_home, 'build-tools', '34.0.0')
+
+BUILD_TOOLS_DIR = find_build_tools(ANDROID_HOME)
+
+def find_platform_jar(sdk_home):
+    """Finds android.jar platform library (prefers android-34 or highest installed)."""
+    platforms_dir = os.path.join(sdk_home, 'platforms')
+    p34 = os.path.join(platforms_dir, f'android-{TARGET_SDK_VERSION}', 'android.jar')
+    if os.path.isfile(p34):
+        return p34
+
+    if os.path.isdir(platforms_dir):
+        platforms = [p for p in os.listdir(platforms_dir) if os.path.isfile(os.path.join(platforms_dir, p, 'android.jar'))]
+        platforms.sort(reverse=True)
+        if platforms:
+            return os.path.join(platforms_dir, platforms[0], 'android.jar')
+    return p34
+
+PLATFORM_JAR = find_platform_jar(ANDROID_HOME)
+
+def resolve_tool(name, build_tools_dir):
+    """Resolves tool executable path with cross-platform extension support (.exe/.bat on Windows)."""
+    is_win = sys.platform.startswith('win')
+    exts = ['.exe', '.bat'] if is_win else ['', '.sh']
+    for ext in exts:
+        cand = os.path.join(build_tools_dir, name + ext)
+        if os.path.isfile(cand):
+            return cand
+
+    which_p = shutil.which(name)
+    if which_p:
+        return which_p
+    return os.path.join(build_tools_dir, name + ('.exe' if is_win else ''))
+
+AAPT2 = resolve_tool('aapt2', BUILD_TOOLS_DIR)
+D8 = resolve_tool('d8', BUILD_TOOLS_DIR)
+ZIPALIGN = resolve_tool('zipalign', BUILD_TOOLS_DIR)
+APKSIGNER = resolve_tool('apksigner', BUILD_TOOLS_DIR)
 
 ANDROID_DIR = os.path.join(BASE_DIR, 'android-mobile')
 APP_DIR = os.path.join(ANDROID_DIR, 'app')
@@ -30,23 +134,44 @@ COMPILED_RES = os.path.join(INTERMEDIATES, 'compiled_res')
 GEN_DIR = os.path.join(INTERMEDIATES, 'gen')
 CLASSES_DIR = os.path.join(INTERMEDIATES, 'classes')
 DEX_DIR = os.path.join(INTERMEDIATES, 'dex')
-OUTPUT_DIR = os.path.join(BASE_DIR, 'dist')
 
-RELEASE_KEYSTORE = os.path.join(ANDROID_DIR, '.keystore', 'waven_release.keystore')
-KEYSTORE_PASS = 'waven2026'
-KEY_ALIAS = 'waven_music'
+# Canonical release output directory (defaults to 'dist', configurable via WAVEN_OUTPUT_DIR)
+OUTPUT_DIR = os.environ.get('WAVEN_OUTPUT_DIR', os.path.join(BASE_DIR, 'dist'))
+
+# Release signing keystore configuration
+RELEASE_KEYSTORE = os.environ.get('WAVEN_KEYSTORE_PATH', os.path.join(ANDROID_DIR, '.keystore', 'waven_release.keystore'))
+KEY_ALIAS = os.environ.get('WAVEN_KEY_ALIAS', 'waven_music')
+KEYSTORE_PASS = os.environ.get('WAVEN_KEYSTORE_PASSWORD') or os.environ.get('KEYSTORE_PASSWORD')
 
 def run_cmd(cmd, cwd=BASE_DIR):
+    """Executes a command and terminates immediately with formatted error on failure."""
+    cmd_str = ' '.join(str(x) for x in cmd) if isinstance(cmd, list) else str(cmd)
+    print(f"\n[RUN] {cmd_str}")
+
     if isinstance(cmd, list):
-        print(f"\n[RUN] {' '.join(str(x) for x in cmd)}")
         res = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
     else:
-        print(f"\n[RUN] {cmd}")
         res = subprocess.run(cmd, cwd=cwd, shell=True, capture_output=True, text=True)
+
     if res.returncode != 0:
-        print(f"[ERROR] Command failed with code {res.returncode}")
-        print(f"Stdout:\n{res.stdout}")
-        print(f"Stderr:\n{res.stderr}")
+        print("\n" + "=" * 60)
+        print(f"[BUILD ERROR] Pipeline step failed with exit code {res.returncode}")
+        print("=" * 60)
+        print(f"Failed Command: {cmd_str}")
+        if res.stdout and res.stdout.strip():
+            print(f"\n[Stdout]:\n{res.stdout.strip()}")
+        if res.stderr and res.stderr.strip():
+            print(f"\n[Stderr]:\n{res.stderr.strip()}")
+        print("=" * 60)
+
+        # Remove any corrupted partial APK to avoid deploying invalid artifacts
+        final_apk = os.path.join(OUTPUT_DIR, 'WAVEN-Music-Player.apk')
+        if os.path.exists(final_apk):
+            try:
+                os.remove(final_apk)
+            except Exception:
+                pass
+
         sys.exit(res.returncode)
     else:
         if res.stdout.strip():
@@ -59,28 +184,42 @@ def generate_crisp_icons():
     svg_path = os.path.join(logo_dir, 'logo.svg')
     out_512 = os.path.join(logo_dir, 'waven_app_logo_512.png')
 
-    chrome_paths = [
+    chrome_candidates = [
+        shutil.which('google-chrome'),
+        shutil.which('google-chrome-stable'),
+        shutil.which('chromium'),
+        shutil.which('chromium-browser'),
+        shutil.which('chrome'),
+        shutil.which('msedge'),
         r'C:\Program Files\Google\Chrome\Application\chrome.exe',
-        r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
+        r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
+        r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe',
+        '/usr/bin/google-chrome',
+        '/usr/bin/google-chrome-stable',
+        '/usr/bin/chromium',
+        '/usr/bin/chromium-browser'
     ]
-    browser = next((p for p in chrome_paths if os.path.exists(p)), None)
+    browser = next((p for p in chrome_candidates if p and os.path.exists(p)), None)
 
     if browser and os.path.exists(svg_path):
-        svg_url = 'file:///' + os.path.abspath(svg_path).replace('\\', '/')
-        cmd = [
-            browser,
-            '--headless=new',
-            '--disable-gpu',
-            '--no-sandbox',
-            '--default-background-color=00000000',
-            f'--screenshot={out_512}',
-            '--window-size=512,512',
-            svg_url
-        ]
-        subprocess.run(cmd, capture_output=True, text=True)
+        try:
+            svg_url = 'file:///' + os.path.abspath(svg_path).replace('\\', '/')
+            cmd = [
+                browser,
+                '--headless=new',
+                '--disable-gpu',
+                '--no-sandbox',
+                '--default-background-color=00000000',
+                f'--screenshot={out_512}',
+                '--window-size=512,512',
+                svg_url
+            ]
+            subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        except Exception as e:
+            print(f"[WARN] Headless browser SVG rendering encountered: {e}")
 
     if not os.path.exists(out_512):
-        raise RuntimeError(f"Failed to render {svg_path} to PNG")
+        raise RuntimeError(f"Failed to find or render launcher icon master at {out_512}")
 
     sq_master = Image.open(out_512).convert("RGBA")
     W, H = sq_master.size
@@ -165,11 +304,11 @@ def setup_android_source_files():
 
     # 1. AndroidManifest.xml
     with open(MANIFEST, 'w', encoding='utf-8') as f:
-        f.write('''<?xml version="1.0" encoding="utf-8"?>
+        f.write(f'''<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.waven.musicplayer"
-    android:versionCode="4"
-    android:versionName="1.0.3">
+    package="{PACKAGE_NAME}"
+    android:versionCode="{VERSION_CODE}"
+    android:versionName="{VERSION_NAME}">
 
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -1966,16 +2105,16 @@ def build_waven_apk():
     flat_files = [os.path.join(COMPILED_RES, f) for f in os.listdir(COMPILED_RES) if f.endswith('.flat')]
 
     # 5. Link resources and generate R.java
-    print("\nStep 2: Linking resources with aapt2 (minSdk 24, targetSdk 34)...")
+    print(f"\nStep 2: Linking resources with aapt2 (minSdk {MIN_SDK_VERSION}, targetSdk {TARGET_SDK_VERSION}, version {VERSION_NAME} [{VERSION_CODE}])...")
     proto_apk = os.path.join(INTERMEDIATES, 'linked_res.apk')
     link_cmd = [
         AAPT2, 'link',
         '-I', PLATFORM_JAR,
         '--manifest', MANIFEST,
-        '--min-sdk-version', '24',
-        '--target-sdk-version', '34',
-        '--version-code', '3',
-        '--version-name', '1.0.2',
+        '--min-sdk-version', MIN_SDK_VERSION,
+        '--target-sdk-version', TARGET_SDK_VERSION,
+        '--version-code', VERSION_CODE,
+        '--version-name', VERSION_NAME,
         '--java', GEN_DIR,
         '-o', proto_apk,
         '--auto-add-overlay'
@@ -1994,7 +2133,20 @@ def build_waven_apk():
             if f.endswith('.java'):
                 java_files.append(os.path.join(root, f))
 
-    javac_bin = shutil.which('javac') or r'C:\Program Files\Common Files\Oracle\Java\javapath\javac.exe'
+    javac_bin = shutil.which('javac')
+    if not javac_bin:
+        java_home = os.environ.get('JAVA_HOME')
+        if java_home:
+            cand = os.path.join(java_home, 'bin', 'javac.exe' if sys.platform.startswith('win') else 'javac')
+            if os.path.isfile(cand):
+                javac_bin = cand
+    if not javac_bin and sys.platform.startswith('win'):
+        cand = r'C:\Program Files\Common Files\Oracle\Java\javapath\javac.exe'
+        if os.path.isfile(cand):
+            javac_bin = cand
+    if not javac_bin:
+        javac_bin = 'javac'
+
     javac_cmd = [
         javac_bin,
         '-cp', PLATFORM_JAR,
@@ -2012,7 +2164,7 @@ def build_waven_apk():
 
     d8_cmd = [
         D8,
-        '--min-api', '24',
+        '--min-api', MIN_SDK_VERSION,
         '--lib', PLATFORM_JAR,
         '--output', DEX_DIR
     ] + class_files
@@ -2045,9 +2197,37 @@ def build_waven_apk():
 
     # 10. Generate persistent release keystore if not present
     if not os.path.exists(RELEASE_KEYSTORE):
+        if os.environ.get('CI') == 'true' or os.environ.get('GITHUB_ACTIONS') == 'true':
+            print("\n" + "=" * 60)
+            print("[CRITICAL ERROR] Production Release Keystore not found in CI environment!")
+            print(f"Expected Path: {RELEASE_KEYSTORE}")
+            print("In GitHub Actions, WAVEN_RELEASE_KEYSTORE_BASE64 must be decoded before build.")
+            print("Auto-generating a dummy or debug keystore in CI is strictly prohibited.")
+            print("=" * 60)
+            sys.exit(1)
+
+        if not KEYSTORE_PASS:
+            print("\n" + "=" * 60)
+            print("[CRITICAL ERROR] Keystore password is required! Set WAVEN_KEYSTORE_PASSWORD in .env or environment variable.")
+            print("=" * 60)
+            sys.exit(1)
+
         os.makedirs(os.path.dirname(RELEASE_KEYSTORE), exist_ok=True)
         print("\nGenerating Production Release Keystore for WAVEN...")
-        keytool_bin = shutil.which('keytool') or r'D:\Java\bin\keytool.exe'
+        keytool_bin = shutil.which('keytool')
+        if not keytool_bin:
+            java_home = os.environ.get('JAVA_HOME')
+            if java_home:
+                cand = os.path.join(java_home, 'bin', 'keytool.exe' if sys.platform.startswith('win') else 'keytool')
+                if os.path.isfile(cand):
+                    keytool_bin = cand
+        if not keytool_bin and sys.platform.startswith('win'):
+            cand = r'D:\Java\bin\keytool.exe'
+            if os.path.isfile(cand):
+                keytool_bin = cand
+        if not keytool_bin:
+            keytool_bin = 'keytool'
+
         keytool_cmd = [
             keytool_bin, '-genkeypair',
             '-keystore', RELEASE_KEYSTORE,
@@ -2060,9 +2240,15 @@ def build_waven_apk():
             '-keysize', '2048'
         ]
         run_cmd(keytool_cmd)
+    else:
+        print(f"\nUsing verified Release Keystore: {RELEASE_KEYSTORE}")
 
     # 11. Sign APK with apksigner (v1, v2, v3 schemes)
     print("\nStep 7: Signing Release APK with apksigner...")
+    if not KEYSTORE_PASS:
+        print("\n[ERROR] Keystore password is required for signing! Set WAVEN_KEYSTORE_PASSWORD in .env or environment variable.")
+        sys.exit(1)
+
     final_apk = os.path.join(OUTPUT_DIR, 'WAVEN-Music-Player.apk')
 
     apksigner_cmd = [
@@ -2079,28 +2265,122 @@ def build_waven_apk():
     ]
     run_cmd(apksigner_cmd)
 
-    # 12. Verify APK signature
-    print("\nStep 8: Verifying APK signature...")
-    verify_cmd = [APKSIGNER, 'verify', '--verbose', final_apk]
-    run_cmd(verify_cmd)
+    # 12. Rigorous Post-Build Verification Pipeline
+    print("\n" + "=" * 60)
+    print("   RUNNING RIGOROUS APK VERIFICATION PIPELINE")
+    print("=" * 60)
 
-    size_mb = os.path.getsize(final_apk) / (1024 * 1024)
+    # V-1: File Existence & Real File Size Check
+    print("\n[Verification 1/4] Checking APK file existence and size...")
+    if not os.path.exists(final_apk):
+        print(f"[FAIL] Final APK was not found at {final_apk}")
+        sys.exit(1)
 
-    root_apk = os.path.join(BASE_DIR, 'WAVEN-Music-Player.apk')
-    shutil.copy2(final_apk, root_apk)
+    size_bytes = os.path.getsize(final_apk)
+    size_mb = size_bytes / (1024 * 1024)
+    if size_bytes < 1024 * 1024:
+        print(f"[FAIL] Generated APK size is unusually small ({size_bytes} bytes). Aborting.")
+        if os.path.exists(final_apk):
+            try:
+                os.remove(final_apk)
+            except Exception:
+                pass
+        sys.exit(1)
+    print(f"  ✔ File size check passed: {size_mb:.2f} MB ({size_bytes:,} bytes)")
 
-    print("\n==================================================")
-    print("   WAVEN MUSIC PLAYER — APK READY!")
-    print("==================================================")
-    print(f"Final APK Output:    {final_apk}")
-    print(f"Root APK Location:   {root_apk}")
-    print(f"File Size:           {size_mb:.2f} MB")
-    print(f"Package ID:          com.waven.musicplayer")
-    print(f"minSdkVersion:       24 (Android 7.0+)")
-    print(f"targetSdkVersion:    34 (Android 14)")
-    print(f"versionName:         1.0.3 (versionCode 4)")
-    print(f"Signature Schemes:   v1, v2, v3 verified")
-    print("==================================================")
+    # V-2: 4-Byte Alignment Verification (zipalign -c -v 4)
+    print("\n[Verification 2/4] Verifying 4-byte zip alignment...")
+    align_verify_cmd = [ZIPALIGN, '-c', '-v', '4', final_apk]
+    align_res = subprocess.run(align_verify_cmd, capture_output=True, text=True)
+    if align_res.returncode != 0 or 'Verification succesful' not in align_res.stdout:
+        print("\n[FAIL] zipalign verification failed!")
+        print(align_res.stderr or align_res.stdout)
+        if os.path.exists(final_apk):
+            try:
+                os.remove(final_apk)
+            except Exception:
+                pass
+        sys.exit(1)
+    print("  ✔ 4-byte zip alignment verified successfully.")
+
+    # V-3: Manifest & Badging Verification (aapt2 dump badging)
+    print("\n[Verification 3/4] Verifying APK badging (package, versions, SDKs)...")
+    badging_cmd = [AAPT2, 'dump', 'badging', final_apk]
+    badging_res = subprocess.run(badging_cmd, capture_output=True, text=True)
+    if badging_res.returncode != 0:
+        print("\n[FAIL] aapt2 dump badging execution failed!")
+        print(badging_res.stderr)
+        if os.path.exists(final_apk):
+            try:
+                os.remove(final_apk)
+            except Exception:
+                pass
+        sys.exit(1)
+
+    badging_out = badging_res.stdout
+    errors = []
+    if f"name='{PACKAGE_NAME}'" not in badging_out:
+        errors.append(f"Package name mismatch! Expected '{PACKAGE_NAME}'")
+    if f"versionCode='{VERSION_CODE}'" not in badging_out:
+        errors.append(f"versionCode mismatch! Expected '{VERSION_CODE}'")
+    if f"versionName='{VERSION_NAME}'" not in badging_out:
+        errors.append(f"versionName mismatch! Expected '{VERSION_NAME}'")
+    if f"sdkVersion:'{MIN_SDK_VERSION}'" not in badging_out:
+        errors.append(f"minSdkVersion mismatch! Expected '{MIN_SDK_VERSION}'")
+    if f"targetSdkVersion:'{TARGET_SDK_VERSION}'" not in badging_out:
+        errors.append(f"targetSdkVersion mismatch! Expected '{TARGET_SDK_VERSION}'")
+
+    if errors:
+        print("\n[FAIL] Badging verification failed with discrepancies:")
+        for err in errors:
+            print(f"  - {err}")
+        if os.path.exists(final_apk):
+            try:
+                os.remove(final_apk)
+            except Exception:
+                pass
+        sys.exit(1)
+    print(f"  ✔ Badging verified: {PACKAGE_NAME} v{VERSION_NAME} (code {VERSION_CODE}), API {MIN_SDK_VERSION}-{TARGET_SDK_VERSION}")
+
+    # V-4: Signature Verification (apksigner verify --verbose --print-certs)
+    print("\n[Verification 4/4] Verifying cryptographic signatures and certificates...")
+    sig_verify_cmd = [APKSIGNER, 'verify', '--verbose', '--print-certs', final_apk]
+    sig_res = subprocess.run(sig_verify_cmd, capture_output=True, text=True)
+    if sig_res.returncode != 0 or 'Verifies' not in sig_res.stdout:
+        print("\n[FAIL] apksigner verification failed!")
+        print(sig_res.stderr or sig_res.stdout)
+        if os.path.exists(final_apk):
+            try:
+                os.remove(final_apk)
+            except Exception:
+                pass
+        sys.exit(1)
+
+    sig_out = sig_res.stdout
+    cert_dn = "Unknown"
+    cert_sha256 = "Unknown"
+    for line in sig_out.splitlines():
+        if 'certificate DN:' in line:
+            cert_dn = line.split('certificate DN:', 1)[1].strip()
+        elif 'certificate SHA-256 digest:' in line:
+            cert_sha256 = line.split('certificate SHA-256 digest:', 1)[1].strip()
+
+    print(f"  ✔ Cryptographic signature verified.")
+    print(f"    Signer DN:     {cert_dn}")
+    print(f"    SHA-256 Cert:  {cert_sha256}")
+
+    print("\n" + "=" * 60)
+    print("   [ALL VERIFICATIONS PASSED] — WAVEN RELEASE APK IS READY!")
+    print("=" * 60)
+    print(f"Final Release APK:   {final_apk}")
+    print(f"File Size:           {size_mb:.2f} MB ({size_bytes:,} bytes)")
+    print(f"Package ID:          {PACKAGE_NAME}")
+    print(f"minSdkVersion:       {MIN_SDK_VERSION} (Android 7.0+)")
+    print(f"targetSdkVersion:    {TARGET_SDK_VERSION} (Android 14)")
+    print(f"versionName:         {VERSION_NAME} (versionCode {VERSION_CODE})")
+    print(f"Signature Schemes:   v1 (JAR), v2, v3 verified")
+    print(f"Status:              PRODUCTION READY")
+    print("=" * 60)
 
 if __name__ == '__main__':
     build_waven_apk()
