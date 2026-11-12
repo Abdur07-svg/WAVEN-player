@@ -451,9 +451,9 @@ html[data-theme="light"] .hero-headline-accent {
 .android-device-frame {
   position: relative;
   width: 100%;
-  max-width: 316px;
-  padding: 11px;
-  border-radius: 40px;
+  max-width: 288px;
+  padding: 9px;
+  border-radius: 38px;
   background: linear-gradient(155deg, #2b303d 0%, #101218 46%, #1f2430 100%);
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: var(--shadow-hardware);
@@ -465,209 +465,20 @@ html[data-theme="light"] .hero-headline-accent {
 }
 
 .android-device-screen {
-  border-radius: 30px;
-  padding: 14px 16px 18px;
-  background:
-    radial-gradient(circle at 50% 26%, rgba(56, 189, 248, 0.18) 0%, transparent 56%),
-    linear-gradient(180deg, #111521 0%, #090b10 100%);
+  border-radius: 29px;
+  padding: 0;
+  background: #040506;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #f8fafc;
   overflow: hidden;
   position: relative;
 }
 
-.device-statusbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: rgba(248, 250, 252, 0.72);
-  margin-bottom: 14px;
-}
-
-.device-punch-camera {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #040507;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-}
-
-/* Matches real WAVEN .player-card-top-actions */
-.waven-app-chrome-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
-
-.waven-app-mini-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-family: var(--font-display);
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-}
-
-.waven-app-mini-brand img {
-  width: 17px;
-  height: 17px;
-  border-radius: 5px;
-}
-
-.waven-app-actions-cluster {
-  display: inline-flex;
-  gap: 6px;
-}
-
-.waven-round-chip {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.waven-album-stage {
-  position: relative;
+.hero-real-screenshot {
+  display: block;
   width: 100%;
-  aspect-ratio: 1 / 1;
-  border-radius: 18px;
-  overflow: hidden;
-  background: linear-gradient(145deg, #1b2438 0%, #10131d 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  margin-bottom: 16px;
-  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.55);
-}
-
-.waven-album-stage img {
-  width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 492 / 1024;
   object-fit: cover;
-}
-
-.waven-soundwave-strip {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 3px;
-  padding: 5px 8px;
-  border-radius: 9999px;
-  background: rgba(9, 11, 16, 0.72);
-  backdrop-filter: blur(8px);
-}
-
-.waven-soundwave-strip span {
-  width: 2.5px;
-  border-radius: 2px;
-  background: #38bdf8;
-  animation: waveBar 1.25s ease-in-out infinite;
-}
-
-.waven-soundwave-strip span:nth-child(1) { height: 6px; animation-delay: 0s; }
-.waven-soundwave-strip span:nth-child(2) { height: 13px; animation-delay: 0.2s; }
-.waven-soundwave-strip span:nth-child(3) { height: 8px; animation-delay: 0.45s; }
-.waven-soundwave-strip span:nth-child(4) { height: 11px; animation-delay: 0.15s; }
-
-@keyframes waveBar {
-  0%, 100% { transform: scaleY(0.5); opacity: 0.7; }
-  50% { transform: scaleY(1.08); opacity: 1; }
-}
-
-.waven-track-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.waven-track-meta {
-  min-width: 0;
-}
-
-.waven-track-title {
-  font-size: 0.94rem;
-  font-weight: 700;
-  color: #ffffff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.waven-track-artist {
-  font-size: 0.74rem;
-  color: #94a3b8;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.waven-format-badge {
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 3px 8px;
-  border-radius: 6px;
-  background: rgba(56, 189, 248, 0.14);
-  border: 1px solid rgba(56, 189, 248, 0.26);
-  color: #7dd3fc;
-  flex-shrink: 0;
-}
-
-.waven-seek-preview {
-  margin-bottom: 14px;
-}
-
-.waven-seek-bar {
-  height: 4px;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.14);
-  overflow: hidden;
-  margin-bottom: 6px;
-}
-
-.waven-seek-fill {
-  width: 62%;
-  height: 100%;
-  border-radius: 9999px;
-  background: linear-gradient(90deg, #38bdf8, #a78bfa);
-}
-
-.waven-seek-times {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.63rem;
-  color: rgba(255, 255, 255, 0.56);
-}
-
-.waven-transport-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 6px;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.waven-play-orb {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #ffffff;
-  color: #090b10;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.22);
 }
 
 /* ==========================================================================
@@ -709,7 +520,7 @@ html[data-theme="light"] .hero-headline-accent {
   border-radius: 26px;
   padding: 36px;
   background: var(--bg-elevated);
-  border: 1px solid var(--line-hairline);
+  border: none;
   box-shadow: var(--shadow-subtle);
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
@@ -1059,7 +870,7 @@ html[data-theme="light"] .hero-headline-accent {
   background:
     radial-gradient(ellipse 65% 65% at 88% 15%, var(--ambient-glow-1), transparent 60%),
     var(--bg-elevated);
-  border: 1px solid var(--line-hairline);
+  border: none;
   box-shadow: var(--shadow-subtle);
 }
 
