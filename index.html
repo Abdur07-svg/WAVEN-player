@@ -1,650 +1,457 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-waven-site="landing-page">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>WAVEN — Local Music Player for Android</title>
-  <meta name="description" content="WAVEN is a modern, privacy-first local music player for Android and the web. Enjoy seamless offline playback for MP3, FLAC, WAV, M4A, and AAC with real-time audio visualizers, synchronized lyrics, and full library management with zero cloud tracking.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WAVEN — Your Music. Your Device. Local Android Music Player</title>
+  <meta name="description" content="Music, Without Boundaries. WAVEN is a local music player for Android crafted for your personal audio collection — MP3, FLAC, WAV, M4A, AAC, OGG, and OPUS with background playback and lock-screen controls.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://abdur07-svg.github.io/WAVEN-player/">
-  <meta name="theme-color" content="#08090d">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#07080c">
   <meta name="google-site-verification" content="OVGVId5yYSPGElWHOadcBO1U7rOTmApUfcFklXKdHbQ" />
 
   <!-- Open Graph / Facebook -->
   <meta property="og:site_name" content="WAVEN">
   <meta property="og:title" content="WAVEN — Local Music Player for Android">
-  <meta property="og:description" content="Modern, privacy-first local music player for Android and web. Enjoy offline playback for MP3, FLAC, WAV, and M4A with real-time visualizers and synchronized lyrics.">
+  <meta property="og:description" content="Your music collection deserves a better experience. Play your favourite local tracks and enjoy music your way on Android.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://abdur07-svg.github.io/WAVEN-player/">
   <meta property="og:image" content="https://abdur07-svg.github.io/WAVEN-player/assets/logo/waven_app_logo_512.png">
-  <meta property="og:image:alt" content="WAVEN Music Player Logo">
+  <meta property="og:image:alt" content="WAVEN Android Music Player">
   <meta property="og:locale" content="en_US">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="WAVEN — Local Music Player for Android">
-  <meta name="twitter:description" content="Modern, privacy-first local music player for Android and web. Enjoy offline playback for MP3, FLAC, WAV, and M4A with real-time visualizers and synchronized lyrics.">
+  <meta name="twitter:description" content="Play your personal music library on Android with background playback, lock-screen controls, and a focused interface.">
   <meta name="twitter:image" content="https://abdur07-svg.github.io/WAVEN-player/assets/logo/waven_app_logo_512.png">
 
   <!-- Schema.org Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
+    "@type": "SoftwareApplication",
     "name": "WAVEN",
-    "alternateName": "WAVEN Music Player",
-    "url": "https://abdur07-svg.github.io/WAVEN-player/",
-    "description": "WAVEN is a modern, privacy-first local music player for Android and web browsers. Enjoy offline playback for MP3, FLAC, WAV, M4A, and AAC with real-time audio visualization, synchronized lyrics, and local library management.",
     "applicationCategory": "MultimediaApplication",
-    "operatingSystem": "Android, Web Browser",
-    "image": "https://abdur07-svg.github.io/WAVEN-player/assets/logo/waven_app_logo_512.png",
+    "operatingSystem": "Android 7.0+",
+    "softwareVersion": "v1.0.3",
+    "description": "Local Android music player crafted for personal audio libraries with background playback, lock-screen controls, Bluetooth media support, and clean Now Playing presentation.",
+    "url": "https://abdur07-svg.github.io/WAVEN-player/",
+    "downloadUrl": "https://github.com/Abdur07-svg/WAVEN-player/releases/download/v1.0.3/WAVEN-Music-Player.apk",
     "offers": {
       "@type": "Offer",
       "price": "0",
       "priceCurrency": "USD"
-    },
-    "author": {
-      "@type": "Person",
-      "name": "Abdur",
-      "url": "https://github.com/Abdur07-svg"
-    },
-    "codeRepository": "https://github.com/Abdur07-svg/WAVEN-player"
+    }
   }
   </script>
+
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="assets/logo/waven_app_logo_192.png">
-  <link rel="apple-touch-icon" href="assets/logo/waven_app_logo_192.png">
+  <link rel="apple-touch-icon" href="assets/logo/apple-touch-icon.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/player.css">
-  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/landing.css">
 </head>
 <body>
-  <div id="app" class="waven-app">
 
-    <input type="file" id="local-file-picker" multiple accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.flac,.opus,.weba" style="display: none;" />
-    <input type="file" id="local-folder-picker" webkitdirectory directory multiple style="display: none;" />
+  <!-- Sticky Translucent Navigation -->
+  <header class="site-header">
+    <div class="container header-row">
+      <a href="#home" class="brand-link" data-scroll-target="home">
+        <img src="assets/logo/waven_app_logo_192.png" alt="WAVEN Logo" class="brand-mark" width="32" height="32" />
+        <span class="brand-wordmark">WAVEN</span>
+      </a>
 
-    <div id="drag-drop-overlay" class="drag-drop-overlay">
-      <div class="drag-drop-card">
-        <div class="drag-drop-icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="17 8 12 3 7 8"></polyline>
-            <line x1="12" y1="3" x2="12" y2="15"></line>
-          </svg>
-        </div>
-        <h3 class="drag-drop-title">Drop your audio files here</h3>
-        <p class="drag-drop-desc">Supports MP3, WAV, FLAC, OGG, M4A, and AAC. Added locally to your library.</p>
-      </div>
-    </div>
+      <nav class="desktop-nav" aria-label="Main Navigation">
+        <a href="#home" class="nav-item is-active" data-scroll-target="home">Home</a>
+        <a href="#features" class="nav-item" data-scroll-target="features">Features</a>
+        <a href="#experience" class="nav-item" data-scroll-target="experience">Experience</a>
+        <a href="#about" class="nav-item" data-scroll-target="about">About</a>
+      </nav>
 
-
-    <div class="waven-window">
-
-    
-      <aside class="floating-dock">
-        <div class="dock-item" data-view="home" onclick="window.navigation.navigateTo('home')" title="Discover / Home">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        </div>
-        <div class="dock-item" data-view="search" onclick="window.navigation.navigateTo('search')" title="Search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        </div>
-        <div class="dock-item" data-view="library" onclick="window.navigation.navigateTo('library')" title="Your Library / All Songs">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-        </div>
-        <div class="dock-item" data-view="liked" onclick="window.navigation.navigateTo('liked')" title="Favourites">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-        </div>
-        <div class="dock-item" data-view="insights" onclick="window.navigation.navigateTo('insights')" title="Music DNA &amp; Listening Insights">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
-        </div>
-        <div class="dock-item" data-view="settings" onclick="window.navigation.navigateTo('settings')" title="Settings & Online Streaming Architecture">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-        </div>
-
-        <div class="dock-avatar-btn" onclick="window.app.requestFolderAccess()" title="Connect Music Storage / Folder">
-          <img src="assets/logo/waven_app_logo_192.png" alt="Profile" />
-        </div>
-      </aside>
-
-      <div class="waven-main-layout">
-        
-
-        <header class="waven-top-header">
-          <div class="waven-brand" onclick="window.navigation.navigateTo('home')">
-            <img src="assets/logo/logo.svg" alt="WAVEN" class="waven-brand-icon" />
-            <span class="waven-brand-text">WAVEN</span>
-          </div>
-
-
-          <nav class="floating-capsule-nav">
-            <button class="capsule-nav-item" data-view="home" onclick="window.navigation.navigateTo('home')">Discover</button>
-            <button class="capsule-nav-item" data-view="playlist" onclick="window.navigation.navigateTo('playlist')">Playlists</button>
-            <button class="capsule-nav-item" data-view="artists" onclick="window.navigation.navigateTo('artists')">Artists</button>
-            <button class="capsule-nav-item" data-view="albums" onclick="window.navigation.navigateTo('albums')">Albums</button>
-            <button class="capsule-nav-item" data-view="genres" onclick="window.navigation.navigateTo('genres')">Genres</button>
-          </nav>
-        </header>
-
-
-        <div class="waven-body-split">
-          
-
-          <main class="waven-center-view">
-
-            <section class="view active-view" id="home-view"></section>
-
-
-            <section class="view" id="library-view">
-              <div id="library-view-content"></div>
-            </section>
-
-
-            <section class="view" id="album-view">
-              <div id="album-view-content"></div>
-            </section>
-
-
-            <section class="view" id="artist-view">
-              <div id="artist-view-content"></div>
-            </section>
-
-
-            <section class="view" id="liked-view">
-              <div id="liked-view-content"></div>
-            </section>
-
-
-            <section class="view" id="playlist-view">
-              <div id="playlist-view-content"></div>
-            </section>
-
-
-            <section class="view" id="history-view">
-              <div id="history-view-content"></div>
-            </section>
-
-
-            <section class="view" id="search-view">
-              <div class="waven-view-header">
-                <h1 class="view-main-title">Search</h1>
-                <p class="view-main-subtitle">Search your music library, artists, albums, or discover new tracks</p>
-              </div>
-
-              <div class="waven-search-bar-wrap">
-                <div class="waven-search-input-box">
-                  <svg class="waven-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                  <input type="text" class="search-input" id="global-search-input" placeholder="Type a song, artist, album, or genre..." autocomplete="off" />
-                  <button class="search-clear-btn" id="search-clear-btn" title="Clear search">✕</button>
-                </div>
-              </div>
-
-              <div class="search-filters-row">
-                <button class="filter-pill active" data-filter="all" onclick="window.searchManager.setFilter('all')">All</button>
-                <button class="filter-pill" data-filter="tracks" onclick="window.searchManager.setFilter('tracks')">Songs</button>
-                <button class="filter-pill" data-filter="artists" onclick="window.searchManager.setFilter('artists')">Artists</button>
-                <button class="filter-pill" data-filter="albums" onclick="window.searchManager.setFilter('albums')">Albums</button>
-              </div>
-              <div id="search-results-area"></div>
-            </section>
-
-
-            <section class="view" id="settings-view">
-              <div id="settings-view-content"></div>
-            </section>
-
-
-            <section class="view" id="insights-view">
-              <div id="insights-view-content"></div>
-            </section>
-          </main>
-
-
-          <aside class="waven-player-card" id="waven-player-card">
-
-            <div class="player-card-bg" id="player-card-bg" style="background: radial-gradient(circle at 50% 30%, #1e2638 0%, #0d0f14 80%);"></div>
-
-
-            <div class="card-scallop-notch">
-              <svg viewBox="0 0 140 28" preserveAspectRatio="none" fill="#0d0f14">
-                <path d="M 0 0 C 18 0 24 28 70 28 C 116 28 122 0 140 0 Z" />
-              </svg>
-            </div>
-
-            <div class="player-card-top-actions">
-              <button class="glass-round-btn player-lyrics-btn" id="player-card-lyrics-btn" aria-label="Lyrics" onclick="event.stopPropagation(); window.lyricsManager?.togglePlayerLyricsOverlay()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-              </button>
-              <button class="glass-round-btn player-queue-btn" id="player-card-queue-btn" aria-label="Playback Queue" onclick="event.stopPropagation(); window.queueManager?.toggleExpandableQueue()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-              </button>
-              <button class="glass-round-btn player-heart-btn" aria-label="Add to Favourites" onclick="event.stopPropagation(); window.player?.toggleLike()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              </button>
-              <button class="glass-round-btn player-immersive-btn" id="player-card-immersive-btn" aria-label="Immersive Visualizer Mode" onclick="event.stopPropagation(); window.immersiveManager?.open()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-              </button>
-              <button class="glass-round-btn" aria-label="More Options" onclick="if (window.player?.state?.currentTrack) window.app.openContextMenu(event, window.player.state.currentTrack.id)">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle><circle cx="5" cy="12" r="1.5"></circle></svg>
-              </button>
-            </div>
-
-            <div class="player-card-expand-overlay" id="player-card-queue-overlay"></div>
-            <div class="player-card-expand-overlay" id="player-card-lyrics-overlay"></div>
-
-
-            <div class="player-card-bottom-overlay">
-              <span class="player-card-badge" id="player-card-badge">Local Audio</span>
-              
-              <div class="player-card-meta-row">
-                <div class="player-card-titles">
-                  <h2 class="player-track-title" id="hero-player-title">No Track Loaded</h2>
-                  <div class="player-card-artist-wrap">
-                    <span class="player-track-artist" id="hero-player-artist">Select music to start playing</span>
-                  </div>
-                </div>
-                <span class="player-card-format-tag" id="hero-player-format">LOCAL AUDIO</span>
-              </div>
-
-
-              <div class="player-card-seek-box">
-                <div class="seek-bar-track">
-                  <div class="seek-bar-bg">
-                    <div class="seek-bar-buffer" style="width: 0%;"></div>
-                    <div class="seek-bar-fill" style="width: 0%;"></div>
-                  </div>
-                  <div class="seek-bar-thumb" style="left: 0%;"></div>
-                </div>
-                <div class="time-row">
-                  <span class="time-stamp current">00:00</span>
-                  <span class="time-stamp duration">00:00</span>
-                </div>
-              </div>
-
-
-              <div class="player-card-controls-row">
-                <button class="ctrl-btn btn-shuffle-toggle" aria-label="Shuffle">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
-                </button>
-                <button class="ctrl-btn btn-prev-track" aria-label="Previous Track">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line></svg>
-                </button>
-                <button class="waven-big-play-btn play-toggle-btn" aria-label="Play/Pause" onclick="window.player?.togglePlay()">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 2px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                </button>
-                <button class="ctrl-btn btn-next-track" aria-label="Next Track">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line></svg>
-                </button>
-                <div class="volume-popover-wrapper">
-                  <button class="ctrl-btn btn-mute-toggle" aria-label="Volume">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-                  </button>
-                  <div class="volume-slider-track">
-                    <div class="volume-slider-bg">
-                      <div class="volume-slider-fill" style="width: 75%;"></div>
-                    </div>
-                    <div class="volume-slider-thumb" style="left: 75%;"></div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </aside>
-
-        </div>
-      </div>
-    </div>
-
-
-    <div class="mini-player-container">
-      <div class="player-left-info">
-        <div class="mini-artwork-wrapper">
-          <img class="mini-artwork player-track-artwork" src="assets/logo/logo.svg" alt="Track Art" />
-        </div>
-        <div class="mini-text-wrap">
-          <div class="mini-title player-track-title">No Track Selected</div>
-          <div class="mini-artist player-track-artist">Select a song</div>
-        </div>
+      <div class="header-right">
+        <button type="button" id="theme-toggle-desktop" class="theme-btn" data-theme-toggle aria-pressed="false" aria-label="Toggle color theme">
+          <span data-theme-icon aria-hidden="true"></span>
+          <span data-theme-label>Light</span>
+        </button>
+        <a href="#download" class="nav-download-cta" id="nav-download-apk-btn" data-scroll-target="download">
+          Download APK
+        </a>
       </div>
 
-      <div class="player-center-controls">
-        <div class="playback-buttons-row">
-          <button class="ctrl-btn btn-prev-track" aria-label="Previous" onclick="window.player?.previous()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line></svg>
-          </button>
-          <button class="ctrl-btn-play play-toggle-btn" aria-label="Play/Pause" onclick="window.player?.togglePlay()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 2px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          </button>
-          <button class="ctrl-btn btn-next-track" aria-label="Next" onclick="window.player?.next()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line></svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="mini-player-action-right">
-        <button class="mini-play-btn play-toggle-btn" aria-label="Play or Pause" onclick="event.stopPropagation(); window.player?.togglePlay()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 2px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      <div class="mobile-actions">
+        <button type="button" id="theme-toggle-mobile" class="theme-btn" data-theme-toggle aria-pressed="false" aria-label="Toggle color theme">
+          <span data-theme-icon aria-hidden="true"></span>
+          <span data-theme-label>Light</span>
+        </button>
+        <button type="button" class="hamburger-btn" id="hamburger-btn" aria-expanded="false" aria-controls="mobile-drawer" aria-label="Open menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
         </button>
       </div>
     </div>
 
+    <div class="mobile-drawer" id="mobile-drawer" hidden>
+      <nav class="mobile-drawer-nav" aria-label="Mobile Navigation">
+        <a href="#home" class="mobile-drawer-link" data-scroll-target="home">Home</a>
+        <a href="#experience" class="mobile-drawer-link" data-scroll-target="experience">Experience</a>
+        <a href="#features" class="mobile-drawer-link" data-scroll-target="features">Features</a>
+        <a href="#about" class="mobile-drawer-link" data-scroll-target="about">About</a>
+        <a href="#download" class="mobile-drawer-link" data-scroll-target="download">Download APK</a>
+      </nav>
+    </div>
+  </header>
 
-    <div class="fullscreen-player-modal" id="fullscreen-player-modal">
-      <div class="player-backdrop"></div>
-      <div class="fullscreen-content-layer">
-        <header class="fullscreen-header">
-          <button class="icon-btn" id="fullscreen-player-close" title="Close Now Playing">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </button>
-          <div class="fullscreen-header-title">Now Playing</div>
-          <button class="icon-btn queue-toggle-btn" title="Open Queue">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-          </button>
-        </header>
+  <main>
+    <!-- 1. Hero Section -->
+    <section class="hero-section" id="home" aria-labelledby="hero-headline">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow-label">YOUR PERSONAL MUSIC SPACE</span>
+          <h1 class="hero-headline" id="hero-headline">
+            Music, <span class="hero-headline-accent">Without Boundaries.</span>
+          </h1>
+          <p class="hero-lead">
+            Your music collection deserves a better experience. Play your favourite tracks, explore your library and enjoy music your way — all from your device.
+          </p>
 
-        <div class="fullscreen-body">
-          <div class="big-artwork-container">
-            <img class="big-artwork player-track-artwork" src="assets/logo/logo.svg" alt="Track artwork" />
+          <div class="hero-cta-row">
+            <a href="#download" class="btn-hero-primary" id="hero-download-cta" data-scroll-target="download">
+              <span>Download for Android</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+            </a>
+            <a href="#experience" class="btn-hero-secondary" id="hero-explore-cta" data-scroll-target="experience">
+              Explore WAVEN
+            </a>
           </div>
 
-          <div class="fullscreen-track-details">
-            <div class="fullscreen-meta-flex">
-              <div class="fullscreen-title-col">
-                <h2 class="fullscreen-title player-track-title">No Track Selected</h2>
-                <span class="fullscreen-artist player-track-artist">Select a song from your library</span>
+          <p class="hero-supporting-note">Made for your music. Designed for you.</p>
+        </div>
+
+        <!-- Realistic WAVEN Android Mockup -->
+        <div class="hero-stage">
+          <div class="ambient-stage-halo" aria-hidden="true"></div>
+
+          <div class="android-device-frame" role="img" aria-label="WAVEN Android music player interface displaying Now Playing artwork, track details, progress bar, and playback controls">
+            <div class="android-device-screen">
+              <div class="device-statusbar" aria-hidden="true">
+                <span>9:41</span>
+                <span class="device-punch-camera"></span>
+                <span>100%</span>
               </div>
-              <button class="glass-round-btn player-heart-btn" title="Add to Favourites" onclick="event.stopPropagation(); window.player?.toggleLike()">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              </button>
-            </div>
-          </div>
 
-          <div class="fullscreen-controls-box">
-            <div class="progress-container">
-              <span class="time-stamp current">0:00</span>
-              <div class="seek-bar-track">
-                <div class="seek-bar-bg">
-                  <div class="seek-bar-buffer"></div>
-                  <div class="seek-bar-fill"></div>
+              <div class="waven-app-chrome-bar" aria-hidden="true">
+                <span class="waven-app-mini-brand">
+                  <img src="assets/logo/logo.svg" alt="WAVEN emblem" width="17" height="17" />
+                  <span>WAVEN</span>
+                </span>
+                <div class="waven-app-actions-cluster">
+                  <span class="waven-round-chip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                  </span>
+                  <span class="waven-round-chip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                  </span>
+                  <span class="waven-round-chip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  </span>
                 </div>
-                <div class="seek-bar-thumb"></div>
               </div>
-              <span class="time-stamp duration">0:00</span>
-            </div>
 
-            <div class="fullscreen-main-btns">
-              <button class="ctrl-btn btn-shuffle-toggle" aria-label="Shuffle" onclick="window.player?.toggleShuffle()">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
-              </button>
-              <button class="ctrl-btn btn-prev-track" aria-label="Previous Track" onclick="window.player?.previous()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line></svg>
-              </button>
-              <button class="waven-big-play-btn play-toggle-btn" aria-label="Play/Pause" onclick="window.player?.togglePlay()">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-              </button>
-              <button class="ctrl-btn btn-next-track" aria-label="Next Track" onclick="window.player?.next()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line></svg>
-              </button>
-              <button class="ctrl-btn btn-repeat-toggle" aria-label="Repeat Mode" onclick="window.player?.toggleRepeat()">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
-              </button>
+              <div class="waven-album-stage" aria-hidden="true">
+                <img src="assets/covers/default_cover.svg" alt="" />
+                <div class="waven-soundwave-strip">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+
+              <div class="waven-track-header" aria-hidden="true">
+                <div class="waven-track-meta">
+                  <div class="waven-track-title">Midnight Chill — Sunset Drive</div>
+                  <div class="waven-track-artist">Local Library • Device Storage</div>
+                </div>
+                <span class="waven-format-badge">LOCAL AUDIO</span>
+              </div>
+
+              <div class="waven-seek-preview" aria-hidden="true">
+                <div class="waven-seek-bar">
+                  <div class="waven-seek-fill"></div>
+                </div>
+                <div class="waven-seek-times">
+                  <span>01:48</span>
+                  <span>03:12</span>
+                </div>
+              </div>
+
+              <div class="waven-transport-row" aria-hidden="true">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line></svg>
+                <span class="waven-play-orb">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 2px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
+    <!-- 2. Music Experience Section -->
+    <section class="experience-section" id="experience" aria-labelledby="experience-heading">
+      <div class="container">
+        <div class="section-heading-row reveal-target">
+          <div>
+            <span class="eyebrow-label">IN-APP EXPERIENCE</span>
+            <h2 class="section-headline" id="experience-heading">Every Track Has Its Place.</h2>
+          </div>
+          <p class="section-aside-copy">
+            Crafted around your local files — switch cleanly between Immersive Now Playing and Lock Screen Notification controls.
+          </p>
+        </div>
 
-    <div class="queue-drawer" id="queue-drawer">
-      <div class="queue-header">
-        <h3 class="queue-title">Playback Queue</h3>
-        <div class="queue-actions-row">
-          <button class="queue-clear-btn" id="queue-clear-all-btn">Clear Queue</button>
-          <button class="icon-btn" id="queue-close-btn" style="width: 32px; height: 32px;">✕</button>
+        <div class="experience-showcase-panel reveal-target">
+          <div class="experience-controls-side">
+            <div class="scene-switcher" id="experience-scene-switcher" role="tablist" aria-label="WAVEN Android interface views">
+              <button type="button" class="scene-tab-btn is-active" role="tab" aria-selected="true" data-scene="nowPlaying">Now Playing</button>
+              <button type="button" class="scene-tab-btn" role="tab" aria-selected="false" data-scene="lockscreen">Lock Screen Notification</button>
+            </div>
+
+            <div class="experience-caption-block">
+              <h3 id="exp-caption-title">Immersive Listening in full focus.</h3>
+              <p id="exp-caption-body">
+                Built around distraction-free playback with ambient artwork glow, live audio wave indicators, synchronized LRC lyrics access, and crisp one-handed transport controls.
+              </p>
+            </div>
+
+            <ul class="experience-highlights" id="exp-caption-meta">
+              <li><span class="exp-hl-label">View Mode</span><span class="exp-hl-val">Immersive Listening &amp; Now Playing</span></li>
+              <li><span class="exp-hl-label">Audio Support</span><span class="exp-hl-val">Local MP3, FLAC, WAV, M4A, AAC, OGG, OPUS</span></li>
+              <li><span class="exp-hl-label">Extras</span><span class="exp-hl-val">Live visualizer bars &amp; synchronized lyrics</span></li>
+            </ul>
+          </div>
+
+          <!-- Real App Screen & Interactive Experience Hardware Frame -->
+          <div class="experience-visual-stage">
+            <div class="experience-phone-frame">
+              <div class="experience-phone-screen">
+                <!-- Scene 1: Real Now Playing Immersive Listening Screen -->
+                <div class="scene-pane scene-pane--photo is-active" data-scene-pane="nowPlaying">
+                  <img
+                    src="assets/screens/immersive-now-playing.jpg"
+                    alt="WAVEN Android Immersive Listening Now Playing screen displaying Through Time artwork, live visualizer bars, progress slider, and playback controls"
+                    class="exp-real-screenshot"
+                    width="492"
+                    height="1024"
+                  />
+                </div>
+
+                <!-- Scene 2: Real Lock Screen Notification Screen -->
+                <div class="scene-pane scene-pane--photo" data-scene-pane="lockscreen">
+                  <img
+                    src="assets/screens/lock-screen-notification.jpg"
+                    alt="WAVEN Android Lock Screen Notification media player showing Through Time by .7knee with playback progress and transport buttons"
+                    class="exp-real-screenshot"
+                    width="485"
+                    height="1024"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="queue-content-list">
+    <!-- 3. Features Section -->
+    <section class="features-section" id="features" aria-labelledby="features-heading">
+      <div class="container features-layout">
+        <div class="features-sticky-intro reveal-target">
+          <span class="eyebrow-label">CRAFTED CAPABILITIES</span>
+          <h2 class="section-headline" id="features-heading">Everything You Need. Nothing You Don't.</h2>
+          <p class="features-intro-copy">
+            Built directly around Android foreground playback and local storage so your personal library responds effortlessly without accounts, tracking, or clutter.
+          </p>
+
+          <div class="roadmap-callout">
+            <h3 class="roadmap-callout-title">Release Scope</h3>
+            <div class="roadmap-row">
+              <span>Local Android Playback &amp; Controls</span>
+              <span class="status-tag status-tag--live">Available Now</span>
+            </div>
+            <div class="roadmap-row">
+              <span>Online Music Streaming</span>
+              <span class="status-tag status-tag--planned">Planned</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="features-spec-list reveal-target" id="features-faq-list">
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-answer-1" id="faq-btn-1">
+              <span class="feature-num">01</span>
+              <span class="faq-question">How does WAVEN organize my Local Music Library?</span>
+              <span class="status-tag status-tag--live">Available</span>
+              <span class="faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-panel" id="faq-answer-1" role="region" aria-labelledby="faq-btn-1" hidden>
+              <p>Access and organize audio stored directly on your device. Browse songs, artists, albums, personal playlists, and favourites straight from your Android storage folders without uploading anything.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-answer-2" id="faq-btn-2">
+              <span class="feature-num">02</span>
+              <span class="faq-question">What does the Beautiful Now Playing &amp; Immersive mode offer?</span>
+              <span class="status-tag status-tag--live">Available</span>
+              <span class="faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-panel" id="faq-answer-2" role="region" aria-labelledby="faq-btn-2" hidden>
+              <p>Enjoy an artwork-driven listening screen with ambient background lighting, live soundwave visualizer bars, synchronized LRC lyrics view, and a distraction-free Immersive Listening mode.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-answer-3" id="faq-btn-3">
+              <span class="feature-num">03</span>
+              <span class="faq-question">Which audio formats and Seamless Playback controls are supported?</span>
+              <span class="status-tag status-tag--live">Available</span>
+              <span class="faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-panel" id="faq-answer-3" role="region" aria-labelledby="faq-btn-3" hidden>
+              <p>Plays local MP3, FLAC, WAV, M4A, AAC, OGG, and OPUS files with accurate scrubbing, queue reordering, shuffle and repeat modes, and instant transitions between tracks.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-answer-4" id="faq-btn-4">
+              <span class="feature-num">04</span>
+              <span class="faq-question">Does WAVEN support Background Playback when my screen is off?</span>
+              <span class="status-tag status-tag--live">Available</span>
+              <span class="faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-panel" id="faq-answer-4" role="region" aria-labelledby="faq-btn-4" hidden>
+              <p>Yes. Music continues playing uninterrupted while you switch apps or lock your screen, backed by WAVEN's persistent Android foreground playback service.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-answer-5" id="faq-btn-5">
+              <span class="feature-num">05</span>
+              <span class="faq-question">Can I control music from Lock Screen &amp; Android notifications?</span>
+              <span class="status-tag status-tag--live">Available</span>
+              <span class="faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-panel" id="faq-answer-5" role="region" aria-labelledby="faq-btn-5" hidden>
+              <p>Play, pause, seek, and skip tracks directly from your Android lock screen and active media notifications via native MediaSession integration.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-answer-6" id="faq-btn-6">
+              <span class="feature-num">06</span>
+              <span class="faq-question">Do Bluetooth Controls and automatic headset disconnect work?</span>
+              <span class="status-tag status-tag--live">Available</span>
+              <span class="faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-panel" id="faq-answer-6" role="region" aria-labelledby="faq-btn-6" hidden>
+              <p>Play, pause, and skip tracks using supported Bluetooth headphones and hardware media keys, with automatic pause protection whenever your audio device disconnects.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-trigger" aria-expanded="false" aria-controls="faq-answer-7" id="faq-btn-7">
+              <span class="feature-num">07</span>
+              <span class="faq-question">Your Music, Your Control — do I need an account or internet?</span>
+              <span class="status-tag status-tag--live">Core Philosophy</span>
+              <span class="faq-chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </button>
+            <div class="faq-panel" id="faq-answer-7" role="region" aria-labelledby="faq-btn-7" hidden>
+              <p>Never. WAVEN works offline with the music stored on your Android device — zero subscriptions or accounts needed. Optional online music streaming remains planned for later updates.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Editorial About Section -->
+    <section class="about-section" id="about" aria-labelledby="about-heading">
+      <div class="container">
+        <div class="about-editorial reveal-target">
+          <span class="eyebrow-label">OUR PHILOSOPHY</span>
+          <h2 class="section-headline" id="about-heading">Your Music. Your Space.</h2>
+          <p class="about-quote">
+            WAVEN is built around a simple idea: your music should belong to you. Enjoy the tracks you already have, with an interface designed to make every listening moment feel special.
+          </p>
+          <span class="about-philosophy-pill">Your Music. Your Device. Your WAVEN.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Final Download Section -->
+    <section class="download-section" id="download" aria-labelledby="download-heading">
+      <div class="container">
+        <div class="download-shell reveal-target">
+          <div class="download-header-block">
+            <span class="eyebrow-label">GET WAVEN FOR ANDROID</span>
+            <h2 class="section-headline" id="download-heading">Your Music Journey Starts Here.</h2>
+            <p>Bring your music collection to life with WAVEN.</p>
+          </div>
+
+          <div class="download-platform-grid" id="download-platform-grid" aria-live="polite">
+            <noscript>
+              <p class="platform-surface-copy">
+                Visit <a href="https://github.com/Abdur07-svg/WAVEN-player/releases">GitHub Releases</a> to verify compatibility and download WAVEN for Android.
+              </p>
+            </noscript>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Minimal Editorial Footer -->
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <div class="footer-left">
+        <img src="assets/logo/waven_app_logo_192.png" alt="WAVEN Logo" class="brand-mark" width="32" height="32" />
         <div>
-          <div class="queue-subheading">Now Playing</div>
-          <div id="queue-now-playing-container"></div>
-        </div>
-        <div>
-          <div class="queue-subheading">Up Next</div>
-          <div id="queue-up-next-container"></div>
+          <span class="brand-wordmark">WAVEN</span>
+          <p class="footer-tagline">Local music player crafted for Android devices.</p>
         </div>
       </div>
+
+      <nav class="footer-nav" aria-label="Footer Navigation">
+        <a href="#home" data-scroll-target="home">Home</a>
+        <a href="#features" data-scroll-target="features">Features</a>
+        <a href="#about" data-scroll-target="about">About</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="https://github.com/Abdur07-svg/WAVEN-player" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </nav>
+
+      <p class="footer-copyright">&copy; 2026 WAVEN. Local Android Music Player.</p>
     </div>
+  </footer>
 
-
-    <div class="modal-overlay" id="create-playlist-modal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3 class="modal-title">Create New Playlist</h3>
-          <button class="modal-close-btn" onclick="window.playlistsManager.closeCreateModal()">✕</button>
-        </div>
-        <form onsubmit="window.playlistsManager.handleCreateSubmit(event)">
-          <div class="form-group">
-            <label class="form-label" for="playlist-name-input">Playlist Name</label>
-            <input type="text" id="playlist-name-input" class="form-input" placeholder="e.g. Midnight Vibes, Road Trip..." required maxlength="40" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="playlist-desc-input">Description (Optional)</label>
-            <input type="text" id="playlist-desc-input" class="form-input" placeholder="Give your playlist a vibe description" maxlength="100" />
-          </div>
-          <div class="modal-actions">
-            <button type="button" class="btn-secondary" onclick="window.playlistsManager.closeCreateModal()">Cancel</button>
-            <button type="submit" class="btn-primary">Create</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-
-    <div class="modal-overlay" id="add-to-playlist-modal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3 class="modal-title">Add to Playlist</h3>
-          <button class="modal-close-btn" onclick="window.playlistsManager.closeAddToPlaylistModal()">✕</button>
-        </div>
-        <div id="add-playlist-options-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 280px; overflow-y: auto;"></div>
-      </div>
-    </div>
-
-
-    <div class="context-menu" id="app-context-menu">
-      <div class="context-item" onclick="window.app.handleContextMenuAction('play')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-        <span>Play Now</span>
-      </div>
-      <div class="context-item" onclick="window.app.handleContextMenuAction('play_next')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
-        <span>Play Next</span>
-      </div>
-      <div class="context-item" onclick="window.app.handleContextMenuAction('add_queue')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line></svg>
-        <span>Add to Queue</span>
-      </div>
-      <div class="context-item" onclick="window.app.handleContextMenuAction('add_playlist')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-        <span>Add to Playlist</span>
-      </div>
-      <div class="context-item" onclick="window.app.handleContextMenuAction('like')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-        <span>Toggle Favourite</span>
-      </div>
-      <div class="context-item" onclick="window.app.handleContextMenuAction('view_artist')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-        <span>Go to Artist</span>
-      </div>
-      <div class="context-item" onclick="window.app.handleContextMenuAction('view_album')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
-        <span>Go to Album</span>
-      </div>
-      <div class="context-item" onclick="window.app.handleContextMenuAction('edit_tags')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-        <span>Edit Track Tags &amp; Mood</span>
-      </div>
-      <div class="context-item" onclick="window.app.handleContextMenuAction('edit_lyrics')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-        <span>Edit / Import Lyrics</span>
-      </div>
-      <div class="context-item" style="color: var(--accent-danger);" onclick="window.app.handleContextMenuAction('delete')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-        <span>Remove from Library</span>
-      </div>
-    </div>
-
-
-    <div id="storage-permission-modal" class="modal-overlay">
-      <div class="modal-card storage-permission-card">
-        <div class="permission-icon-halo">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-            <circle cx="12" cy="13" r="3"></circle>
-            <path d="M12 10v3l2 1"></path>
-          </svg>
-        </div>
-        <h2 class="permission-title">Connect Your Music Storage</h2>
-        <p class="permission-desc">
-          WAVEN is a local music player that plays songs stored on your computer. 
-          Grant access to your Music folder to automatically load and organize your songs.
-        </p>
-        <div class="permission-actions-vertical">
-          <button class="permission-main-btn" onclick="window.app.requestFolderAccess()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-              <line x1="12" y1="11" x2="12" y2="17"></line>
-              <line x1="9" y1="14" x2="15" y2="14"></line>
-            </svg>
-            Grant Storage Permission / Select Folder
-          </button>
-          <button class="permission-file-btn" onclick="window.app.requestFileAccess()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            Select Audio Files
-          </button>
-        </div>
-        <p class="permission-formats-note">
-          Supports MP3, WAV, FLAC, M4A, AAC, OGG. Playback is 100% offline &amp; private on your computer.
-        </p>
-        <button class="permission-skip-btn" onclick="window.app.hideStoragePermissionModal()">
-          Explore Library First
-        </button>
-      </div>
-    </div>
-
-
-    <div class="immersive-overlay" id="immersive-player-overlay">
-      <div class="immersive-ambient-bg" id="immersive-ambient-bg"></div>
-      <div class="immersive-glass-layer">
-        <header class="immersive-top-bar">
-          <div class="immersive-brand-badge">
-            <span class="immersive-badge-dot"></span>
-            IMMERSIVE LISTENING
-          </div>
-          <div class="immersive-top-actions">
-            <button class="glass-round-btn" id="immersive-lyrics-toggle-btn" title="Toggle Lyrics" onclick="window.immersiveManager.toggleLyricsView()">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-            </button>
-            <button class="glass-round-btn" title="Exit Immersive (Esc)" onclick="window.immersiveManager.close()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-          </div>
-        </header>
-
-        <div class="immersive-center-content" id="immersive-center-content">
-          <div class="immersive-artwork-wrapper">
-            <img id="immersive-artwork-img" src="assets/logo/logo.svg" alt="Cover" />
-          </div>
-
-
-          <div class="immersive-lyrics-view" id="immersive-lyrics-view"></div>
-        </div>
-
-
-        <div class="immersive-visualizer-wrap">
-          <canvas id="immersive-visualizer-canvas"></canvas>
-        </div>
-
-        <div class="immersive-controls-wrap">
-          <div class="immersive-meta-row">
-            <div class="immersive-titles">
-              <h2 class="immersive-title" id="immersive-track-title">No Track Selected</h2>
-              <p class="immersive-artist"><span id="immersive-track-artist">Local Audio</span> • <span id="immersive-track-album">Local Library</span></p>
-            </div> 
-            <div class="immersive-meta-chips">
-              <span class="immersive-format-tag" id="immersive-track-format">LOCAL AUDIO</span>
-              <button class="glass-round-btn player-heart-btn" id="immersive-heart-btn" title="Add to Favourites" onclick="window.player?.toggleLike()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              </button>
-            </div>
-          </div>
-
-
-          <div class="immersive-seek-row">
-            <span class="immersive-time" id="immersive-time-current">00:00</span>
-            <div class="immersive-seek-track">
-              <div class="immersive-seek-fill" id="immersive-seek-fill"></div>
-              <div class="immersive-seek-thumb" id="immersive-seek-thumb"></div>
-            </div>
-            <span class="immersive-time" id="immersive-time-duration">00:00</span>
-          </div>
-
-          <div class="immersive-btns-row">
-            <button class="ctrl-btn btn-shuffle-toggle" title="Shuffle Mode" onclick="window.player?.toggleShuffle()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
-            </button>
-            <button class="ctrl-btn btn-prev-track" title="Previous Track" onclick="window.player?.previous()">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line></svg>
-            </button>
-            <button class="waven-big-play-btn play-toggle-btn" id="immersive-play-toggle-btn" title="Play/Pause (Space)" onclick="window.player?.togglePlay()">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 3px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-            </button>
-            <button class="ctrl-btn btn-next-track" title="Next Track" onclick="window.player?.next()">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line></svg>
-            </button>
-            <button class="ctrl-btn btn-repeat-toggle" title="Repeat Mode" onclick="window.player?.toggleRepeat()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <div id="toast-container"></div>
-  </div>
-
-
-  <script src="js/config.js"></script>
-  <script src="js/catalog.js"></script>
-  <script src="js/metadata-parser.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/import-manager.js"></script>
-  <script src="js/player.js"></script>
-  <script src="js/queue.js"></script>
-  <script src="js/media-session.js"></script>
-  <script src="js/playlists.js"></script>
-  <script src="js/library.js"></script>
-  <script src="js/history.js"></script>
-  <script src="js/search.js"></script>
-  <script src="js/mood-studio.js"></script>
-  <script src="js/forgotten-gems.js"></script>
-  <script src="js/insights.js"></script>
-  <script src="js/lyrics.js"></script>
-  <script src="js/immersive.js"></script>
-  <script src="js/organizer.js"></script>
-  <script src="js/navigation.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/qrcode-svg.js"></script>
+  <script src="js/landing.js"></script>
 </body>
 </html>

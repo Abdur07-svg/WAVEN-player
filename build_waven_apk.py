@@ -2127,12 +2127,36 @@ public class MainActivity extends Activity {
 }''')
 
 def sync_mobile_assets():
+    root_index_path = os.path.join(BASE_DIR, 'index.html')
+    android_index_path = os.path.join(ASSETS_DIR, 'index.html')
+
+    # Protect the native Android WebView player app when root index.html is the landing website.
+    is_web_landing = False
+    if os.path.isfile(root_index_path):
+        try:
+            with open(root_index_path, 'r', encoding='utf-8') as f:
+                is_web_landing = 'data-waven-site="landing-page"' in f.read(4096)
+        except Exception:
+            is_web_landing = False
+
+    if is_web_landing:
+        if not os.path.isfile(android_index_path):
+            raise RuntimeError(
+                f"Android player assets missing at {android_index_path}; cannot pack landing page into APK."
+            )
+        logo_src = os.path.join(BASE_DIR, 'assets', 'logo')
+        logo_dst = os.path.join(ASSETS_DIR, 'assets', 'logo')
+        if os.path.isdir(logo_src):
+            shutil.copytree(logo_src, logo_dst, dirs_exist_ok=True)
+        print(f"Preserved native Android player assets in: {ASSETS_DIR}")
+        return
+
     if os.path.exists(ASSETS_DIR):
         shutil.rmtree(ASSETS_DIR, ignore_errors=True)
     os.makedirs(ASSETS_DIR, exist_ok=True)
 
     # Copy web files into Android assets
-    shutil.copy2(os.path.join(BASE_DIR, 'index.html'), os.path.join(ASSETS_DIR, 'index.html'))
+    shutil.copy2(root_index_path, android_index_path)
     shutil.copy2(os.path.join(BASE_DIR, 'manifest.json'), os.path.join(ASSETS_DIR, 'manifest.json'))
 
     # Copy directories
