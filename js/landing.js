@@ -239,28 +239,69 @@ const EXPERIENCE_SCENES = Object.freeze({
         btn.addEventListener("click", () => this.toggleTheme());
       });
 
-      // Active link highlighting on scroll
-      const sections = ["home", "experience", "features", "about", "download"]
-        .map((id) => document.getElementById(id))
-        .filter(Boolean);
-      const navItems = Array.from(document.querySelectorAll(".desktop-nav .nav-item"));
+      // Active link highlighting on scroll (Desktop Nav & Mobile Drawer)
+      const navTargets = ["home", "experience", "features", "about"];
+      const desktopNavItems = Array.from(document.querySelectorAll(".desktop-nav .nav-item"));
+      const mobileNavItems = Array.from(document.querySelectorAll(".mobile-drawer-link"));
 
-      if (sections.length && navItems.length && "IntersectionObserver" in global) {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (!entry.isIntersecting) continue;
-              const activeId = entry.target.id;
-              navItems.forEach((item) => {
-                const target = item.getAttribute("data-scroll-target");
-                item.classList.toggle("is-active", target === activeId);
-              });
-            }
-          },
-          { rootMargin: "-35% 0px -55% 0px" }
-        );
-        sections.forEach((sec) => observer.observe(sec));
-      }
+      let isTicking = false;
+      const updateActiveNav = () => {
+        const scrollY = global.scrollY || document.documentElement.scrollTop || 0;
+        const viewportHeight = global.innerHeight || 800;
+        const scrollHeight = document.documentElement.scrollHeight || 5000;
+        const headerHeight = 70;
+
+        let activeTarget = "home";
+
+        // Check from bottom to top for precision
+        for (let i = navTargets.length - 1; i >= 0; i--) {
+          const targetId = navTargets[i];
+          const sectionEl = document.getElementById(targetId);
+          if (!sectionEl) continue;
+
+          // When top of section enters comfortable reading zone under fixed header
+          const top = sectionEl.offsetTop - headerHeight - 120;
+          if (scrollY >= top) {
+            activeTarget = targetId;
+            break;
+          }
+        }
+
+        // If scrolled near bottom of page (download/about section), keep about or download context active
+        if (scrollY + viewportHeight >= scrollHeight - 90) {
+          activeTarget = "about";
+        }
+
+        desktopNavItems.forEach((item) => {
+          const target = item.getAttribute("data-scroll-target");
+          const isActive = target === activeTarget;
+          item.classList.toggle("is-active", isActive);
+          item.setAttribute("aria-current", isActive ? "page" : "false");
+        });
+
+        mobileNavItems.forEach((item) => {
+          const target = item.getAttribute("data-scroll-target");
+          const isActive = target === activeTarget;
+          item.classList.toggle("is-active", isActive);
+        });
+
+        isTicking = false;
+      };
+
+      const onScrollThrottled = () => {
+        if (!isTicking) {
+          isTicking = true;
+          if (typeof global.requestAnimationFrame === "function") {
+            global.requestAnimationFrame(updateActiveNav);
+          } else {
+            setTimeout(updateActiveNav, 16);
+          }
+        }
+      };
+
+      global.addEventListener("scroll", onScrollThrottled, { passive: true });
+      global.addEventListener("resize", onScrollThrottled, { passive: true });
+      updateActiveNav();
     }
 
     /* ----------------------------------------------------------

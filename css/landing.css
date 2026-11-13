@@ -180,23 +180,51 @@ button {
   color: var(--text-secondary);
   transition: color 0.18s ease;
   position: relative;
-  padding: 6px 0;
+  padding: 8px 0;
 }
 
-.nav-item:hover,
-.nav-item.is-active {
-  color: var(--text-primary);
-}
-
-.nav-item.is-active::after {
+.nav-item::after {
   content: "";
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -2px;
-  height: 1.5px;
-  background: linear-gradient(90deg, var(--accent-blue), var(--accent-violet));
-  border-radius: 2px;
+  bottom: 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, #38bdf8 0%, #818cf8 100%);
+  border-radius: 9999px;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.55);
+  transform: scaleX(0);
+  transform-origin: center;
+  opacity: 0;
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.nav-item:hover {
+  color: var(--text-primary);
+}
+
+.nav-item:hover::after {
+  transform: scaleX(0.45);
+  opacity: 0.5;
+}
+
+.nav-item.is-active {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.nav-item.is-active::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+html[data-theme="light"] .nav-item.is-active {
+  color: #111318;
+}
+
+html[data-theme="light"] .nav-item::after {
+  background: linear-gradient(90deg, #0284c7 0%, #6366f1 100%);
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.35);
 }
 
 .header-right {
