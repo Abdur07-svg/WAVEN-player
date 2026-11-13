@@ -517,15 +517,14 @@ html[data-theme="light"] .hero-headline-accent {
 }
 
 .experience-showcase-panel {
-  border-radius: 26px;
-  padding: 36px;
-  background: var(--bg-elevated);
-  border: none;
-  box-shadow: var(--shadow-subtle);
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: 40px;
+  gap: 48px;
   align-items: center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 
 .experience-controls-side {
@@ -564,18 +563,25 @@ html[data-theme="light"] .hero-headline-accent {
   color: var(--accent-ink);
 }
 
-.experience-caption-block h3 {
-  margin: 0 0 10px 0;
-  font-family: var(--font-display);
-  font-size: 1.45rem;
-  font-weight: 700;
-  color: var(--text-primary);
+.experience-caption-block {
+  text-align: left;
+  max-width: none;
 }
 
-.experience-caption-block p {
+.exp-caption-title {
+  margin: 0 0 10px 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.exp-caption-body {
   margin: 0;
-  font-size: 0.96rem;
-  line-height: 1.68;
+  font-size: 0.95rem;
+  line-height: 1.65;
   color: var(--text-secondary);
 }
 
@@ -591,7 +597,7 @@ html[data-theme="light"] .hero-headline-accent {
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  padding: 13px 0;
+  padding: 14px 0;
   border-bottom: 1px solid var(--line-hairline);
   font-size: 0.88rem;
 }
@@ -599,18 +605,20 @@ html[data-theme="light"] .hero-headline-accent {
 .exp-hl-label {
   font-weight: 600;
   color: var(--text-primary);
+  flex-shrink: 0;
 }
 
 .exp-hl-val {
-  color: var(--text-muted);
+  color: var(--text-secondary);
   text-align: right;
 }
 
-/* Visual Experience Composition Frame (mirrors real WAVEN Now Playing + Queue + Lock Screen) */
+/* Visual Experience Composition Frame (mirrors real WAVEN Now Playing + Lock Screen) */
 .experience-visual-stage {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   min-width: 0;
 }
 
@@ -1187,7 +1195,7 @@ html[data-theme="light"] .hero-headline-accent {
   .features-layout,
   .download-platform-grid {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 36px;
   }
 
   .features-sticky-intro {
@@ -1236,7 +1244,6 @@ html[data-theme="light"] .hero-headline-accent {
     padding: 64px 0;
   }
 
-  .experience-showcase-panel,
   .download-shell,
   .policy-article {
     padding: 24px 18px;
