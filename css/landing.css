@@ -873,13 +873,10 @@ html[data-theme="light"] .hero-headline-accent {
 }
 
 .download-shell {
-  border-radius: 28px;
-  padding: 46px 42px;
-  background:
-    radial-gradient(ellipse 65% 65% at 88% 15%, var(--ambient-glow-1), transparent 60%),
-    var(--bg-elevated);
+  background: transparent;
   border: none;
-  box-shadow: var(--shadow-subtle);
+  box-shadow: none;
+  padding: 0;
 }
 
 .download-header-block {
@@ -894,20 +891,128 @@ html[data-theme="light"] .hero-headline-accent {
 }
 
 .download-platform-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-  gap: 22px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
 }
 
 .platform-surface {
-  border-radius: 20px;
-  padding: 26px 24px;
+  border-radius: 24px;
+  padding: 32px 30px;
   background: var(--bg-surface);
   border: 1px solid var(--line-hairline);
   display: flex;
   flex-direction: column;
+  gap: 20px;
+}
+
+.platform-surface--android {
+  background:
+    radial-gradient(ellipse 65% 65% at 90% 12%, var(--ambient-glow-1), transparent 60%),
+    var(--bg-surface);
+}
+
+.android-panel-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.28fr) minmax(0, 0.92fr);
+  gap: 36px;
+  align-items: center;
+}
+
+.android-panel-main {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
+  min-width: 0;
+}
+
+.download-action-wrap {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Super Prominent Call-To-Action Download Button */
+.btn-download-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  min-height: 64px;
+  padding: 12px 32px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: linear-gradient(135deg, #38bdf8 0%, #2563eb 52%, #4f46e5 100%);
+  color: #ffffff !important;
+  font-family: var(--font-display);
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 14px 42px rgba(56, 189, 248, 0.45), 0 0 0 1px rgba(56, 189, 248, 0.24);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.btn-download-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 52px rgba(56, 189, 248, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.5);
+  filter: brightness(1.08);
+}
+
+.btn-download-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.35);
+}
+
+.btn-download-primary .btn-dl-icon {
+  flex-shrink: 0;
+  color: #ffffff;
+}
+
+.btn-download-primary .btn-dl-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  line-height: 1.25;
+}
+
+.btn-download-primary .btn-dl-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.btn-download-primary .btn-dl-sub {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 3px;
+  letter-spacing: 0.01em;
+}
+
+html[data-theme="light"] .btn-download-primary {
+  background: linear-gradient(135deg, #0284c7 0%, #1d4ed8 100%);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 14px 34px rgba(2, 132, 199, 0.38);
+}
+
+.install-desktop-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.16fr) minmax(0, 0.84fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.desktop-future-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
 }
 
 .platform-surface-head {
@@ -1203,6 +1308,14 @@ html[data-theme="light"] .hero-headline-accent {
   }
 }
 
+@media (max-width: 960px) {
+  .android-panel-layout,
+  .install-desktop-columns {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+}
+
 @media (max-width: 899px) {
   .desktop-nav,
   .header-right {
@@ -1229,8 +1342,10 @@ html[data-theme="light"] .hero-headline-accent {
   }
 
   .btn-hero-primary,
-  .btn-hero-secondary {
+  .btn-hero-secondary,
+  .btn-download-primary {
     width: 100%;
+    justify-content: center;
   }
 
   .android-device-frame {
@@ -1244,7 +1359,6 @@ html[data-theme="light"] .hero-headline-accent {
     padding: 64px 0;
   }
 
-  .download-shell,
   .policy-article {
     padding: 24px 18px;
     border-radius: 22px;

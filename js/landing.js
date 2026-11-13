@@ -373,25 +373,31 @@ const EXPERIENCE_SCENES = Object.freeze({
           <button
             type="button"
             id="final-download-apk-btn"
-            class="btn-hero-primary"
+            class="btn-download-primary"
             data-apk-trigger="desktop-qr-prompt"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><path d="M14 14h3v3h-3z"></path><path d="M20 14v7h-7"></path></svg>
-            <span>Download WAVEN for Android</span>
+            <svg class="btn-dl-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span class="btn-dl-text">
+              <span class="btn-dl-title">Download WAVEN for Android</span>
+              <span class="btn-dl-sub">Direct APK (${escapeHtml(WAVEN_APK_SIZE)}) • Free &amp; Offline</span>
+            </span>
           </button>
         `;
       } else if (!isIOS) {
         primaryActionHtml = `
           <a
             id="final-download-apk-btn"
-            class="btn-hero-primary"
+            class="btn-download-primary"
             href="${escapeHtml(WAVEN_APK_URL)}"
             download="${escapeHtml(WAVEN_RELEASE_META.fileName)}"
             rel="noopener noreferrer"
             data-apk-trigger="primary"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            <span>Download WAVEN for Android</span>
+            <svg class="btn-dl-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span class="btn-dl-text">
+              <span class="btn-dl-title">Download WAVEN for Android</span>
+              <span class="btn-dl-sub">Direct APK (${escapeHtml(WAVEN_APK_SIZE)}) • Free &amp; Offline</span>
+            </span>
           </a>
         `;
       }
@@ -400,71 +406,79 @@ const EXPERIENCE_SCENES = Object.freeze({
         isIOS
           ? `<p class="platform-surface-copy">Note: WAVEN is packaged as an Android <code>.apk</code> file and cannot be installed on ${escapeHtml(info.detail)}. Scan the QR code below with an Android phone or stay tuned for future platform support.</p>`
           : isDesktop
-            ? `<p class="platform-surface-copy">Viewing on ${escapeHtml(info.detail)}. WAVEN APK cannot run directly on desktop — a dedicated desktop version will arrive later. Scan the QR code below with your Android phone to download on mobile.</p>`
+            ? `<p class="platform-surface-copy">Viewing on ${escapeHtml(info.detail)}. WAVEN APK cannot run directly on desktop — a dedicated desktop version will arrive later. Scan the QR code with your Android phone to download directly on mobile.</p>`
             : info.platform === "unknown"
               ? `<p class="platform-surface-copy">Requires ${escapeHtml(WAVEN_RELEASE_META.minAndroid)}. Verify your device supports Android APK installation before opening the downloaded file.</p>`
               : `<p class="platform-surface-copy">Ready for ${escapeHtml(WAVEN_RELEASE_META.minAndroid)}. Tap below to download the signed WAVEN APK release directly from GitHub Releases.</p>`;
 
       const androidCardHtml = `
-        <article class="platform-surface" id="android-download-panel" data-platform="${escapeHtml(info.platform)}">
-          <div class="platform-surface-head">
-            <h3 class="platform-surface-title">WAVEN for Android</h3>
-            ${statusBadge}
-          </div>
-
-          <div class="verified-meta-strip" aria-label="Verified release information">
-            <span class="meta-chip">Version ${escapeHtml(WAVEN_APP_VERSION)}</span>
-            <span class="meta-chip">${escapeHtml(WAVEN_APK_SIZE)}</span>
-            <span class="meta-chip">${escapeHtml(WAVEN_RELEASE_META.minAndroid)}</span>
-            <span class="meta-chip">Package: ${escapeHtml(WAVEN_RELEASE_META.packageName)}</span>
-          </div>
-
-          ${platformGuidanceHtml}
-
-          ${primaryActionHtml ? `<div>${primaryActionHtml}</div>` : ""}
-
-          <p class="feedback-banner" id="download-feedback-banner" role="status" aria-live="polite" hidden></p>
-
-          ${qrSvgHtml ? `
-            <div class="qr-block" id="download-qr-wrapper">
-              <div class="qr-white-pad" id="download-qr-box">${qrSvgHtml}</div>
-              <div class="qr-copy">
-                <strong>Scan to download on Android mobile</strong>
-                <p>Desktop version is coming later. Point your Android camera here to open the verified ${escapeHtml(WAVEN_APP_VERSION)} APK release directly on mobile.</p>
+        <article class="platform-surface platform-surface--android" id="android-download-panel" data-platform="${escapeHtml(info.platform)}">
+          <div class="android-panel-layout">
+            <div class="android-panel-main">
+              <div class="platform-surface-head">
+                <h3 class="platform-surface-title">WAVEN for Android</h3>
+                ${statusBadge}
               </div>
+
+              <div class="verified-meta-strip" aria-label="Verified release information">
+                <span class="meta-chip">Version ${escapeHtml(WAVEN_APP_VERSION)}</span>
+                <span class="meta-chip">${escapeHtml(WAVEN_APK_SIZE)}</span>
+                <span class="meta-chip">${escapeHtml(WAVEN_RELEASE_META.minAndroid)}</span>
+                <span class="meta-chip">Package: ${escapeHtml(WAVEN_RELEASE_META.packageName)}</span>
+              </div>
+
+              ${platformGuidanceHtml}
+
+              ${primaryActionHtml ? `<div class="download-action-wrap">${primaryActionHtml}</div>` : ""}
+
+              <p class="feedback-banner" id="download-feedback-banner" role="status" aria-live="polite" hidden></p>
             </div>
-          ` : ""}
+
+            ${qrSvgHtml ? `
+              <div class="qr-block" id="download-qr-wrapper">
+                <div class="qr-white-pad" id="download-qr-box">${qrSvgHtml}</div>
+                <div class="qr-copy">
+                  <strong>Scan to download on Android mobile</strong>
+                  <p>Desktop version is coming later. Point your Android camera here to open the verified ${escapeHtml(WAVEN_APP_VERSION)} APK release directly on mobile.</p>
+                </div>
+              </div>
+            ` : ""}
+          </div>
         </article>
       `;
 
       const secondaryCardHtml = `
-        <article class="platform-surface" id="install-and-desktop-panel">
-          ${info.platform !== "ios" ? `
-            <div class="install-steps-card" id="install-steps-card">
-              <h4>Android Installation Steps</h4>
-              <ol>
-                <li>Scan the QR code or open the link on your Android phone (${escapeHtml(WAVEN_APP_VERSION)}).</li>
-                <li>Open the downloaded <code>${escapeHtml(WAVEN_RELEASE_META.fileName)}</code> file.</li>
-                <li>Allow installation from this source if Android prompts for permission.</li>
-                <li>Tap <strong>Install</strong> and open WAVEN to enjoy your local library.</li>
-              </ol>
-              <p class="install-security-caption">
-                Only install APK files downloaded from the official WAVEN GitHub Releases source.
-              </p>
-            </div>
-          ` : ""}
+        <article class="platform-surface platform-surface--secondary" id="install-and-desktop-panel">
+          <div class="install-desktop-columns">
+            ${info.platform !== "ios" ? `
+              <div class="install-steps-card" id="install-steps-card">
+                <h4>Android Installation Steps</h4>
+                <ol>
+                  <li>Scan the QR code or open the link on your Android phone (${escapeHtml(WAVEN_APP_VERSION)}).</li>
+                  <li>Open the downloaded <code>${escapeHtml(WAVEN_RELEASE_META.fileName)}</code> file.</li>
+                  <li>Allow installation from this source if Android prompts for permission.</li>
+                  <li>Tap <strong>Install</strong> and open WAVEN to enjoy your local library.</li>
+                </ol>
+                <p class="install-security-caption">
+                  Only install APK files downloaded from the official WAVEN GitHub Releases source.
+                </p>
+              </div>
+            ` : ""}
 
-          <div class="platform-surface-head">
-            <h3 class="platform-surface-title">Desktop &amp; Future Platforms</h3>
-            <span class="status-tag status-tag--planned">Planned</span>
+            <div class="desktop-future-block">
+              <div class="platform-surface-head">
+                <h3 class="platform-surface-title">Desktop &amp; Future Platforms</h3>
+                <span class="status-tag status-tag--planned">Planned</span>
+              </div>
+              <p class="platform-surface-copy">
+                Dedicated desktop builds and optional online streaming extensions are planned for future releases. Today, WAVEN is focused purely on local playback for Android.
+              </p>
+              <button type="button" class="btn-disabled-soon" aria-disabled="true" id="desktop-planned-btn">
+                Desktop App Coming Soon
+              </button>
+              <p class="feedback-banner" id="desktop-planned-feedback" role="status" aria-live="polite" hidden></p>
+            </div>
           </div>
-          <p class="platform-surface-copy">
-            Dedicated desktop builds and optional online streaming extensions are planned for future releases. Today, WAVEN is focused purely on local playback for Android.
-          </p>
-          <button type="button" class="btn-disabled-soon" aria-disabled="true" id="desktop-planned-btn">
-            Desktop App Coming Soon
-          </button>
-          <p class="feedback-banner" id="desktop-planned-feedback" role="status" aria-live="polite" hidden></p>
         </article>
       `;
 
