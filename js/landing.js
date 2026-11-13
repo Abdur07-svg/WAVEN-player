@@ -195,7 +195,8 @@ const EXPERIENCE_SCENES = Object.freeze({
       };
 
       if (menuBtn && drawer) {
-        menuBtn.addEventListener("click", () => {
+        menuBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
           const opening = drawer.hidden;
           drawer.hidden = !opening;
           menuBtn.setAttribute("aria-expanded", opening ? "true" : "false");
@@ -205,6 +206,12 @@ const EXPERIENCE_SCENES = Object.freeze({
           if (e.key === "Escape" && !drawer.hidden) {
             closeDrawer();
             menuBtn.focus();
+          }
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!drawer.hidden && !drawer.contains(e.target) && !menuBtn.contains(e.target)) {
+            closeDrawer();
           }
         });
       }

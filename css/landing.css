@@ -75,11 +75,13 @@ html[data-theme="light"] {
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 70px;
   overflow-x: hidden;
 }
 
 body {
   margin: 0;
+  padding-top: 70px;
   font-family: var(--font-body);
   color: var(--text-primary);
   background-color: var(--bg-page);
@@ -120,12 +122,15 @@ button {
 }
 
 /* ==========================================================================
-   Sticky Translucent Navigation Bar
+   Fixed Translucent Navigation Bar (Never scrolls away)
    ========================================================================== */
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 50;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 100;
   background: var(--bg-header);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -266,14 +271,28 @@ button {
 }
 
 .mobile-drawer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 110;
   border-top: 1px solid var(--line-hairline);
+  border-bottom: 1px solid var(--line-hairline);
   background: var(--bg-elevated);
-  padding: 16px 28px 22px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.75);
+  padding: 14px 20px 18px;
+  box-sizing: border-box;
   animation: drawerSlide 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .mobile-drawer[hidden] {
   display: none;
+}
+
+html[data-theme="light"] .mobile-drawer {
+  background: #ffffff;
+  box-shadow: 0 20px 40px rgba(17, 19, 24, 0.12);
 }
 
 @keyframes drawerSlide {
@@ -285,19 +304,24 @@ button {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-bottom: 14px;
+  margin-bottom: 0;
 }
 
 .mobile-drawer-link {
-  padding: 11px 10px;
+  padding: 12px 14px;
   border-radius: 10px;
-  font-size: 0.95rem;
+  font-size: 0.96rem;
   font-weight: 600;
   color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  transition: background-color 0.16s ease, color 0.16s ease;
 }
 
-.mobile-drawer-link:hover {
+.mobile-drawer-link:hover,
+.mobile-drawer-link:active {
   background: var(--bg-surface-soft);
+  color: var(--accent-blue);
 }
 
 /* ==========================================================================
