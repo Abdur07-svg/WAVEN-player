@@ -1,115 +1,202 @@
 <p align="center">
-  <img src="assets/logo/waven_app_logo_512.png" alt="WAVEN Music Player Logo" width="128" height="128" />
+  <img src="assets/img/logo-512.png" alt="WAVEN Music Player Logo" width="120" height="120" />
 </p>
 
-<h1 align="center">WAVEN — Local Music Player for Android & Web</h1>
+<h1 align="center">WAVEN — Nocturne Pulse Music Player</h1>
 
 <p align="center">
-  <strong>A modern, privacy-first local audio player featuring real-time visualizers, synchronized lyrics, and zero cloud tracking.</strong>
+  <strong>Dark Luxury Local Music Player &amp; DSP Equalizer for Android. Bit-perfect 24-bit/192kHz audio engine, 6-band parametric EQ, real-time synchronized lyrics, lock-screen MediaSession, and zero telemetry.</strong>
 </p>
 
 <p align="center">
-  <a href="https://abdur07-svg.github.io/WAVEN-player/"><strong>🌐 Launch Live Web App</strong></a> •
-  <a href="https://github.com/Abdur07-svg/WAVEN-player/releases"><strong>📱 Download Android APK</strong></a> •
-  <a href="#key-features">Key Features</a> •
-  <a href="#getting-started">Getting Started</a>
+  <a href="https://abdur07-svg.github.io/WAVEN/"><strong>🌐 Live Landing Page</strong></a> •
+  <a href="https://abdur07-svg.github.io/WAVEN/downloads/waven-latest.apk"><strong>📱 Download Android APK (3.97 MB)</strong></a> •
+  <a href="https://github.com/Abdur07-svg/WAVEN"><strong>💻 GitHub Repository</strong></a>
 </p>
 
 ---
 
-## Overview
+## 1. Project Deliverables
 
-**WAVEN** is a high-performance local music and audio player built for Android and modern web browsers. Designed for audiophiles who value privacy, control, and clean aesthetics, WAVEN plays your local music library directly from your device storage with zero telemetry, zero accounts, and zero cloud tracking.
+WAVEN consists strictly of **TWO production deliverables**:
 
-Whether running as an Android application or as a standalone Progressive Web App (PWA), WAVEN delivers an immersive listening experience with dynamic album art theming, audio frequency visualizers, and synchronized lyrics support.
+1. **Responsive Promotional Website (`index.html` & `web/`)**:
+   - Single responsive landing page deployed to **GitHub Pages**.
+   - Desktop viewports receive a luxury desktop showcase with interactive screen previews, specifications, comparison tables, and mobile QR code.
+   - Mobile viewports receive a thumb-optimized mobile layout with high-contrast typography, screenshot swipe carousel, 3-step installation guide, and sticky bottom download bar.
+   - **Promotional & Download Portal Only**: Contains **NO** audio playback, **NO** web player, and **NO** streaming overhead.
+   - **Direct APK Download**: Primary CTA immediately downloads `waven-latest.apk` (3.97 MB, v1.0.3 Stable).
 
-- **Official Web Application**: [https://abdur07-svg.github.io/WAVEN-player/](https://abdur07-svg.github.io/WAVEN-player/)
-- **GitHub Repository**: [https://github.com/Abdur07-svg/WAVEN-player](https://github.com/Abdur07-svg/WAVEN-player)
-- **Official Releases (APK)**: [https://github.com/Abdur07-svg/WAVEN-player/releases](https://github.com/Abdur07-svg/WAVEN-player/releases)
-
----
-
-## Key Features
-
-- **🎧 100% Offline & Private Playback**:
-  Plays your local audio files directly from device storage. Zero telemetry, zero analytics tracking, and no internet connection required.
-- **🎼 Broad Audio Format Support**:
-  Full playback support for MP3, FLAC, WAV, M4A, AAC, OGG, and OPUS files.
-- **✨ Real-Time Audio Visualizer**:
-  Hardware-accelerated frequency visualizers dynamically synced to the rhythm and beat of your music.
-- **🎤 Synchronized Lyrics & Editor**:
-  View embedded or imported synchronized lyrics, with a built-in interactive editor to create or fine-tune LRC timestamps.
-- **📱 Native Android Integration**:
-  Full support for Android `MediaSession`, lockscreen controls, notification shade controls with album artwork, headset/Bluetooth button actions, and persistent background playback.
-- **🎨 Dynamic Artwork & Glassmorphism UI**:
-  A responsive glassmorphic interface that extracts and dynamically adapts the UI palette to the dominant colors of the currently playing album artwork.
-- **📊 Music DNA & Insights**:
-  Track your personal listening statistics, favorite genres, top artists, and recent listening history stored securely on your local device.
-- **⚡ Smart Queue & Playlist Management**:
-  Create and organize custom playlists, reorder playback queues, and toggle shuffle or repeat modes seamlessly.
+2. **Native Android Music Player (`android-app/`)**:
+   - Genuine installable Android APK (`com.waven.musicplayer`).
+   - High-fidelity **Nocturne Pulse** UI built with HTML, CSS, and JavaScript inside Android WebView.
+   - Real native Android Java backend managing `MediaStore` audio queries, foreground playback service, `MediaSessionCompat`, lock-screen media controls, notification shade controls, and Bluetooth headphone disconnect handling.
+   - Exclusively a **Local Music Player** with 100% offline playback, zero accounts, and zero telemetry.
+   - Modular architecture ready for future online streaming plug-ins without rewriting the player.
 
 ---
 
-## Installation & Usage
+## 2. Directory Structure
 
-### 1. Android Installation (APK)
-1. Navigate to the [Official GitHub Releases](https://github.com/Abdur07-svg/WAVEN-player/releases) page.
-2. Download the latest `WAVEN-Music-Player.apk`.
-3. Open the downloaded APK on your Android device (Android 7.0+ / API 24+ supported) and confirm installation.
-4. Grant storage permissions when prompted to automatically scan and import your local music library.
-
-### 2. Live Web Application
-You can use WAVEN directly in any modern desktop or mobile browser without installing anything:
-- Visit [https://abdur07-svg.github.io/WAVEN-player/](https://abdur07-svg.github.io/WAVEN-player/)
-- Drag and drop audio files or folders into the player window to start listening.
+```text
+WAVEN/
+├── android-app/                          # Complete Android Studio Project
+│   ├── app/
+│   │   ├── src/main/
+│   │   │   ├── AndroidManifest.xml       # Full permissions & service registrations
+│   │   │   ├── java/com/waven/musicplayer/
+│   │   │   │   ├── MainActivity.java     # WebView controller, edge-to-edge UI & permissions
+│   │   │   │   ├── WavenNativeBridge.java# Bidirectional JavaScript-Java bridge
+│   │   │   │   ├── WavenPlaybackService.java # Foreground playback service & MediaSession
+│   │   │   │   ├── MediaActionReceiver.java  # Notification & Bluetooth headset receiver
+│   │   │   │   ├── AudioScanner.java     # High-speed MediaStore local device scanner
+│   │   │   │   └── GenericFileProvider.java # Secure content provider
+│   │   │   ├── assets/                   # Music Player UI (HTML5/CSS/JS)
+│   │   │   │   ├── index.html            # All 7 Nocturne Pulse screens
+│   │   │   │   ├── css/style.css         # Glassmorphic themes & animations
+│   │   │   │   └── js/
+│   │   │   │       ├── app.js            # View router & component coordinator
+│   │   │   │       ├── player.js         # Playback state, queue, shuffle & repeat
+│   │   │   │       ├── audio-engine.js   # 6-band DSP EQ & native audio bridge
+│   │   │   │       ├── library.js        # Local tracks, favorites & playlists
+│   │   │   │       └── lyrics.js         # Synchronized karaoke highlighter
+│   │   │   └── res/                      # Launcher icons, colors, styles, XML configs
+│   │   ├── build.gradle
+│   │   └── proguard-rules.pro
+│   ├── build.gradle
+│   ├── gradle.properties
+│   ├── settings.gradle
+│   ├── gradlew                           # Linux/macOS Gradle wrapper script
+│   ├── gradlew.bat                       # Windows Gradle wrapper script
+│   └── gradle/wrapper/gradle-wrapper.properties
+│
+├── web/                                  # GitHub Pages Publishing Directory
+│   ├── index.html                        # Single responsive landing page
+│   ├── assets/img/                       # Optimized WebP/PNG logos & UI screenshots
+│   ├── downloads/waven-latest.apk        # Distribution APK
+│   ├── robots.txt                        # Search engine crawling rules
+│   ├── sitemap.xml                       # Valid XML sitemap for Search Console
+│   ├── 404.html                          # Branded error page
+│   └── manifest.webmanifest              # Web application manifest
+│
+├── downloads/
+│   └── waven-latest.apk                  # Root distribution copy of APK
+├── assets/                               # Global logos, icons, covers & screenshots
+├── index.html                            # Root responsive landing page (mirrors web/index.html)
+├── robots.txt                            # Search engine directive
+├── sitemap.xml                           # Canonical sitemap
+├── 404.html                              # Root 404 handler
+├── manifest.webmanifest                  # Root PWA manifest
+├── build_waven_apk.py                    # Automated standalone APK compiler & verifier
+├── README.md                             # Documentation & user guide
+└── .gitignore                            # Build artifacts & temp files ignore list
+```
 
 ---
 
-## Building from Source
+## 3. Nocturne Pulse UI Design System (Android App)
 
-WAVEN uses a custom, lightweight Python build pipeline (leveraging Android SDK `aapt2`, `d8`, and `zipalign`) that produces optimized release APKs without requiring Gradle.
+The Android application implements all screens from the provided `stitch_waven_ui_ux_application` reference specifications:
 
-### Prerequisites
-- Python 3.10+
-- Java JDK 17
-- Android SDK (API 34 platform & build-tools 34.0.0)
+| Screen | File / Identifier | Description & Features |
+| :--- | :--- | :--- |
+| **Home Screen** | `view-home` | Quick picks, greeting, recently added tracks, Flow carousel, and navigation shortcuts. |
+| **Explore Screen** | `view-explore` | High-voltage discovery chips, curated genre mixes, and trending local library picks. |
+| **Library Screen** | `view-library` | High-speed track catalog with tabs for Songs, Artists, Albums, and Playlists, plus real-time search. |
+| **Now Playing** | `view-now-playing` | Fullscreen atmospheric vinyl backdrop, dynamic blur, real-time scrubber, shuffle/repeat, EQ & lyrics shortcuts. |
+| **Synchronized Lyrics** | `view-lyrics` | Fullscreen karaoke view with syllable cadence indicators and synchronized line highlighting. |
+| **Playlist Details** | `view-playlist-details` | Playlist art header, track counter, play all button, shuffle toggle, and track reordering list. |
+| **Equalizer Screen** | `view-equalizer` | 6-band tactile frequency sliders (60Hz, 150Hz, 400Hz, 1kHz, 2.4kHz, 15kHz), sub-bass resonance knob, and presets. |
+| **Mini Player** | `mini-player` | Persistent floating capsule displaying album art, title, artist, play/pause toggle, and progress bar. |
+| **Floating Dock** | `floating-dock` | Quick bottom navigation bar accessing Home, Explore, Library, and Equalizer. |
 
-### Local Build Steps
-1. Clone the repository:
+---
+
+## 4. Android Native Features & Permissions
+
+### Permissions
+- `android.permission.READ_MEDIA_AUDIO` (Android 13+ / API 33+)
+- `android.permission.READ_EXTERNAL_STORAGE` (Android 8.0 to 12 / API 26-32)
+- `android.permission.POST_NOTIFICATIONS` (Android 13+ for playback controls)
+- `android.permission.FOREGROUND_SERVICE` & `FOREGROUND_SERVICE_MEDIA_PLAYBACK`
+- `android.permission.WAKE_LOCK` (audio continuity with screen locked)
+
+### Audio Engine Capabilities
+- **Direct MediaStore Querying**: Native Java `AudioScanner` queries `MediaStore.Audio.Media.EXTERNAL_CONTENT_URI` retrieving title, artist, album, duration, data URI, album art, and date added in milliseconds.
+- **Android MediaSession Integration**: Full `MediaSession` with `PlaybackState` updates (Playing, Paused, Buffering). Lock screen displays track metadata, album artwork, and interactive controls (Previous, Play/Pause, Next).
+- **Foreground Playback Service**: `WavenPlaybackService` runs as an official media playback foreground service, preventing Android from killing playback when the app is in the background or screen is off.
+- **Audio Focus & Bluetooth**: Handles `AudioManager.OnAudioFocusChangeListener` for incoming phone calls, GPS navigation, and registers `ACTION_AUDIO_BECOMING_NOISY` to auto-pause immediately when Bluetooth headphones or cables are unplugged.
+
+---
+
+## 5. Building the WAVEN APK
+
+### Method A: Standalone Python Script (Automated CLI)
+WAVEN includes an automated, deterministic compiler script that requires only the Android SDK build-tools and JDK 17:
+
+```powershell
+python build_waven_apk.py
+```
+
+This script automatically executes:
+1. `aapt2 compile` on all resource drawables and XML files.
+2. `aapt2 link` with Android 34 platform JAR.
+3. `javac` compilation of all native Java files.
+4. `d8` Dalvik bytecode conversion.
+5. 4-byte zip alignment via `zipalign`.
+6. Cryptographic signing via `apksigner` (v1, v2, and v3 schemes).
+7. Audit verification: validates APK size, zip alignment, badging, and signatures.
+8. Automatically updates `web/downloads/waven-latest.apk` and `downloads/waven-latest.apk`.
+
+### Method B: Android Studio / Gradle
+1. Open Android Studio.
+2. Select **Open an Existing Project** and navigate to `WAVEN/android-app`.
+3. Allow Gradle to sync.
+4. Run `Build -> Build Bundle(s) / APK(s) -> Build APK(s)` or execute:
    ```bash
-   git clone https://github.com/Abdur07-svg/WAVEN-player.git
-   cd WAVEN-player
+   ./gradlew assembleRelease
    ```
-2. Install Python dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Set up your release signing credentials in `.env`:
-   ```env
-   WAVEN_KEYSTORE_PASSWORD=your_keystore_password
-   WAVEN_KEY_ALIAS=waven_music
-   WAVEN_KEYSTORE_PATH=android-mobile/.keystore/waven_release.keystore
-   ```
-4. Build the signed release APK:
-   ```bash
-   python build_waven_apk.py
-   ```
-5. The verified, signed release APK is generated at:
-   ```
-   dist/WAVEN-Music-Player.apk
-   ```
+5. Output APK is placed in `android-app/app/build/outputs/apk/release/`.
 
 ---
 
-## Recommended Repository Topics
+## 6. GitHub Pages Deployment & SEO
 
-To improve search visibility and discoverability on GitHub and search engines, add the following topics in your repository settings:
+The website is fully configured for deployment on **GitHub Pages**:
 
-`waven` • `waven-music-player` • `music-player` • `android-music-player` • `audio-player` • `local-music-player` • `offline-music-player` • `web-audio-api` • `audio-visualizer` • `lyrics-player` • `pwa` • `javascript`
+- **Entry Point**: Root `index.html` (and `web/index.html`).
+- **Responsive Layout**: Desktop visitors receive the desktop showcase; mobile visitors receive the thumb-friendly mobile layout.
+- **Zero Local Server Dependency**: Uses relative paths (`./`, `assets/`, `downloads/`). Works seamlessly under any custom domain or repository base path (`https://abdur07-svg.github.io/WAVEN/`).
+- **Google Search Console**:
+  - Verification tag preserved: `<meta name="google-site-verification" content="OVGVId5yYSPGElWHOadcBO1U7rOTmApUfcFklXKdHbQ" />`
+  - Valid XML sitemap accessible at: `https://abdur07-svg.github.io/WAVEN/sitemap.xml`
+  - Permissive robots directive at: `https://abdur07-svg.github.io/WAVEN/robots.txt`
+  - JSON-LD `SoftwareApplication` structured schema for search snippet enrichment.
+  - Custom `404.html` error page that seamlessly guides visitors back to the home portal.
 
 ---
 
-## License
+## 7. Future Online Music Streaming Architecture
 
-This project is released under the [MIT License](LICENSE).
+WAVEN is intentionally architected to support future online streaming without touching the core UI or player layer:
+- The UI communicates through an abstract player controller (`player.js`).
+- Track objects contain a standard schema:
+  ```javascript
+  {
+    id: "track_id",
+    title: "Track Title",
+    artist: "Artist Name",
+    album: "Album Name",
+    duration: 215,
+    uri: "content://... or https://streaming-url.com/stream.mp3",
+    source: "local" // Can be extended to "online", "audius", "custom-stream"
+  }
+  ```
+- Adding streaming in a future update simply requires implementing a network data provider feeding into the existing playback pipeline.
 
+---
+
+## 8. License
+
+WAVEN is released under the **Apache License 2.0**.
+Free, open-source, and privacy-respecting audio software for everyone.

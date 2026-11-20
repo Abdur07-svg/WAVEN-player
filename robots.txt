@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Allow: /downloads/
+Allow: /assets/
 
-Sitemap: https://abdur07-svg.github.io/WAVEN-player/sitemap.xml
+Sitemap: https://abdur07-svg.github.io/WAVEN/sitemap.xml

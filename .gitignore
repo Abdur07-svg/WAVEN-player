@@ -1,47 +1,22 @@
-# ==============================================================
-# WAVEN Music Player — Git Ignore Configuration
-# ==============================================================
-
-# Android Build Outputs & Intermediate Files
-dist/
+# Build & Cache Directories
+.gradle/
 build/
-android-mobile/app/build/
-*.apk
-*.idsig
-*.aab
-*.dex
-*.class
-*.flat
-
-# Keystores & Signing Secrets (CRITICAL: NEVER commit keys to public GitHub!)
-*.keystore
-*.jks
-android-mobile/.keystore/
-
-# Environment Variables & Local Secrets
-.env
-.env.local
-.env.*.local
-
-# Python Cache & Virtual Environments
+android-app/app/build/
+android-app/build_temp/
 __pycache__/
-*.py[cod]
-*$py.class
-.venv/
-venv/
-env/
-*.egg-info/
+*.pyc
 
-# Scratch & Debug Artifacts
-scratch/
+# IDE & Editor Files
+.idea/
+*.iml
+.vscode/
 
-# Operating System & Editor Artifacts
+# OS Specific
 .DS_Store
 Thumbs.db
 desktop.ini
-.vscode/
-.idea/
-*.swp
-*.bak
-*~
 
+# Environment & Secrets
+.env
+*.keystore
+!android-app/build_temp/*.keystore

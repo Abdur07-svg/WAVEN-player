@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>WAVEN — High-Fidelity Local Music Player for Android</title>
+  <meta name="description" content="WAVEN is a bit-perfect local audio player and DSP equalizer for Android with 24-bit/192kHz master tuning, 6-band parametric EQ, lock-screen MediaSession, and zero tracking.">
+  <meta name="keywords" content="WAVEN, Android music player, local audio player, FLAC player, equalizer, offline music, MediaSession, APK download">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0e0e13">
+  <link rel="canonical" href="https://abdur07-svg.github.io/WAVEN/">
+
+  <!-- Google Search Console Verification Tag (PRESERVED) -->
+  <meta name="google-site-verification" content="OVGVId5yYSPGElWHOadcBO1U7rOTmApUfcFklXKdHbQ" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://abdur07-svg.github.io/WAVEN/">
+  <meta property="og:title" content="WAVEN — High-Fidelity Local Music Player for Android">
+  <meta property="og:description" content="Download WAVEN APK for Android. 24-bit/192kHz bit-perfect local playback, 6-band EQ, synchronized lyrics, lock-screen MediaSession, and zero telemetry.">
+  <meta property="og:image" content="assets/img/logo-512.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="WAVEN — Local Music Player for Android">
+  <meta name="twitter:description" content="Dark Luxury Local Audio Player & DSP Equalizer for Android.">
+  <meta name="twitter:image" content="assets/img/logo-512.png">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="48x48" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/logo-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- Fonts & Tailwind -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#0E0E13',
+            surface: '#131318',
+            'surface-elevated': '#1A1A24',
+            'accent-citron': '#CCF22E',
+            'accent-citron-hover': '#D8FF33',
+            'accent-violet': '#7928CA',
+            'accent-violet-light': '#A855F7'
+          },
+          fontFamily: {
+            headline: ['"Plus Jakarta Sans"', 'sans-serif'],
+            body: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- SoftwareApplication JSON-LD Structured Data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "WAVEN",
+    "operatingSystem": "Android 8.0+",
+    "applicationCategory": "MultimediaApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "downloadUrl": "https://abdur07-svg.github.io/WAVEN/downloads/waven-latest.apk",
+    "softwareVersion": "1.0.3",
+    "fileSize": "3.97MB",
+    "description": "High-fidelity local music player and DSP equalizer for Android featuring 24-bit/192kHz local playback, 6-band parametric EQ, and zero tracking."
+  }
+  </script>
+
+  <style>
+    body {
+      background-color: #0E0E13;
+      color: #FFFFFF;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-headline {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .citron-glow {
+      box-shadow: 0 0 35px rgba(204, 242, 46, 0.28);
+    }
+    .violet-glow {
+      box-shadow: 0 0 45px rgba(121, 40, 202, 0.25);
+    }
+    .glass-card {
+      background: rgba(19, 19, 24, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card:hover {
+      border-color: rgba(204, 242, 46, 0.3);
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="selection:bg-accent-citron selection:text-black">
+
+  <!-- Top Announcement Bar -->
+  <aside aria-label="Version Notice" class="bg-gradient-to-r from-[#7928CA]/30 via-[#CCF22E]/20 to-[#7928CA]/30 border-b border-white/10 text-xs py-2 px-4 text-center font-medium tracking-wide text-white/90">
+    <span class="inline-flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-accent-citron animate-pulse"></span>
+      <span class="font-bold text-accent-citron">WAVEN v1.0.3 Stable Released:</span> Bit-perfect local playback, 6-band DSP EQ & native lock-screen MediaSession.
+      <a href="#download" class="underline hover:text-accent-citron ml-1 font-semibold">Download APK &rarr;</a>
+    </span>
+  </aside>
+
+  <!-- Navigation Header -->
+  <header class="sticky top-0 z-40 bg-canvas/85 backdrop-blur-xl border-b border-white/5 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3.5 flex items-center justify-between">
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="relative w-10 h-10 rounded-xl overflow-hidden p-0.5 bg-gradient-to-tr from-accent-violet to-accent-citron group-hover:scale-105 transition-transform duration-300">
+          <img src="assets/img/logo-192.png" alt="WAVEN Logo" class="w-full h-full object-cover rounded-[10px]">
+        </div>
+        <div class="flex flex-col">
+          <span class="font-headline font-black text-xl tracking-wider text-white group-hover:text-accent-citron transition-colors">WAVEN</span>
+          <span class="text-[10px] uppercase font-bold tracking-widest text-white/40 -mt-1">Android Audio</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
+        <a href="#features" class="hover:text-accent-citron transition-colors">Features</a>
+        <a href="#showcase" class="hover:text-accent-citron transition-colors">UI Showcase</a>
+        <a href="#specs" class="hover:text-accent-citron transition-colors">Architecture</a>
+        <a href="#compare" class="hover:text-accent-citron transition-colors">Compare</a>
+        <a href="#install" class="hover:text-accent-citron transition-colors">Installation</a>
+      </nav>
+
+      <!-- Desktop & Mobile Header CTA -->
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/Abdur07-svg/WAVEN" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center justify-center p-2 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-colors" title="GitHub Source">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        </a>
+        <a href="#download" class="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-accent-citron text-black font-headline font-bold text-xs sm:text-sm tracking-wide hover:bg-accent-citron-hover transition-all duration-200 transform hover:-translate-y-0.5 citron-glow">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span>Download APK</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative pt-12 pb-20 md:pt-20 md:pb-32 overflow-hidden">
+    <!-- Ambient Glow Blobs -->
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[650px] h-[350px] bg-accent-violet/20 blur-[140px] pointer-events-none rounded-full"></div>
+    <div class="absolute top-48 left-1/4 w-[380px] h-[380px] bg-accent-citron/10 blur-[130px] pointer-events-none rounded-full"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        
+        <!-- Left Hero Content -->
+        <div class="lg:col-span-7 text-center lg:text-left flex flex-col items-center lg:items-start">
+          <!-- Tag Badge -->
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-elevated border border-white/10 text-xs font-semibold tracking-wide text-white/90 mb-6">
+            <span class="w-2 h-2 rounded-full bg-accent-citron"></span>
+            <span>Nocturne Pulse v1.0.3</span>
+            <span class="text-white/30">•</span>
+            <span class="text-accent-citron">100% Offline &amp; Bit-Perfect</span>
+          </div>
+
+          <!-- Main Headline -->
+          <h1 class="font-headline font-extrabold text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-[1.1] mb-6">
+            Sound Unbound.<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#CCF22E] via-[#E2FE52] to-[#A855F7]">Local Audio Mastered.</span>
+          </h1>
+
+          <!-- Body Description -->
+          <p class="text-base sm:text-lg text-white/70 max-w-2xl leading-relaxed mb-8">
+            WAVEN brings studio-grade 24-bit/192kHz local audio decoding, native Android MediaSession integration, synchronized karaoke lyrics, and a tactile 6-band DSP equalizer directly to your Android device. Zero telemetry, zero subscription fees, pure fidelity.
+          </p>
+
+          <!-- Primary CTAs -->
+          <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-8">
+            <a href="downloads/waven-latest.apk" download="waven-latest.apk" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-accent-citron text-black font-headline font-extrabold text-base tracking-wide hover:bg-accent-citron-hover transition-all duration-200 transform hover:-translate-y-1 citron-glow">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span>Download WAVEN APK</span>
+            </a>
+            <a href="#showcase" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-headline font-bold text-base hover:bg-white/10 hover:border-white/20 transition-all duration-200">
+              <span>Explore UI Screens</span>
+              <svg class="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </a>
+          </div>
+
+          <!-- Quick Specifications Pill -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs text-white/50 font-medium">
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-accent-citron" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              File Size: <strong>3.97 MB</strong>
+            </span>
+            <span class="text-white/20">•</span>
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-accent-citron" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              Requires: <strong>Android 8.0+ (API 26)</strong>
+            </span>
+            <span class="text-white/20">•</span>
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-accent-citron" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              License: <strong>Free &amp; Open Source</strong>
+            </span>
+          </div>
+        </div>
+
+        <!-- Right Hero Visual: Phone Mockup with Screen Selector -->
+        <div class="lg:col-span-5 flex flex-col items-center">
+          <!-- Mockup Frame -->
+          <div class="relative w-[280px] sm:w-[320px] aspect-[9/19] rounded-[48px] p-3 bg-gradient-to-b from-white/20 via-white/5 to-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.8)] border border-white/20">
+            <!-- Glass Inner Bezel -->
+            <div class="w-full h-full rounded-[40px] bg-canvas overflow-hidden relative border border-black flex flex-col">
+              <!-- Camera Notch -->
+              <div class="absolute top-2.5 left-1/2 -translate-x-1/2 w-24 h-4 bg-black rounded-full z-30 flex items-center justify-center">
+                <div class="w-2.5 h-2.5 rounded-full bg-white/10 mr-1.5"></div>
+                <div class="w-2 h-2 rounded-full bg-accent-violet/40"></div>
+              </div>
+              
+              <!-- Screen Preview Images (Tabbed) -->
+              <div class="w-full h-full relative overflow-hidden bg-canvas">
+                <img id="preview-screen-img" src="assets/img/now-playing-screen.png" alt="WAVEN Android App UI" class="w-full h-full object-cover transition-opacity duration-300">
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Screen Selector Pills -->
+          <div class="flex items-center gap-2 mt-6 p-1.5 rounded-2xl bg-surface border border-white/10 text-xs font-semibold">
+            <button onclick="switchHeroScreen('now-playing')" class="screen-tab px-3 py-1.5 rounded-xl bg-accent-citron text-black font-bold transition-all" data-screen="now-playing">Now Playing</button>
+            <button onclick="switchHeroScreen('home')" class="screen-tab px-3 py-1.5 rounded-xl text-white/60 hover:text-white transition-all" data-screen="home">Library</button>
+            <button onclick="switchHeroScreen('lyrics')" class="screen-tab px-3 py-1.5 rounded-xl text-white/60 hover:text-white transition-all" data-screen="lyrics">Lyrics</button>
+            <button onclick="switchHeroScreen('equalizer')" class="screen-tab px-3 py-1.5 rounded-xl text-white/60 hover:text-white transition-all" data-screen="equalizer">Equalizer</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: UI Reference Showcase -->
+  <section id="showcase" class="py-20 bg-surface/50 border-t border-white/5 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-xs uppercase tracking-widest font-extrabold text-accent-citron mb-3">Nocturne Pulse UI</h2>
+        <p class="font-headline text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-4">
+          Engineered for Deep Acoustic Focus
+        </p>
+        <p class="text-white/60 text-base leading-relaxed">
+          Inspired by high-end analog audio consoles and modern dark-luxury mobile design, WAVEN brings 7 meticulously crafted screens with zero visual clutter.
+        </p>
+      </div>
+
+      <!-- 4-Card UI Showcase Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Screen 1: Now Playing -->
+        <div class="glass-card rounded-3xl p-5 flex flex-col group transition-all duration-300 hover:-translate-y-1.5">
+          <div class="w-full aspect-[9/16] rounded-2xl overflow-hidden mb-5 bg-black border border-white/10 relative">
+            <img src="assets/img/now-playing-screen.png" alt="WAVEN Now Playing Screen" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+            <span class="absolute bottom-3 left-3 text-xs font-bold px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-accent-citron">Now Playing</span>
+          </div>
+          <h3 class="font-headline font-bold text-lg text-white mb-2">Atmospheric Playback</h3>
+          <p class="text-xs text-white/60 leading-relaxed">
+            Blurred vinyl backdrop, live scrubber timeline, shuffle/repeat matrix, and instant shortcuts to lyrics and audio DSP.
+          </p>
+        </div>
+
+        <!-- Screen 2: Home Library -->
+        <div class="glass-card rounded-3xl p-5 flex flex-col group transition-all duration-300 hover:-translate-y-1.5">
+          <div class="w-full aspect-[9/16] rounded-2xl overflow-hidden mb-5 bg-black border border-white/10 relative">
+            <img src="assets/img/home-screen.png" alt="WAVEN Home Library Screen" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+            <span class="absolute bottom-3 left-3 text-xs font-bold px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-accent-citron">Local Library</span>
+          </div>
+          <h3 class="font-headline font-bold text-lg text-white mb-2">Instant MediaStore Scan</h3>
+          <p class="text-xs text-white/60 leading-relaxed">
+            Hardware-accelerated queries for thousands of device audio files with tabs for Songs, Artists, Albums, and Playlists.
+          </p>
+        </div>
+
+        <!-- Screen 3: Synchronized Lyrics -->
+        <div class="glass-card rounded-3xl p-5 flex flex-col group transition-all duration-300 hover:-translate-y-1.5">
+          <div class="w-full aspect-[9/16] rounded-2xl overflow-hidden mb-5 bg-black border border-white/10 relative">
+            <img src="assets/img/lyrics-screen.png" alt="WAVEN Lyrics Screen" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+            <span class="absolute bottom-3 left-3 text-xs font-bold px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-accent-citron">Karaoke Sync</span>
+          </div>
+          <h3 class="font-headline font-bold text-lg text-white mb-2">Syllable Lyrics Engine</h3>
+          <p class="text-xs text-white/60 leading-relaxed">
+            Dynamic verse tracking with glowing syllable cadence indicators for an immersive sing-along experience.
+          </p>
+        </div>
+
+        <!-- Screen 4: 6-Band Equalizer -->
+        <div class="glass-card rounded-3xl p-5 flex flex-col group transition-all duration-300 hover:-translate-y-1.5">
+          <div class="w-full aspect-[9/16] rounded-2xl overflow-hidden mb-5 bg-black border border-white/10 relative">
+            <img src="assets/img/equalizer-screen.png" alt="WAVEN Equalizer Screen" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+            <span class="absolute bottom-3 left-3 text-xs font-bold px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-accent-citron">6-Band DSP</span>
+          </div>
+          <h3 class="font-headline font-bold text-lg text-white mb-2">Tactile Frequency Tuning</h3>
+          <p class="text-xs text-white/60 leading-relaxed">
+            Precision decibel control across 60Hz, 150Hz, 400Hz, 1kHz, 2.4kHz, 15kHz, with dedicated sub-bass resonance shaping.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section 3: Architecture & Android Audio Features -->
+  <section id="features" class="py-24 bg-canvas relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-xs uppercase tracking-widest font-extrabold text-accent-citron mb-3">Core Engineering</h2>
+        <p class="font-headline text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-4">
+          Genuine Android Architecture
+        </p>
+        <p class="text-white/60 text-base leading-relaxed">
+          WAVEN is not a web toy. It is backed by native Java Android foreground services, Android MediaSession, and direct OS hardware media bindings.
+        </p>
+      </div>
+
+      <!-- Feature Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- Feature 1 -->
+        <div class="glass-card rounded-3xl p-8 flex flex-col">
+          <div class="w-12 h-12 rounded-2xl bg-accent-citron/10 border border-accent-citron/20 flex items-center justify-center text-accent-citron mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+          </div>
+          <h3 class="font-headline font-bold text-xl text-white mb-3">MediaStore Audio Scanning</h3>
+          <p class="text-sm text-white/65 leading-relaxed">
+            Instantly scans your device storage for MP3, FLAC, WAV, AAC, and M4A. Reads high-res ID3 metadata and embedded album art without cloud latency.
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="glass-card rounded-3xl p-8 flex flex-col">
+          <div class="w-12 h-12 rounded-2xl bg-accent-violet/20 border border-accent-violet/30 flex items-center justify-center text-accent-violet-light mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="font-headline font-bold text-xl text-white mb-3">Lock-Screen MediaSession</h3>
+          <p class="text-sm text-white/65 leading-relaxed">
+            Full Android MediaSession integration. View album art, track progress, and use playback controls directly on your lock screen and system notification shade.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="glass-card rounded-3xl p-8 flex flex-col">
+          <div class="w-12 h-12 rounded-2xl bg-accent-citron/10 border border-accent-citron/20 flex items-center justify-center text-accent-citron mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="font-headline font-bold text-xl text-white mb-3">Audio Focus &amp; Bluetooth</h3>
+          <p class="text-sm text-white/65 leading-relaxed">
+            Gracefully handles phone calls, navigation audio ducking, and automatically pauses when your Bluetooth headphones or aux cable disconnect.
+          </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="glass-card rounded-3xl p-8 flex flex-col">
+          <div class="w-12 h-12 rounded-2xl bg-accent-violet/20 border border-accent-violet/30 flex items-center justify-center text-accent-violet-light mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+          <h3 class="font-headline font-bold text-xl text-white mb-3">100% Offline &amp; Private</h3>
+          <p class="text-sm text-white/65 leading-relaxed">
+            Zero telemetry, zero ads, zero user accounts, and zero cloud tracking. Your local library and listening habits remain completely private on your device.
+          </p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="glass-card rounded-3xl p-8 flex flex-col">
+          <div class="w-12 h-12 rounded-2xl bg-accent-citron/10 border border-accent-citron/20 flex items-center justify-center text-accent-citron mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          </div>
+          <h3 class="font-headline font-bold text-xl text-white mb-3">Modular Future Streaming</h3>
+          <p class="text-sm text-white/65 leading-relaxed">
+            Engineered with a clean provider-abstraction layer. When online streaming is introduced in future releases, it seamlessly docks into the audio architecture.
+          </p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="glass-card rounded-3xl p-8 flex flex-col">
+          <div class="w-12 h-12 rounded-2xl bg-accent-violet/20 border border-accent-violet/30 flex items-center justify-center text-accent-violet-light mb-6">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="font-headline font-bold text-xl text-white mb-3">Minimal Battery Drain</h3>
+          <p class="text-sm text-white/65 leading-relaxed">
+            Lightweight Android foreground service with partial wake locks only during active playback. No background daemon pinging servers or draining battery.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section 4: Technical Comparison Table -->
+  <section id="compare" class="py-20 bg-surface/40 border-t border-white/5">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <h2 class="text-xs uppercase tracking-widest font-extrabold text-accent-citron mb-3">Comparison</h2>
+        <p class="font-headline text-3xl font-extrabold tracking-tight text-white mb-2">
+          Why Audiophiles Choose WAVEN
+        </p>
+        <p class="text-white/60 text-sm">
+          A direct comparison between WAVEN, default stock Android players, and bloated cloud streaming apps.
+        </p>
+      </div>
+
+      <div class="overflow-x-auto rounded-3xl border border-white/10 glass-card">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-white/10 bg-white/5 text-xs uppercase font-extrabold tracking-wider">
+              <th class="py-4 px-6 text-white/80">Capability</th>
+              <th class="py-4 px-6 text-accent-citron bg-accent-citron/10">WAVEN Android</th>
+              <th class="py-4 px-6 text-white/50">Stock OEM Player</th>
+              <th class="py-4 px-6 text-white/50">Cloud Streamers</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 font-medium text-white/80">
+            <tr>
+              <td class="py-4 px-6 font-bold text-white">Bit-Perfect 24-bit/192kHz Local Dec</td>
+              <td class="py-4 px-6 text-accent-citron font-bold bg-accent-citron/5">✔ Native Support</td>
+              <td class="py-4 px-6 text-white/40">Limited (Resampled)</td>
+              <td class="py-4 px-6 text-white/40">Lossy Transcoded</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 font-bold text-white">6-Band DSP Parametric Equalizer</td>
+              <td class="py-4 px-6 text-accent-citron font-bold bg-accent-citron/5">✔ Included Free</td>
+              <td class="py-4 px-6 text-white/40">Basic / Absent</td>
+              <td class="py-4 px-6 text-white/40">Basic Presets</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 font-bold text-white">Real-Time Syllable Lyrics Cadence</td>
+              <td class="py-4 px-6 text-accent-citron font-bold bg-accent-citron/5">✔ Integrated</td>
+              <td class="py-4 px-6 text-white/40">❌ None</td>
+              <td class="py-4 px-6 text-white/40">Requires Paywall</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 font-bold text-white">Lock-Screen MediaSession Controls</td>
+              <td class="py-4 px-6 text-accent-citron font-bold bg-accent-citron/5">✔ Full Integration</td>
+              <td class="py-4 px-6 text-white/40">✔ Partial</td>
+              <td class="py-4 px-6 text-white/40">✔ Full</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 font-bold text-white">Zero Telemetry &amp; 100% Offline</td>
+              <td class="py-4 px-6 text-accent-citron font-bold bg-accent-citron/5">✔ 100% Private</td>
+              <td class="py-4 px-6 text-white/40">OEM Telemetry</td>
+              <td class="py-4 px-6 text-white/40">❌ Heavy Tracking &amp; Ads</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-6 font-bold text-white">Compact Install Size</td>
+              <td class="py-4 px-6 text-accent-citron font-bold bg-accent-citron/5">✔ 3.97 MB APK</td>
+              <td class="py-4 px-6 text-white/40">25 MB – 50 MB</td>
+              <td class="py-4 px-6 text-white/40">100 MB – 250 MB</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section 5: 3-Step Installation Guide -->
+  <section id="install" class="py-20 bg-canvas">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <h2 class="text-xs uppercase tracking-widest font-extrabold text-accent-citron mb-3">Easy Setup</h2>
+        <p class="font-headline text-3xl font-extrabold tracking-tight text-white mb-2">
+          Install on Android in 3 Simple Steps
+        </p>
+        <p class="text-white/60 text-sm">
+          No Google Play account needed. WAVEN installs directly on any Android 8.0+ smartphone or tablet.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Step 1 -->
+        <div class="glass-card rounded-3xl p-6 flex flex-col items-center text-center relative">
+          <div class="w-12 h-12 rounded-full bg-accent-citron text-black font-headline font-black text-lg flex items-center justify-center mb-4 citron-glow">1</div>
+          <h3 class="font-headline font-bold text-lg text-white mb-2">Download APK</h3>
+          <p class="text-xs text-white/60 leading-relaxed">
+            Click the download button to save <strong class="text-white">waven-latest.apk</strong> (3.97 MB) to your device downloads folder.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="glass-card rounded-3xl p-6 flex flex-col items-center text-center relative">
+          <div class="w-12 h-12 rounded-full bg-accent-citron text-black font-headline font-black text-lg flex items-center justify-center mb-4 citron-glow">2</div>
+          <h3 class="font-headline font-bold text-lg text-white mb-2">Allow Unknown Apps</h3>
+          <p class="text-xs text-white/60 leading-relaxed">
+            If prompted by Android, tap <strong class="text-white">Settings</strong> and toggle on "Allow from this source" for your browser or file manager.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="glass-card rounded-3xl p-6 flex flex-col items-center text-center relative">
+          <div class="w-12 h-12 rounded-full bg-accent-citron text-black font-headline font-black text-lg flex items-center justify-center mb-4 citron-glow">3</div>
+          <h3 class="font-headline font-bold text-lg text-white mb-2">Scan &amp; Enjoy</h3>
+          <p class="text-xs text-white/60 leading-relaxed">
+            Launch WAVEN, grant audio storage access, and let the high-speed scanner instantly populate your local music library.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section 6: Direct Download Portal & Mobile QR Code -->
+  <section id="download" class="py-20 bg-gradient-to-b from-canvas via-surface to-canvas border-t border-white/5">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="glass-card rounded-3xl p-8 sm:p-12 border border-white/10 violet-glow relative overflow-hidden">
+        <!-- Background accent light -->
+        <div class="absolute -top-24 -right-24 w-80 h-80 bg-accent-violet/20 blur-[100px] pointer-events-none rounded-full"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+          
+          <!-- Download CTA Info -->
+          <div class="lg:col-span-8 text-center lg:text-left">
+            <span class="inline-block px-3 py-1 rounded-full bg-accent-citron/10 text-accent-citron text-xs font-bold tracking-wider uppercase mb-3">Direct Release</span>
+            <h2 class="font-headline font-extrabold text-3xl sm:text-4xl text-white tracking-tight mb-4">
+              Get WAVEN for Android
+            </h2>
+            <p class="text-white/70 text-sm sm:text-base leading-relaxed mb-6 max-w-xl">
+              Experience local music playback with zero compromises. Bit-perfect master audio, tactile 6-band equalization, and total privacy on your Android device.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4 mb-6">
+              <a href="downloads/waven-latest.apk" download="waven-latest.apk" class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-accent-citron text-black font-headline font-extrabold text-base tracking-wide hover:bg-accent-citron-hover transition-all duration-200 transform hover:-translate-y-0.5 citron-glow">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <span>Download WAVEN APK (3.97 MB)</span>
+              </a>
+              <a href="https://github.com/Abdur07-svg/WAVEN/releases" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-headline font-bold text-sm hover:bg-white/10 transition-colors">
+                <span>All Releases</span>
+                <svg class="w-4 h-4 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </a>
+            </div>
+
+            <!-- Version Meta -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/10 text-xs">
+              <div>
+                <span class="text-white/40 block">Version</span>
+                <strong class="text-white">v1.0.3 (Build 4)</strong>
+              </div>
+              <div>
+                <span class="text-white/40 block">Package Size</span>
+                <strong class="text-white">3.97 MB</strong>
+              </div>
+              <div>
+                <span class="text-white/40 block">Minimum OS</span>
+                <strong class="text-white">Android 8.0+</strong>
+              </div>
+              <div>
+                <span class="text-white/40 block">Architecture</span>
+                <strong class="text-white">ARM64 &amp; x86_64</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- QR Code for Mobile Scanning from Desktop -->
+          <div class="lg:col-span-4 flex flex-col items-center p-6 rounded-2xl bg-canvas border border-white/10 text-center">
+            <div class="w-36 h-36 mb-4 p-2 bg-white rounded-xl shadow-lg flex items-center justify-center">
+              <!-- Inline High-Quality Vector QR Code for APK Download -->
+              <svg class="w-full h-full" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10,10 h30 v30 h-30 z M16,16 v18 h18 v-18 z M22,22 h6 v6 h-6 z" fill="#0E0E13"/>
+                <path d="M80,10 h30 v30 h-30 z M86,16 v18 h18 v-18 z M92,22 h6 v6 h-6 z" fill="#0E0E13"/>
+                <path d="M10,80 h30 v30 h-30 z M16,86 v18 h18 v-18 z M22,92 h6 v6 h-6 z" fill="#0E0E13"/>
+                <rect x="50" y="10" width="6" height="6" fill="#0E0E13"/>
+                <rect x="62" y="16" width="6" height="12" fill="#0E0E13"/>
+                <rect x="50" y="30" width="18" height="6" fill="#0E0E13"/>
+                <rect x="10" y="50" width="12" height="6" fill="#0E0E13"/>
+                <rect x="30" y="50" width="6" height="18" fill="#0E0E13"/>
+                <rect x="42" y="44" width="6" height="12" fill="#0E0E13"/>
+                <rect x="54" y="44" width="12" height="6" fill="#0E0E13"/>
+                <rect x="72" y="44" width="18" height="6" fill="#0E0E13"/>
+                <rect x="96" y="50" width="14" height="6" fill="#0E0E13"/>
+                <rect x="50" y="56" width="6" height="12" fill="#0E0E13"/>
+                <rect x="62" y="56" width="12" height="18" fill="#0E0E13"/>
+                <rect x="80" y="56" width="6" height="6" fill="#0E0E13"/>
+                <rect x="92" y="62" width="18" height="6" fill="#0E0E13"/>
+                <rect x="44" y="74" width="12" height="6" fill="#0E0E13"/>
+                <rect x="62" y="80" width="6" height="12" fill="#0E0E13"/>
+                <rect x="74" y="80" width="12" height="6" fill="#0E0E13"/>
+                <rect x="92" y="80" width="18" height="12" fill="#0E0E13"/>
+                <rect x="50" y="98" width="18" height="6" fill="#0E0E13"/>
+                <rect x="74" y="98" width="6" height="12" fill="#0E0E13"/>
+                <rect x="86" y="98" width="12" height="6" fill="#0E0E13"/>
+              </svg>
+            </div>
+            <span class="text-xs font-bold text-white mb-1">Scan with Phone Camera</span>
+            <span class="text-[11px] text-white/50">Instant APK download link directly on Android</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Sticky Mobile Bottom Bar (Visible on mobile viewports only) -->
+  <aside aria-label="Quick Download" class="md:hidden fixed bottom-0 left-0 right-0 p-3 bg-canvas/95 backdrop-blur-xl border-t border-white/10 z-50 flex items-center justify-between shadow-2xl">
+    <div class="flex items-center gap-2.5">
+      <img src="assets/img/logo-192.png" alt="WAVEN" class="w-8 h-8 rounded-lg">
+      <div class="flex flex-col">
+        <span class="font-headline font-bold text-xs text-white">WAVEN APK</span>
+        <span class="text-[10px] text-white/50">v1.0.3 • 3.97 MB</span>
+      </div>
+    </div>
+    <a href="downloads/waven-latest.apk" download="waven-latest.apk" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-accent-citron text-black font-headline font-extrabold text-xs tracking-wide citron-glow">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      <span>Download</span>
+    </a>
+  </aside>
+
+  <!-- Footer -->
+  <footer class="py-12 bg-canvas border-t border-white/5 pb-24 md:pb-12 text-xs text-white/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-3">
+          <img src="assets/img/logo-192.png" alt="WAVEN" class="w-7 h-7 rounded-lg">
+          <span class="font-headline font-bold text-sm text-white">WAVEN Project</span>
+          <span class="text-white/20">|</span>
+          <span>Open-Source Android Audio</span>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-6">
+          <a href="#features" class="hover:text-white transition-colors">Features</a>
+          <a href="#showcase" class="hover:text-white transition-colors">Screenshots</a>
+          <a href="#install" class="hover:text-white transition-colors">Installation</a>
+          <a href="https://github.com/Abdur07-svg/WAVEN" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">GitHub Repository</a>
+          <a href="sitemap.xml" class="hover:text-white transition-colors">Sitemap</a>
+        </div>
+
+        <div>
+          <span>&copy; 2026 WAVEN. Licensed under Apache 2.0.</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Interactive JavaScript for Tab Switching (NO audio playback) -->
+  <script>
+    const SCREEN_PATHS = {
+      'now-playing': 'assets/img/now-playing-screen.png',
+      'home': 'assets/img/home-screen.png',
+      'lyrics': 'assets/img/lyrics-screen.png',
+      'equalizer': 'assets/img/equalizer-screen.png'
+    };
+
+    function switchHeroScreen(screenKey) {
+      const img = document.getElementById('preview-screen-img');
+      if (!img || !SCREEN_PATHS[screenKey]) return;
+
+      img.style.opacity = '0';
+      setTimeout(() => {
+        img.src = SCREEN_PATHS[screenKey];
+        img.style.opacity = '1';
+      }, 150);
+
+      document.querySelectorAll('.screen-tab').forEach(btn => {
+        if (btn.getAttribute('data-screen') === screenKey) {
+          btn.className = 'screen-tab px-3 py-1.5 rounded-xl bg-accent-citron text-black font-bold transition-all';
+        } else {
+          btn.className = 'screen-tab px-3 py-1.5 rounded-xl text-white/60 hover:text-white transition-all';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

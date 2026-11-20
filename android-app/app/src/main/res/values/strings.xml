@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">WAVEN</string>
+    <string name="channel_name">WAVEN Music Playback</string>
+    <string name="channel_description">Active media controls for WAVEN playback</string>
+</resources>

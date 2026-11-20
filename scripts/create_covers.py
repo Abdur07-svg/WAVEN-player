@@ -1,0 +1,38 @@
+import os
+import fitz
+
+os.makedirs('assets/covers', exist_ok=True)
+os.makedirs('web/assets/img', exist_ok=True)
+
+cover_svg = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="covGrad" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#3A1363" />
+      <stop offset="60%" stop-color="#1F1F24" />
+      <stop offset="100%" stop-color="#0E0E13" />
+    </radialGradient>
+    <linearGradient id="limeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#CCF22E" />
+      <stop offset="100%" stop-color="#7928CA" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" rx="32" fill="url(#covGrad)" />
+  <circle cx="200" cy="200" r="120" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2" stroke-dasharray="4 6" />
+  <circle cx="200" cy="200" r="80" fill="none" stroke="rgba(204,242,46,0.1)" stroke-width="1.5" />
+  <g transform="translate(200, 200)">
+    <path d="M -45,-15 C -35,-15 -25,35 0,35 C 25,35 35,-15 45,-15" fill="none" stroke="url(#limeGrad)" stroke-width="12" stroke-linecap="round" />
+    <circle cx="0" cy="-15" r="16" fill="#CCF22E" />
+    <path d="M -5,-22 L 7,-15 L -5,-8 Z" fill="#171E00" />
+  </g>
+</svg>"""
+
+with open('assets/covers/default_cover.svg', 'w', encoding='utf-8') as f:
+    f.write(cover_svg)
+with open('web/assets/img/default_cover.svg', 'w', encoding='utf-8') as f:
+    f.write(cover_svg)
+
+doc = fitz.open(stream=cover_svg.encode('utf-8'), filetype='svg')
+pix = doc[0].get_pixmap(dpi=150, alpha=True)
+pix.save('assets/covers/default_cover.png')
+pix.save('web/assets/img/default_cover.png')
+print('Default album art covers created!')
