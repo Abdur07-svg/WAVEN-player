@@ -74,7 +74,7 @@
 <body class="bg-canvas text-on-surface antialiased select-none font-body-md overflow-x-hidden selection:bg-primary-container selection:text-black">
 
   <!-- Fullscreen App Container -->
-  <div class="relative w-full min-h-screen bg-canvas overflow-y-auto no-scrollbar pb-36">
+  <div class="relative w-full min-h-full bg-canvas pb-36">
 
     <!-- =========================================================================
          SCREEN 1: HOME (waven_home)
@@ -597,7 +597,7 @@
       <div class="rounded-2xl bg-surface-container p-space-md flex flex-col gap-2 mb-space-xl border border-white/5 shadow-lg text-xs text-on-surface-variant">
         <div class="flex items-center justify-between">
           <span class="font-bold text-white text-sm">WAVEN Android</span>
-          <span class="font-semibold text-primary-container">v1.0.3 (Build 4)</span>
+          <span class="font-semibold text-primary-container">v1.0.4 (Build 5)</span>
         </div>
         <p>Bit-perfect 24-bit/192kHz master local audio engine with hardware MediaSession and 6-band DSP equalizer.</p>
         <div class="flex items-center justify-between pt-2 border-t border-white/5 text-[11px]">
@@ -674,7 +674,7 @@
   <!-- =========================================================================
        SCREEN 4: FULL NOW PLAYING MODAL (waven_now_playing_player)
        ========================================================================= -->
-  <div id="view-now-playing" class="fixed inset-0 z-50 bg-canvas flex flex-col justify-between px-margin pb-safe pt-safe overflow-hidden transition-transform duration-300 translate-y-full">
+  <div id="view-now-playing" class="fixed inset-0 z-50 bg-canvas flex flex-col justify-between px-margin pb-safe pt-safe transition-transform duration-300 pointer-events-none" style="transform: translateY(100%);">
     <!-- Dynamic Atmospheric Backdrop Glow -->
     <div class="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-secondary-container/25 blur-[120px] rounded-full"></div>
 
@@ -780,7 +780,7 @@
   <!-- =========================================================================
        SCREEN 5: SYNCHRONIZED LYRICS MODAL (waven_lyrics)
        ========================================================================= -->
-  <div id="view-lyrics" class="fixed inset-0 z-50 bg-canvas flex flex-col justify-between px-margin pb-safe pt-safe overflow-hidden transition-transform duration-300 translate-y-full">
+  <div id="view-lyrics" class="fixed inset-0 z-50 bg-canvas flex flex-col justify-between px-margin pb-safe pt-safe transition-transform duration-300 pointer-events-none" style="transform: translateY(100%);">
     <!-- Header -->
     <header class="w-full flex items-center justify-between py-space-md z-10">
       <button onclick="window.wavenApp.closeLyrics()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface active:scale-95 transition-all">
@@ -853,21 +853,27 @@
       <p class="text-xs text-on-surface-variant mt-1 mb-5">Set up your private offline profile. No email or phone number required.</p>
 
       <!-- Profile Avatar Picker -->
-      <div class="relative w-20 h-20 rounded-full p-0.5 bg-gradient-to-tr from-secondary-container to-primary-container mb-3 shadow-lg">
+      <div class="relative w-20 h-20 rounded-full p-0.5 bg-gradient-to-tr from-secondary-container to-primary-container mb-2 shadow-lg">
         <img id="profile-preview-avatar" class="w-full h-full rounded-full object-cover bg-surface-container-high" src="assets/covers/default_cover.png" alt="Avatar">
         <label for="profile-image-upload" class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-primary-container text-black flex items-center justify-center cursor-pointer shadow-md hover:scale-105 active:scale-95 transition-transform" title="Upload Photo">
           <span class="material-symbols-outlined text-[15px]">photo_camera</span>
         </label>
-        <input type="file" id="profile-image-upload" accept="image/*" class="hidden">
+        <input type="file" id="profile-image-upload" accept="image/*" class="sr-only" style="position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none;">
       </div>
-      <span class="text-[11px] text-primary-fixed mb-4 cursor-pointer hover:underline" onclick="document.getElementById('profile-image-upload').click()">Tap camera to choose photo</span>
+
+      <!-- Device Photo Selection Button -->
+      <button type="button" onclick="document.getElementById('profile-image-upload').click()" class="mb-3 px-3.5 py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-primary-fixed text-xs font-semibold flex items-center gap-1.5 transition-colors active:scale-95">
+        <span class="material-symbols-outlined text-[16px]">add_a_photo</span>
+        <span>Choose Photo from Device</span>
+      </button>
 
       <!-- Preset Avatars Quick Select -->
       <div class="flex items-center gap-2 mb-4">
-        <button type="button" onclick="window.wavenApp.selectPresetAvatar('assets/covers/default_cover.png')" class="w-8 h-8 rounded-full border border-white/20 overflow-hidden hover:scale-110 transition-transform">
+        <span class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider mr-1">Or Pick:</span>
+        <button type="button" onclick="window.wavenApp.selectPresetAvatar('assets/covers/default_cover.png')" class="w-7 h-7 rounded-full border border-white/20 overflow-hidden hover:scale-110 transition-transform" title="Vinyl Disc">
           <img src="assets/covers/default_cover.png" class="w-full h-full object-cover">
         </button>
-        <button type="button" onclick="window.wavenApp.selectPresetAvatar('assets/img/logo-192.png')" class="w-8 h-8 rounded-full border border-white/20 overflow-hidden hover:scale-110 transition-transform">
+        <button type="button" onclick="window.wavenApp.selectPresetAvatar('assets/img/logo-192.png')" class="w-7 h-7 rounded-full border border-white/20 overflow-hidden hover:scale-110 transition-transform" title="WAVEN Pulse">
           <img src="assets/img/logo-192.png" class="w-full h-full object-cover">
         </button>
       </div>

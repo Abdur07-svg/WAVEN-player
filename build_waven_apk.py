@@ -10,8 +10,8 @@ import zipfile
 
 PACKAGE_NAME = "com.waven.musicplayer"
 APP_NAME = "WAVEN"
-VERSION_CODE = "4"
-VERSION_NAME = "1.0.3"
+VERSION_CODE = "5"
+VERSION_NAME = "1.0.4"
 MIN_SDK = "24"
 TARGET_SDK = "34"
 

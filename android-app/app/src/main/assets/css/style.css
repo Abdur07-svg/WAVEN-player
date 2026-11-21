@@ -38,14 +38,15 @@
 
 html, body {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   margin: 0;
   padding: 0;
-  background-color: var(--color-canvas);
-  color: var(--color-on-surface);
+  background-color: #0e0e13;
+  color: #e4e1e9;
   font-family: 'Inter', sans-serif;
-  overflow: hidden;
-  overscroll-behavior-y: none;
+  overflow-x: hidden;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Typography Helpers */
@@ -139,6 +140,8 @@ h1, h2, h3, h4, h5, h6, .font-headline-lg, .font-headline-md, .font-headline-xl 
   display: none;
   opacity: 0;
   transition: opacity 0.2s ease;
+  min-height: 100%;
+  padding-bottom: 140px; /* Space for mini player + dock */
 }
 .view-container.active {
   display: block;
@@ -146,17 +149,32 @@ h1, h2, h3, h4, h5, h6, .font-headline-lg, .font-headline-md, .font-headline-xl 
 }
 
 /* Fullscreen Modals (Now Playing & Lyrics) */
-.modal-overlay {
+#view-now-playing {
   position: fixed;
   inset: 0;
-  z-index: 100;
-  background: var(--color-surface);
+  z-index: 50;
+  background: #0E0E13;
   transform: translateY(100%);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
-.modal-overlay.open {
-  transform: translateY(0);
+#view-now-playing.open {
+  transform: translateY(0) !important;
+}
+
+#view-lyrics {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: #0E0E13;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#view-lyrics.open {
+  transform: translateY(0) !important;
 }
 
 /* Equalizer Slider Tracks */

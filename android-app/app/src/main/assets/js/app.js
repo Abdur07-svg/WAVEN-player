@@ -223,26 +223,42 @@ class WavenApp {
   openNowPlaying() {
     this.isNowPlayingOpen = true;
     const modal = document.getElementById('view-now-playing');
-    if (modal) modal.classList.add('open');
+    if (modal) {
+      modal.classList.add('open');
+      modal.style.transform = 'translateY(0)';
+      modal.style.pointerEvents = 'auto';
+    }
   }
 
   closeNowPlaying() {
     this.isNowPlayingOpen = false;
     const modal = document.getElementById('view-now-playing');
-    if (modal) modal.classList.remove('open');
+    if (modal) {
+      modal.classList.remove('open');
+      modal.style.transform = 'translateY(100%)';
+      modal.style.pointerEvents = 'none';
+    }
   }
 
   openLyrics() {
     this.isLyricsOpen = true;
     const modal = document.getElementById('view-lyrics');
-    if (modal) modal.classList.add('open');
+    if (modal) {
+      modal.classList.add('open');
+      modal.style.transform = 'translateY(0)';
+      modal.style.pointerEvents = 'auto';
+    }
     if (this.lyricsManager) this.lyricsManager.render();
   }
 
   closeLyrics() {
     this.isLyricsOpen = false;
     const modal = document.getElementById('view-lyrics');
-    if (modal) modal.classList.remove('open');
+    if (modal) {
+      modal.classList.remove('open');
+      modal.style.transform = 'translateY(100%)';
+      modal.style.pointerEvents = 'none';
+    }
   }
 
   handleBackPress() {
@@ -643,6 +659,15 @@ class WavenApp {
   // Player Controls Binding
   // -------------------------------------------------------------
   bindPlayerControls() {
+    // Mini player container tap to open full Now Playing screen
+    const miniPlayer = document.getElementById('mini-player');
+    if (miniPlayer) {
+      miniPlayer.addEventListener('click', (e) => {
+        if (e.target.closest('#mini-prev-btn, #mini-play-btn, #mini-next-btn')) return;
+        this.openNowPlaying();
+      });
+    }
+
     // Mini player transport buttons
     const miniPlay = document.getElementById('mini-play-btn');
     if (miniPlay) miniPlay.addEventListener('click', () => this.player.togglePlayPause());
