@@ -1,5 +1,6 @@
 /**
  * WAVEN — Main Application Coordinator & View Router
+ * High-Fidelity Local Music Player Architecture
  */
 
 class WavenApp {
@@ -8,11 +9,15 @@ class WavenApp {
     this.previousView = 'home';
     this.isNowPlayingOpen = false;
     this.isLyricsOpen = false;
+    this.currentLibFilter = 'all'; // 'all' | 'liked' | 'artists' | 'albums'
 
     this.player = window.wavenPlayer;
     this.library = window.wavenLibrary;
     this.audioEngine = window.wavenAudioEngine;
     this.lyricsManager = window.wavenLyricsManager;
+
+    this.userProfile = this.loadUserProfile();
+    this.tempAvatar = this.userProfile.avatar;
 
     this.init();
   }
@@ -24,22 +29,160 @@ class WavenApp {
     this.bindLibraryControls();
     this.bindExploreControls();
     this.bindLyricsControls();
+    this.bindProfileControls();
+
+    this.applyUserProfile();
     this.renderHome();
     this.renderLibrary();
     this.renderExplore();
+    this.updateSettingsUI();
 
-    // Default load first track into player ready state
-    const allTracks = this.library.getAllTracks();
-    if (allTracks.length > 0) {
-      this.player.queue = [...allTracks];
-      this.player.currentIndex = 0;
-      this.player.currentTrack = allTracks[0];
-      this.player.duration = allTracks[0].duration;
-      this.player.updateTrackMetaUI(allTracks[0]);
+    // Check first-time onboarding
+    if (!localStorage.getItem('waven_profile_initialized')) {
+      setTimeout(() => this.openProfileModal(), 400);
+    }
+
+    // Attempt auto-scan if native bridge is already available
+    if (this.audioEngine.isNative && this.audioEngine.nativeBridge) {
+      setTimeout(() => this.scanDeviceAudio(), 600);
     }
   }
 
+  // -------------------------------------------------------------
+  // User Profile & Onboarding Management (No email/phone required)
+  // -------------------------------------------------------------
+  loadUserProfile() {
+    try {
+      const data = localStorage.getItem('waven_user_profile');
+      if (data) {
+        return JSON.parse(data);
+      }
+    } catch (e) {}
+    return {
+      name: 'Abdur',
+      handle: '@audiophile',
+      avatar: 'assets/covers/default_cover.png'
+    };
+  }
+
+  saveUserProfile(profile) {
+    this.userProfile = { ...this.userProfile, ...profile };
+    try {
+      localStorage.setItem('waven_user_profile', JSON.stringify(this.userProfile));
+      localStorage.setItem('waven_profile_initialized', 'true');
+    } catch (e) {}
+    this.applyUserProfile();
+  }
+
+  applyUserProfile() {
+    const name = this.userProfile.name || 'Abdur';
+    const handle = this.userProfile.handle || '@audiophile';
+    const avatar = this.userProfile.avatar || 'assets/covers/default_cover.png';
+
+    // 1. Home Screen
+    const homeGreeting = document.getElementById('home-greeting');
+    if (homeGreeting) homeGreeting.textContent = `Good day, ${name}`;
+    const homeAvatar = document.getElementById('home-profile-avatar');
+    if (homeAvatar) homeAvatar.src = avatar;
+
+    // 2. Library Screen Vault
+    const vaultName = document.getElementById('vault-user-name');
+    if (vaultName) vaultName.textContent = `${name}'s Vault`;
+    const vaultAvatar = document.getElementById('vault-user-avatar');
+    if (vaultAvatar) vaultAvatar.src = avatar;
+
+    // 3. Settings Hub
+    const settingsName = document.getElementById('settings-profile-name');
+    if (settingsName) settingsName.textContent = name;
+    const settingsHandle = document.getElementById('settings-profile-handle');
+    if (settingsHandle) settingsHandle.textContent = `${handle} • Offline Listener`;
+    const settingsAvatar = document.getElementById('settings-profile-avatar');
+    if (settingsAvatar) settingsAvatar.src = avatar;
+  }
+
+  openProfileModal() {
+    const modal = document.getElementById('profile-modal');
+    if (!modal) return;
+
+    const nameInput = document.getElementById('profile-name-input');
+    const handleInput = document.getElementById('profile-handle-input');
+    const avatarPreview = document.getElementById('profile-preview-avatar');
+
+    if (nameInput) nameInput.value = this.userProfile.name || 'Abdur';
+    if (handleInput) handleInput.value = this.userProfile.handle || '@audiophile';
+    if (avatarPreview) avatarPreview.src = this.userProfile.avatar || 'assets/covers/default_cover.png';
+    this.tempAvatar = this.userProfile.avatar;
+
+    modal.classList.remove('hidden');
+  }
+
+  closeProfileModal() {
+    const modal = document.getElementById('profile-modal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  selectPresetAvatar(avatarUrl) {
+    this.tempAvatar = avatarUrl;
+    const preview = document.getElementById('profile-preview-avatar');
+    if (preview) preview.src = avatarUrl;
+  }
+
+  bindProfileControls() {
+    const uploadInput = document.getElementById('profile-image-upload');
+    if (uploadInput) {
+      uploadInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const dataUrl = event.target.result;
+            this.tempAvatar = dataUrl;
+            const preview = document.getElementById('profile-preview-avatar');
+            if (preview) preview.src = dataUrl;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  }
+
+  saveProfileFromModal() {
+    const nameInput = document.getElementById('profile-name-input');
+    const handleInput = document.getElementById('profile-handle-input');
+
+    const name = nameInput ? nameInput.value.trim() : 'Abdur';
+    const handle = handleInput ? handleInput.value.trim() : '@audiophile';
+
+    this.saveUserProfile({
+      name: name || 'Abdur',
+      handle: handle.startsWith('@') ? handle : `@${handle}`,
+      avatar: this.tempAvatar || 'assets/covers/default_cover.png'
+    });
+
+    this.closeProfileModal();
+    if (this.audioEngine.isNative && this.audioEngine.nativeBridge) {
+      this.audioEngine.nativeBridge.showToast('Profile saved!');
+    }
+  }
+
+  // -------------------------------------------------------------
+  // Online Streaming Explanatory Notice
+  // -------------------------------------------------------------
+  showStreamingNotice(title) {
+    const modal = document.getElementById('streaming-modal');
+    const titleEl = document.getElementById('streaming-modal-title');
+    if (titleEl && title) titleEl.textContent = title;
+    if (modal) modal.classList.remove('hidden');
+  }
+
+  closeStreamingNotice() {
+    const modal = document.getElementById('streaming-modal');
+    if (modal) modal.classList.add('hidden');
+  }
+
+  // -------------------------------------------------------------
   // View Navigation
+  // -------------------------------------------------------------
   navigateTo(viewName) {
     if (this.currentView === viewName) return;
     this.previousView = this.currentView;
@@ -66,6 +209,15 @@ class WavenApp {
         a.className = 'flex items-center justify-center w-12 h-12 rounded-full text-on-surface-variant hover:text-on-surface transition-all';
       }
     });
+
+    // Refresh view specific contents
+    if (viewName === 'library') {
+      this.renderLibrary();
+    } else if (viewName === 'explore') {
+      this.renderExplore();
+    } else if (viewName === 'settings') {
+      this.updateSettingsUI();
+    }
   }
 
   openNowPlaying() {
@@ -93,55 +245,6 @@ class WavenApp {
     if (modal) modal.classList.remove('open');
   }
 
-  openPlaylistDetails(playlistId) {
-    const pl = this.library.getPlaylists().find(p => p.id === playlistId) || this.library.getPlaylists()[0];
-    const titleEl = document.getElementById('pl-detail-title');
-    const curatorEl = document.getElementById('pl-detail-curator');
-    const tracklistEl = document.getElementById('pl-detail-tracklist');
-
-    if (titleEl) titleEl.textContent = pl.title;
-    if (curatorEl) curatorEl.textContent = `Curated by ${pl.curator} • ${pl.trackCount} Songs • ${pl.duration}`;
-
-    // Render tracks
-    if (tracklistEl) {
-      const tracks = this.library.getAllTracks();
-      tracklistEl.innerHTML = tracks.map((t, i) => {
-        const isCurrent = this.player.currentTrack && this.player.currentTrack.id === t.id;
-        return `
-          <div class="track-row group relative flex items-center justify-between p-space-sm rounded-DEFAULT ${isCurrent ? 'bg-surface-container-low/70' : 'hover:bg-surface-container-low'} transition-all cursor-pointer" onclick="window.wavenApp.playSpecificTrack('${t.id}')">
-            <div class="flex items-center gap-space-md min-w-0 flex-1">
-              <div class="w-7 h-7 flex items-center justify-center shrink-0">
-                ${isCurrent && this.player.isPlaying ? `
-                  <div class="flex items-end gap-0.5 h-4">
-                    <span class="w-[3px] bg-primary-fixed rounded-full eq-bar-1"></span>
-                    <span class="w-[3px] bg-primary-fixed rounded-full eq-bar-2"></span>
-                    <span class="w-[3px] bg-primary-fixed rounded-full eq-bar-3"></span>
-                    <span class="w-[3px] bg-primary-fixed rounded-full eq-bar-4"></span>
-                  </div>
-                ` : `
-                  <span class="text-center font-label-md text-label-md text-on-surface-variant group-hover:hidden">${(i + 1).toString().padStart(2, '0')}</span>
-                  <span class="material-symbols-outlined text-[20px] text-primary hidden group-hover:block">play_arrow</span>
-                `}
-              </div>
-              <div class="min-w-0 flex-1">
-                <p class="font-label-lg text-label-lg ${isCurrent ? 'text-primary-fixed font-bold' : 'text-primary'} truncate">${t.title}</p>
-                <p class="font-body-sm text-body-sm text-on-surface-variant truncate">${t.artist}</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-space-sm shrink-0 ml-space-sm">
-              <span class="font-label-sm text-label-sm ${isCurrent ? 'text-primary-fixed font-semibold' : 'text-on-surface-variant'}">${this.player.formatTime(t.duration)}</span>
-              <button class="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface transition-colors" onclick="event.stopPropagation(); window.wavenApp.toggleFavorite('${t.id}')">
-                <span class="material-symbols-outlined text-[20px] ${this.library.isFavorite(t.id) ? 'text-secondary-fixed icon-filled' : ''}">favorite</span>
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    this.navigateTo('playlist-details');
-  }
-
   handleBackPress() {
     if (this.isLyricsOpen) {
       this.closeLyrics();
@@ -151,317 +254,264 @@ class WavenApp {
       this.closeNowPlaying();
       return true;
     }
-    if (this.currentView === 'playlist-details' || this.currentView === 'settings') {
-      this.navigateTo(this.previousView || 'home');
+    const profileModal = document.getElementById('profile-modal');
+    if (profileModal && !profileModal.classList.contains('hidden')) {
+      this.closeProfileModal();
+      return true;
+    }
+    const streamModal = document.getElementById('streaming-modal');
+    if (streamModal && !streamModal.classList.contains('hidden')) {
+      this.closeStreamingNotice();
+      return true;
+    }
+    if (this.currentView !== 'home') {
+      this.navigateTo('home');
       return true;
     }
     return false;
   }
 
-  // Navigation Dock Binding
-  bindNavigation() {
-    document.querySelectorAll('#bottom-nav a[data-path]').forEach(a => {
-      a.addEventListener('click', (e) => {
-        e.preventDefault();
-        const path = a.getAttribute('data-path');
-        this.navigateTo(path);
-      });
-    });
+  // -------------------------------------------------------------
+  // Audio Scanning & Storage
+  // -------------------------------------------------------------
+  scanDeviceAudio() {
+    const scanBtnText = document.getElementById('scan-btn-text');
+    if (scanBtnText) scanBtnText.textContent = 'Scanning...';
 
-    // Mini Player Click -> Open Now Playing
-    const miniPlayer = document.getElementById('mini-player');
-    if (miniPlayer) {
-      miniPlayer.addEventListener('click', (e) => {
-        // Prevent toggle if clicking play button directly
-        if (e.target.closest('#mini-play-btn') || e.target.closest('#mini-fav-btn')) return;
-        this.openNowPlaying();
-      });
-    }
-
-    // Now Playing dismiss
-    const dismissNp = document.getElementById('np-dismiss-btn');
-    if (dismissNp) {
-      dismissNp.addEventListener('click', () => this.closeNowPlaying());
-    }
-
-    // Now Playing lyrics teaser click -> Open Lyrics Sheet
-    const lyricsTeaser = document.getElementById('np-lyrics-teaser');
-    if (lyricsTeaser) {
-      lyricsTeaser.addEventListener('click', () => this.openLyrics());
-    }
-
-    // Lyrics dismiss
-    const dismissLyrics = document.getElementById('lyrics-dismiss-btn');
-    if (dismissLyrics) {
-      dismissLyrics.addEventListener('click', () => this.closeLyrics());
-    }
-
-    // Playlist Details back button
-    const plBack = document.getElementById('pl-back-btn');
-    if (plBack) {
-      plBack.addEventListener('click', () => this.navigateTo(this.previousView || 'home'));
-    }
-
-    // Settings back button
-    const settingsBack = document.getElementById('settings-back-btn');
-    if (settingsBack) {
-      settingsBack.addEventListener('click', () => this.navigateTo(this.previousView || 'home'));
-    }
-  }
-
-  // Player Controls Binding
-  bindPlayerControls() {
-    // Mini Player Play/Pause
-    const miniPlay = document.getElementById('mini-play-btn');
-    if (miniPlay) {
-      miniPlay.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.player.togglePlayPause();
-      });
-    }
-
-    // Mini Player Favorite
-    const miniFav = document.getElementById('mini-fav-btn');
-    if (miniFav) {
-      miniFav.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (this.player.currentTrack) {
-          const isFav = this.library.toggleFavorite(this.player.currentTrack.id);
-          this.player.updateFavoriteUI(isFav);
-        }
-      });
-    }
-
-    // Now Playing Play/Pause Big CTA
-    const npPlay = document.getElementById('np-play-btn');
-    if (npPlay) {
-      npPlay.addEventListener('click', () => this.player.togglePlayPause());
-    }
-
-    // Now Playing Prev / Next
-    const npPrev = document.getElementById('np-prev-btn');
-    if (npPrev) npPrev.addEventListener('click', () => this.player.playPrevious());
-
-    const npNext = document.getElementById('np-next-btn');
-    if (npNext) npNext.addEventListener('click', () => this.player.playNext());
-
-    // Shuffle & Repeat
-    const npShuffle = document.getElementById('np-shuffle-btn');
-    if (npShuffle) npShuffle.addEventListener('click', () => this.player.toggleShuffle());
-
-    const npRepeat = document.getElementById('np-repeat-btn');
-    if (npRepeat) npRepeat.addEventListener('click', () => this.player.cycleRepeat());
-
-    // Favorite toggle in Now Playing
-    const npFav = document.getElementById('np-fav-btn');
-    if (npFav) {
-      npFav.addEventListener('click', () => {
-        if (this.player.currentTrack) {
-          const isFav = this.library.toggleFavorite(this.player.currentTrack.id);
-          this.player.updateFavoriteUI(isFav);
-        }
-      });
-    }
-
-    // Interactive Scrubber seeking
-    const scrubberContainer = document.getElementById('np-scrubber-container');
-    if (scrubberContainer) {
-      const handleSeek = (e) => {
-        const rect = scrubberContainer.getBoundingClientRect();
-        const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-        const clickX = Math.max(0, Math.min(clientX - rect.left, rect.width));
-        const percentage = clickX / rect.width;
-        const targetSec = percentage * Math.max(1, this.player.duration);
-        this.player.seekTo(targetSec);
+    if (this.audioEngine.isNative && this.audioEngine.nativeBridge) {
+      this.audioEngine.nativeBridge.scanDeviceAudio();
+    } else {
+      // Browser fallback file picker
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'audio/*';
+      input.multiple = true;
+      input.onchange = (e) => {
+        const files = Array.from(e.target.files);
+        const scanned = files.map((f, i) => ({
+          id: 'local_file_' + i,
+          title: f.name.replace(/\.[^/.]+$/, ""),
+          artist: 'Local Device Audio',
+          album: 'Device Storage',
+          duration: 180,
+          uri: URL.createObjectURL(f),
+          filePath: f.name,
+          coverArt: 'assets/covers/default_cover.png',
+          hires: true
+        }));
+        this.library.addScannedTracks(scanned);
+        this.renderLibrary();
+        this.renderHome();
+        this.renderExplore();
+        this.updateSettingsUI();
+        if (scanBtnText) scanBtnText.textContent = 'Scan Device Music';
       };
-
-      scrubberContainer.addEventListener('click', handleSeek);
+      input.click();
     }
   }
 
-  // Equalizer & Audio Settings Binding
-  bindEqualizerControls() {
-    // Master EQ toggle switch
-    const eqToggle = document.getElementById('eq-master-toggle');
-    if (eqToggle) {
-      eqToggle.addEventListener('click', () => {
-        const knob = eqToggle.querySelector('span');
-        const isEnabled = knob.classList.contains('translate-x-5');
-        if (isEnabled) {
-          knob.classList.remove('translate-x-5');
-          knob.classList.add('translate-x-0');
-          eqToggle.classList.remove('bg-primary-container');
-          eqToggle.classList.add('bg-surface-container-highest');
-          this.audioEngine.toggleEq(false);
+  clearLibraryCache() {
+    this.library.clearScannedTracks();
+    this.renderLibrary();
+    this.renderHome();
+    this.renderExplore();
+    this.updateSettingsUI();
+    if (this.audioEngine.isNative && this.audioEngine.nativeBridge) {
+      this.audioEngine.nativeBridge.showToast('Audio cache cleared');
+    }
+  }
+
+  openAppSettings() {
+    if (this.audioEngine.isNative && this.audioEngine.nativeBridge && this.audioEngine.nativeBridge.openAppSettings) {
+      this.audioEngine.nativeBridge.openAppSettings();
+    } else {
+      alert('To manage permissions on Android, open: System Settings > Apps > WAVEN > Permissions');
+    }
+  }
+
+  // -------------------------------------------------------------
+  // Library Controls & Filtering
+  // -------------------------------------------------------------
+  filterLibrary(filterName) {
+    this.currentLibFilter = filterName;
+
+    // Update active tab buttons
+    const tabs = ['all', 'liked', 'artists', 'albums'];
+    tabs.forEach(tab => {
+      const btn = document.getElementById(`tab-${tab === 'all' ? 'all-songs' : tab === 'liked' ? 'liked-songs' : tab}`);
+      if (btn) {
+        if (tab === filterName) {
+          btn.className = 'lib-tab px-3.5 py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-xs font-bold transition-all shrink-0 shadow-sm';
         } else {
-          knob.classList.add('translate-x-5');
-          knob.classList.remove('translate-x-0');
-          eqToggle.classList.add('bg-primary-container');
-          eqToggle.classList.remove('bg-surface-container-highest');
-          this.audioEngine.toggleEq(true);
+          btn.className = 'lib-tab px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-label-md text-xs font-medium hover:text-white transition-all shrink-0';
         }
-      });
-    }
-
-    // EQ Presets Carousel
-    document.querySelectorAll('.eq-preset').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.eq-preset').forEach(b => {
-          b.className = 'eq-preset flex-shrink-0 px-space-sm py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all';
-        });
-        btn.className = 'eq-preset active flex-shrink-0 px-space-sm py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold transition-all shadow-sm';
-        
-        const presetName = btn.textContent.trim();
-        this.audioEngine.applyPreset(presetName);
-        this.renderEqSliders();
-      });
-    });
-
-    // Interactive vertical sliders
-    const sliderTracks = document.querySelectorAll('.eq-slider-track');
-    sliderTracks.forEach((track, index) => {
-      const updateSlider = (clientY) => {
-        const rect = track.getBoundingClientRect();
-        const offsetY = Math.max(0, Math.min(rect.bottom - clientY, rect.height));
-        const percentage = offsetY / rect.height; // 0..1
-        // Map 0..1 to -10dB .. +10dB
-        const gainDb = Math.round((percentage * 20) - 10);
-        this.audioEngine.setBandGain(index, gainDb);
-        this.renderEqSliders();
-      };
-
-      track.addEventListener('mousedown', (e) => {
-        updateSlider(e.clientY);
-        const onMouseMove = (ev) => updateSlider(ev.clientY);
-        const onMouseUp = () => {
-          window.removeEventListener('mousemove', onMouseMove);
-          window.removeEventListener('mouseup', onMouseUp);
-        };
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
-      });
-
-      track.addEventListener('touchstart', (e) => {
-        if (e.touches[0]) updateSlider(e.touches[0].clientY);
-        const onTouchMove = (ev) => {
-          if (ev.touches[0]) updateSlider(ev.touches[0].clientY);
-        };
-        const onTouchEnd = () => {
-          window.removeEventListener('touchmove', onTouchMove);
-          window.removeEventListener('touchend', onTouchEnd);
-        };
-        window.addEventListener('touchmove', onTouchMove);
-        window.addEventListener('touchend', onTouchEnd);
-      }, { passive: true });
-    });
-
-    // Reset EQ
-    const resetBtn = document.getElementById('reset-eq-btn');
-    if (resetBtn) {
-      resetBtn.addEventListener('click', () => {
-        this.audioEngine.applyPreset('Flat (Studio)');
-        this.renderEqSliders();
-      });
-    }
-
-    // Clear Cache Button
-    const clearCacheBtn = document.getElementById('clear-cache-btn');
-    if (clearCacheBtn) {
-      clearCacheBtn.addEventListener('click', () => {
-        clearCacheBtn.textContent = 'Cleared (0 MB)';
-        setTimeout(() => clearCacheBtn.textContent = 'Clear Cache', 2500);
-      });
-    }
-
-    this.renderEqSliders();
-  }
-
-  renderEqSliders() {
-    this.audioEngine.bandGains.forEach((gain, i) => {
-      const valEl = document.getElementById(`eq-val-${i}`);
-      const fillEl = document.getElementById(`eq-fill-${i}`);
-      const thumbEl = document.getElementById(`eq-thumb-${i}`);
-
-      const percent = Math.min(100, Math.max(0, ((gain + 10) / 20) * 100));
-      if (valEl) {
-        valEl.textContent = (gain >= 0 ? `+${gain}` : `${gain}`) + 'dB';
-        valEl.className = `font-label-sm text-label-sm font-bold ${gain > 0 ? 'text-primary-container' : gain < 0 ? 'text-on-surface-variant' : 'text-on-surface'}`;
       }
-      if (fillEl) fillEl.style.height = `${percent}%`;
-      if (thumbEl) thumbEl.style.bottom = `${percent}%`;
     });
 
-    // Update dynamic SVG frequency curve path
-    const curvePath = document.getElementById('eq-curve-path');
-    const glowPath = document.getElementById('eq-glow-path');
-    if (curvePath) {
-      const d = this.audioEngine.getSvgCurvePath();
-      curvePath.setAttribute('d', d);
-      if (glowPath) glowPath.setAttribute('d', d + ' L 300,50 L 0,50 Z');
-    }
+    this.renderLibrary();
   }
 
-  // Library Controls Binding
+  playLikedSongs() {
+    const liked = this.library.getLikedTracks();
+    if (liked.length === 0) {
+      if (this.audioEngine.isNative && this.audioEngine.nativeBridge) {
+        this.audioEngine.nativeBridge.showToast('No liked songs yet! Tap the heart icon on any song.');
+      } else {
+        alert('No liked songs yet! Tap the heart icon on any song to add it to Favorites.');
+      }
+      return;
+    }
+    this.player.setQueue(liked, 0);
+    this.openNowPlaying();
+  }
+
   bindLibraryControls() {
-    // Device scan button
-    const scanBtn = document.getElementById('scan-device-btn');
-    if (scanBtn) {
-      scanBtn.addEventListener('click', () => {
-        scanBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Scanning...';
-        if (this.audioEngine.isNative && this.audioEngine.nativeBridge) {
-          this.audioEngine.nativeBridge.scanDeviceAudio();
-        } else {
-          // Trigger local file picker in browser
-          const input = document.createElement('input');
-          input.type = 'file';
-          input.accept = 'audio/*';
-          input.multiple = true;
-          input.onchange = (e) => {
-            const files = Array.from(e.target.files);
-            const scanned = files.map((f, i) => ({
-              id: 'local_file_' + i,
-              title: f.name.replace(/\.[^/.]+$/, ""),
-              artist: 'Local Device File',
-              album: 'Local Storage',
-              duration: 180,
-              uri: URL.createObjectURL(f),
-              filePath: f.name,
-              coverArt: 'assets/covers/default_cover.png',
-              hires: true
-            }));
-            this.library.addScannedTracks(scanned);
-            this.renderLibrary();
-            scanBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check</span> Scan Complete';
-            setTimeout(() => {
-              scanBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">folder_open</span> Scan Device Music';
-            }, 3000);
-          };
-          input.click();
-        }
-      });
-    }
-
-    // View mode toggle: List vs Grid
-    const listBtn = document.getElementById('viewListBtn');
-    const gridBtn = document.getElementById('viewGridBtn');
-    const plContainer = document.getElementById('playlistContainer');
-
-    if (listBtn && gridBtn && plContainer) {
-      listBtn.addEventListener('click', () => {
-        listBtn.className = 'w-8 h-8 rounded-full flex items-center justify-center text-primary-fixed bg-surface-container-highest transition-all';
-        gridBtn.className = 'w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-all';
-        plContainer.className = 'flex flex-col gap-space-xs transition-all duration-200';
-      });
-
-      gridBtn.addEventListener('click', () => {
-        gridBtn.className = 'w-8 h-8 rounded-full flex items-center justify-center text-primary-fixed bg-surface-container-highest transition-all';
-        listBtn.className = 'w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-all';
-        plContainer.className = 'grid grid-cols-2 gap-space-sm transition-all duration-200';
-      });
-    }
+    // Handled in HTML template
   }
 
-  // Explore Controls Binding
+  renderLibrary() {
+    const container = document.getElementById('playlistContainer');
+    if (!container) return;
+
+    const allTracks = this.library.getAllTracks();
+    const likedTracks = this.library.getLikedTracks();
+
+    // Update count labels
+    const countBadge = document.getElementById('library-track-count');
+    if (countBadge) countBadge.textContent = `${allTracks.length} tracks • Ready for playback`;
+
+    const likedBadge = document.getElementById('library-liked-count');
+    if (likedBadge) likedBadge.textContent = `${likedTracks.length} songs in favorites`;
+
+    // 1. If filtering by 'liked'
+    if (this.currentLibFilter === 'liked') {
+      if (likedTracks.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center flex flex-col items-center justify-center rounded-2xl bg-surface-container/40 border border-white/5 my-4">
+            <div class="w-14 h-14 rounded-full bg-secondary-container/20 text-secondary-fixed flex items-center justify-center mb-3">
+              <span class="material-symbols-outlined text-[28px]">favorite_border</span>
+            </div>
+            <h4 class="font-headline-md text-white font-bold text-base">No Liked Songs Yet</h4>
+            <p class="text-xs text-on-surface-variant mt-1 max-w-xs">Tap the heart icon on any song while listening to add it to your favorites.</p>
+          </div>
+        `;
+        return;
+      }
+      this.renderTrackList(container, likedTracks);
+      return;
+    }
+
+    // 2. If filtering by 'artists'
+    if (this.currentLibFilter === 'artists') {
+      const artists = this.library.getArtists();
+      if (artists.length === 0) {
+        this.renderEmptyLibrary(container);
+        return;
+      }
+      container.innerHTML = artists.map(a => `
+        <div class="flex items-center justify-between p-space-sm rounded-DEFAULT bg-surface-container/60 hover:bg-surface-container transition-all cursor-pointer" onclick="window.wavenApp.playSpecificTrack('${a.songs[0].id}')">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary-fixed font-bold border border-white/10">
+              <span class="material-symbols-outlined text-[20px]">person</span>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <span class="font-headline-md text-sm text-primary font-bold truncate">${a.artist}</span>
+              <span class="text-xs text-on-surface-variant">${a.count} song${a.count > 1 ? 's' : ''}</span>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-[20px] text-on-surface-variant">chevron_right</span>
+        </div>
+      `).join('');
+      return;
+    }
+
+    // 3. If filtering by 'albums'
+    if (this.currentLibFilter === 'albums') {
+      const albums = this.library.getAlbums();
+      if (albums.length === 0) {
+        this.renderEmptyLibrary(container);
+        return;
+      }
+      container.innerHTML = albums.map(alb => `
+        <div class="flex items-center justify-between p-space-sm rounded-DEFAULT bg-surface-container/60 hover:bg-surface-container transition-all cursor-pointer" onclick="window.wavenApp.playSpecificTrack('${alb.songs[0].id}')">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-12 h-12 rounded-xl bg-surface-container-high overflow-hidden border border-white/10">
+              <img src="${alb.coverArt}" class="w-full h-full object-cover">
+            </div>
+            <div class="flex flex-col min-w-0">
+              <span class="font-headline-md text-sm text-primary font-bold truncate">${alb.album}</span>
+              <span class="text-xs text-on-surface-variant">${alb.artist || 'Local Audio'} • ${alb.songs.length} song${alb.songs.length > 1 ? 's' : ''}</span>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-[20px] text-on-surface-variant">chevron_right</span>
+        </div>
+      `).join('');
+      return;
+    }
+
+    // 4. Default: 'all'
+    if (allTracks.length === 0) {
+      this.renderEmptyLibrary(container);
+      return;
+    }
+    this.renderTrackList(container, allTracks);
+  }
+
+  renderEmptyLibrary(container) {
+    container.innerHTML = `
+      <div class="p-8 text-center flex flex-col items-center justify-center rounded-2xl bg-surface-container/40 border border-white/5 my-4">
+        <div class="w-16 h-16 rounded-full bg-primary-container/10 text-primary-fixed flex items-center justify-center mb-3">
+          <span class="material-symbols-outlined text-[32px]">library_music</span>
+        </div>
+        <h4 class="font-headline-md text-white font-bold text-base">No Local Songs Found</h4>
+        <p class="text-xs text-on-surface-variant mt-1.5 max-w-xs leading-relaxed">
+          WAVEN plays music stored on your Android device (.mp3, .flac, .wav, .m4a). Tap the button below to scan your storage.
+        </p>
+        <button onclick="window.wavenApp.scanDeviceAudio()" class="mt-5 px-5 py-2.5 rounded-full bg-primary-container text-black font-headline font-bold text-xs tracking-wide shadow-lg active:scale-95 transition-transform flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">folder_open</span>
+          <span>Scan Device Storage</span>
+        </button>
+      </div>
+    `;
+  }
+
+  renderTrackList(container, tracks) {
+    container.innerHTML = tracks.map(t => {
+      const isFav = this.library.isFavorite(t.id);
+      return `
+        <div class="playlist-row group flex items-center justify-between p-space-sm rounded-DEFAULT bg-surface-container/60 hover:bg-surface-container active:scale-[0.99] transition-all cursor-pointer" onclick="window.wavenApp.playSpecificTrack('${t.id}')">
+          <div class="flex items-center gap-space-sm min-w-0 flex-1">
+            <div class="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 shadow-md bg-surface-container-high border border-white/5">
+              <img class="w-full h-full object-cover" src="${t.coverArt}" alt="${t.title}" onerror="this.src='assets/covers/default_cover.png'">
+            </div>
+            <div class="flex flex-col min-w-0 pr-space-xs">
+              <div class="flex items-center gap-space-xs">
+                <span class="font-headline-md text-sm text-primary font-semibold truncate">${t.title}</span>
+                <span class="material-symbols-outlined text-primary-fixed text-[14px] flex-shrink-0" style="font-variation-settings: 'FILL' 1;" title="Bit-Perfect Local Audio">verified</span>
+              </div>
+              <div class="flex items-center gap-1.5 text-on-surface-variant font-body-sm text-xs truncate">
+                <span class="text-secondary font-medium">${t.artist}</span>
+                <span class="w-1 h-1 rounded-full bg-outline"></span>
+                <span>${this.player.formatTime(t.duration)}</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
+            <button class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:text-secondary-fixed transition-colors active:scale-90" onclick="window.wavenApp.toggleFavorite('${t.id}')" title="Favorite">
+              <span class="material-symbols-outlined text-[20px] ${isFav ? 'text-secondary-fixed' : ''}" style="${isFav ? 'font-variation-settings: \'FILL\' 1;' : ''}">favorite</span>
+            </button>
+            <button class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface hover:text-primary-fixed transition-colors active:scale-90" onclick="window.wavenApp.playSpecificTrack('${t.id}')">
+              <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // -------------------------------------------------------------
+  // Explore Controls & Search
+  // -------------------------------------------------------------
   bindExploreControls() {
     const searchInput = document.getElementById('explore-search-input');
     if (searchInput) {
@@ -472,7 +522,17 @@ class WavenApp {
       });
     }
 
-    // Quick filter tags
+    const clearBtn = document.getElementById('clearExploreSearch');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        if (searchInput) {
+          searchInput.value = '';
+          this.renderExploreResults(this.library.getAllTracks());
+        }
+      });
+    }
+
+    // Quick filter chips
     document.querySelectorAll('.explore-tag').forEach(tag => {
       tag.addEventListener('click', () => {
         document.querySelectorAll('.explore-tag').forEach(t => {
@@ -480,10 +540,234 @@ class WavenApp {
         });
         tag.className = 'explore-tag flex-shrink-0 px-space-md py-space-xs rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold transition-all active:scale-95 shadow-sm';
         const q = tag.textContent.trim();
-        const results = this.library.search(q);
-        this.renderExploreResults(results);
+        if (q === 'All' || q === 'Local Audio') {
+          this.renderExploreResults(this.library.getAllTracks());
+        } else if (q === 'Favorites') {
+          this.renderExploreResults(this.library.getLikedTracks());
+        } else {
+          this.renderExploreResults(this.library.search(q));
+        }
       });
     });
+  }
+
+  renderExplore() {
+    this.renderExploreResults(this.library.getAllTracks());
+  }
+
+  renderExploreResults(tracks) {
+    const stack = document.getElementById('explore-tracks-stack');
+    const countLabel = document.getElementById('explore-count-label');
+    if (countLabel) countLabel.textContent = `${tracks.length} track${tracks.length !== 1 ? 's' : ''}`;
+    if (!stack) return;
+
+    if (tracks.length === 0) {
+      stack.innerHTML = `
+        <div class="p-6 text-center text-xs text-on-surface-variant">
+          No matching tracks found on your device.
+        </div>
+      `;
+      return;
+    }
+
+    stack.innerHTML = tracks.slice(0, 25).map((t, i) => `
+      <div class="group flex items-center justify-between p-space-sm rounded-DEFAULT bg-surface-container hover:bg-surface-container-high transition-colors active:scale-[0.99] cursor-pointer" onclick="window.wavenApp.playSpecificTrack('${t.id}')">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="text-sm font-bold text-primary-container w-6 text-center shrink-0">${(i + 1).toString().padStart(2, '0')}</span>
+          <div class="w-12 h-12 rounded-xl bg-surface-container-highest overflow-hidden shrink-0 border border-white/5">
+            <img class="w-full h-full object-cover" src="${t.coverArt}" alt="${t.title}" onerror="this.src='assets/covers/default_cover.png'">
+          </div>
+          <div class="flex flex-col min-w-0 pr-space-xs">
+            <span class="text-sm font-semibold text-primary truncate">${t.title}</span>
+            <span class="text-xs text-on-surface-variant truncate">${t.artist} • ${this.player.formatTime(t.duration)}</span>
+          </div>
+        </div>
+        <button class="w-9 h-9 rounded-full bg-surface-container-highest group-hover:bg-primary-container group-hover:text-on-primary-container text-on-surface flex items-center justify-center transition-colors">
+          <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+        </button>
+      </div>
+    `).join('');
+  }
+
+  // -------------------------------------------------------------
+  // Home Screen Content
+  // -------------------------------------------------------------
+  renderHome() {
+    const tracks = this.library.getAllTracks();
+    const badge = document.getElementById('home-local-badge');
+    if (badge) badge.textContent = `${tracks.length} Track${tracks.length !== 1 ? 's' : ''}`;
+
+    const desc = document.getElementById('home-storage-desc');
+    if (desc) desc.textContent = tracks.length > 0 ? `${tracks.length} songs ready for bit-perfect playback` : 'Tap to scan and play all audio on device';
+
+    const stack = document.getElementById('home-playlists-stack');
+    if (stack) {
+      if (tracks.length === 0) {
+        stack.innerHTML = `
+          <div class="p-4 text-center rounded-xl bg-surface-container/50 border border-white/5 text-xs text-on-surface-variant">
+            No local audio tracks loaded yet. Tap "Scan" above to load your music.
+          </div>
+        `;
+        return;
+      }
+
+      stack.innerHTML = tracks.slice(0, 5).map(t => `
+        <div class="group flex items-center justify-between p-space-sm rounded-DEFAULT bg-surface-container/60 hover:bg-surface-container-high transition-all cursor-pointer" onclick="window.wavenApp.playSpecificTrack('${t.id}')">
+          <div class="flex items-center gap-space-sm min-w-0">
+            <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-surface-container border border-white/5">
+              <img class="w-full h-full object-cover" src="${t.coverArt}" alt="${t.title}" onerror="this.src='assets/covers/default_cover.png'">
+            </div>
+            <div class="flex flex-col min-w-0 pr-space-xs">
+              <span class="font-headline-md text-sm text-primary font-semibold truncate group-hover:text-primary-container transition-colors">${t.title}</span>
+              <span class="font-body-sm text-xs text-on-surface-variant truncate">${t.artist} • ${this.player.formatTime(t.duration)}</span>
+            </div>
+          </div>
+          <button class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
+            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+          </button>
+        </div>
+      `).join('');
+    }
+  }
+
+  // -------------------------------------------------------------
+  // Settings UI Updates
+  // -------------------------------------------------------------
+  updateSettingsUI() {
+    const tracks = this.library.getAllTracks();
+    const badge = document.getElementById('settings-tracks-badge');
+    if (badge) badge.textContent = `${tracks.length} tracks scanned`;
+  }
+
+  // -------------------------------------------------------------
+  // Player Controls Binding
+  // -------------------------------------------------------------
+  bindPlayerControls() {
+    // Mini player transport buttons
+    const miniPlay = document.getElementById('mini-play-btn');
+    if (miniPlay) miniPlay.addEventListener('click', () => this.player.togglePlayPause());
+
+    const miniPrev = document.getElementById('mini-prev-btn');
+    if (miniPrev) miniPrev.addEventListener('click', () => this.player.playPrevious());
+
+    const miniNext = document.getElementById('mini-next-btn');
+    if (miniNext) miniNext.addEventListener('click', () => this.player.playNext());
+
+    // Full Now Playing Transport buttons
+    const npPlay = document.getElementById('np-play-btn');
+    if (npPlay) npPlay.addEventListener('click', () => this.player.togglePlayPause());
+
+    const npPrev = document.getElementById('np-prev-btn');
+    if (npPrev) npPrev.addEventListener('click', () => this.player.playPrevious());
+
+    const npNext = document.getElementById('np-next-btn');
+    if (npNext) npNext.addEventListener('click', () => this.player.playNext());
+
+    const npShuffle = document.getElementById('np-shuffle-btn');
+    if (npShuffle) npShuffle.addEventListener('click', () => this.player.toggleShuffle());
+
+    const npRepeat = document.getElementById('np-repeat-btn');
+    if (npRepeat) npRepeat.addEventListener('click', () => this.player.toggleRepeat());
+
+    const npFav = document.getElementById('np-fav-btn');
+    if (npFav) npFav.addEventListener('click', () => {
+      if (this.player.currentTrack) {
+        this.toggleFavorite(this.player.currentTrack.id);
+      }
+    });
+
+    // Scrubber timeline seeking
+    const scrubber = document.getElementById('scrubber-track');
+    if (scrubber) {
+      scrubber.addEventListener('click', (e) => {
+        const rect = scrubber.getBoundingClientRect();
+        const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const seekTime = percent * (this.player.duration || 1);
+        this.player.seekTo(seekTime);
+      });
+    }
+  }
+
+  bindEqualizerControls() {
+    // Preset buttons
+    document.querySelectorAll('.eq-preset').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.eq-preset').forEach(b => {
+          b.className = 'eq-preset flex-shrink-0 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-xs transition-all';
+        });
+        btn.className = 'eq-preset active flex-shrink-0 px-3 py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-xs font-semibold transition-all';
+        const presetName = btn.textContent.trim();
+        if (this.audioEngine) this.audioEngine.applyPreset(presetName);
+        this.syncEqualizerUI();
+      });
+    });
+
+    // Touch/click drag for 6-band sliders
+    document.querySelectorAll('.eq-slider-track').forEach(track => {
+      const handleSlider = (e) => {
+        const bandIdx = parseInt(track.getAttribute('data-band'));
+        const rect = track.getBoundingClientRect();
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const percent = Math.max(0, Math.min(1, 1 - (clientY - rect.top) / rect.height));
+        const gain = Math.round((percent * 24) - 12); // -12dB to +12dB
+
+        if (this.audioEngine) this.audioEngine.setBandGain(bandIdx, gain);
+        this.syncEqualizerUI();
+      };
+
+      track.addEventListener('mousedown', (e) => {
+        handleSlider(e);
+        const onMouseMove = (ev) => handleSlider(ev);
+        const onMouseUp = () => {
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+        };
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+      });
+
+      track.addEventListener('touchstart', (e) => {
+        handleSlider(e);
+        const onTouchMove = (ev) => handleSlider(ev);
+        const onTouchEnd = () => {
+          window.removeEventListener('touchmove', onTouchMove);
+          window.removeEventListener('touchend', onTouchEnd);
+        };
+        window.addEventListener('touchmove', onTouchMove);
+        window.addEventListener('touchend', onTouchEnd);
+      });
+    });
+  }
+
+  syncEqualizerUI() {
+    if (!this.audioEngine) return;
+    const gains = this.audioEngine.bandGains;
+    gains.forEach((gain, i) => {
+      const fill = document.getElementById(`eq-fill-${i}`);
+      const thumb = document.getElementById(`eq-thumb-${i}`);
+      const val = document.getElementById(`eq-val-${i}`);
+
+      const percent = ((gain + 12) / 24) * 100;
+      if (fill) fill.style.height = `${percent}%`;
+      if (thumb) thumb.style.bottom = `${percent}%`;
+      if (val) {
+        val.textContent = (gain > 0 ? `+${gain}` : `${gain}`) + 'dB';
+      }
+    });
+
+    // Dynamic curve
+    const curvePath = document.getElementById('eq-curve-path');
+    const glowPath = document.getElementById('eq-glow-path');
+    if (curvePath && glowPath) {
+      const pts = gains.map((g, i) => {
+        const x = i * 60;
+        const y = 35 - (g * 1.5);
+        return `${x},${y}`;
+      });
+      const d = `M0,${35 - gains[0]*1.5} Q30,${35 - gains[1]*1.5} 60,${35 - gains[1]*1.5} T120,${35 - gains[2]*1.5} T180,${35 - gains[3]*1.5} T240,${35 - gains[4]*1.5} T300,${35 - gains[5]*1.5}`;
+      curvePath.setAttribute('d', d);
+      glowPath.setAttribute('d', d + ' L 300,50 L 0,50 Z');
+    }
   }
 
   bindLyricsControls() {
@@ -497,7 +781,6 @@ class WavenApp {
       });
     }
 
-    // Lyrics bottom transport play/pause
     const lyricsPlay = document.getElementById('lyrics-play-btn');
     if (lyricsPlay) lyricsPlay.addEventListener('click', () => this.player.togglePlayPause());
 
@@ -508,93 +791,14 @@ class WavenApp {
     if (lyricsNext) lyricsNext.addEventListener('click', () => this.player.playNext());
   }
 
-  // Render Screens Content
-  renderHome() {
-    const playlistsStack = document.getElementById('home-playlists-stack');
-    if (playlistsStack) {
-      const plList = this.library.getPlaylists();
-      playlistsStack.innerHTML = plList.map((pl, idx) => `
-        <div class="group flex items-center justify-between p-space-sm rounded-DEFAULT bg-surface-container/60 hover:bg-surface-container-high/80 transition-all duration-200 cursor-pointer" onclick="window.wavenApp.openPlaylistDetails('${pl.id}')">
-          <div class="flex items-center gap-space-sm min-w-0">
-            <div class="w-14 h-14 rounded-DEFAULT overflow-hidden shrink-0 relative shadow-sm">
-              <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="${pl.coverArt}" alt="${pl.title}">
-            </div>
-            <div class="flex flex-col min-w-0 pr-space-xs">
-              <h5 class="font-label-lg text-label-lg text-primary font-semibold truncate group-hover:text-primary-container transition-colors">${pl.title}</h5>
-              <span class="font-body-sm text-body-sm text-on-surface-variant truncate mt-0.5">By <span class="text-on-surface font-medium">${pl.curator}</span> • ${pl.trackCount} Songs</span>
-            </div>
-          </div>
-          <button class="w-10 h-10 rounded-full bg-surface-container-highest/60 group-hover:bg-primary-container group-hover:text-on-primary-container text-on-surface flex items-center justify-center shrink-0 transition-all active:scale-95 shadow-sm" onclick="event.stopPropagation(); window.wavenApp.playPlaylist('${pl.id}')">
-            <span class="material-symbols-outlined text-[20px] ml-0.5" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
-          </button>
-        </div>
-      `).join('');
-    }
-  }
-
-  renderLibrary() {
-    const container = document.getElementById('playlistContainer');
-    if (!container) return;
-
-    const tracks = this.library.getAllTracks();
-    const countBadge = document.getElementById('library-track-count');
-    if (countBadge) countBadge.textContent = `${tracks.length} tracks • Ready for playback`;
-
-    container.innerHTML = tracks.map(t => `
-      <div class="playlist-row group flex items-center justify-between p-space-sm rounded-DEFAULT bg-surface-container/60 hover:bg-surface-container active:scale-[0.99] transition-all cursor-pointer" onclick="window.wavenApp.playSpecificTrack('${t.id}')">
-        <div class="flex items-center gap-space-sm min-w-0">
-          <div class="relative w-14 h-14 rounded-DEFAULT overflow-hidden flex-shrink-0 shadow-md">
-            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="${t.coverArt}" alt="${t.title}">
-          </div>
-          <div class="flex flex-col min-w-0">
-            <div class="flex items-center gap-space-xs">
-              <span class="font-headline-md text-[16px] leading-[22px] text-primary font-semibold truncate">${t.title}</span>
-              ${t.hires ? '<span class="material-symbols-outlined text-primary-fixed text-[15px] flex-shrink-0" style="font-variation-settings: \'FILL\' 1;" title="Lossless Hi-Res">verified</span>' : ''}
-            </div>
-            <div class="flex items-center gap-1.5 text-on-surface-variant font-body-sm text-body-sm truncate">
-              <span class="text-secondary font-medium">${t.artist}</span>
-              <span class="w-1 h-1 rounded-full bg-outline"></span>
-              <span>${this.player.formatTime(t.duration)}</span>
-            </div>
-          </div>
-        </div>
-        <div class="flex items-center gap-space-xs">
-          <button class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface hover:text-primary-fixed transition-colors">
-            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
-          </button>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  renderExplore() {
-    const results = this.library.getAllTracks();
-    this.renderExploreResults(results);
-  }
-
-  renderExploreResults(tracks) {
-    const stack = document.getElementById('explore-tracks-stack');
-    if (!stack) return;
-
-    stack.innerHTML = tracks.slice(0, 10).map((t, i) => `
-      <div class="group flex items-center justify-between p-space-sm rounded-DEFAULT bg-surface-container hover:bg-surface-container-high transition-colors active:scale-[0.99] cursor-pointer" onclick="window.wavenApp.playSpecificTrack('${t.id}')">
-        <div class="flex items-center gap-space-md min-w-0">
-          <span class="text-headline-md font-headline-md text-primary-container font-bold w-8 text-center flex-shrink-0 tracking-tight">${(i + 1).toString().padStart(2, '0')}</span>
-          <div class="w-12 h-12 rounded-DEFAULT bg-surface-container-highest overflow-hidden flex-shrink-0 relative">
-            <img class="w-full h-full object-cover" src="${t.coverArt}" alt="${t.title}">
-          </div>
-          <div class="flex flex-col min-w-0 pr-space-xs">
-            <span class="text-label-lg font-label-lg text-primary truncate font-semibold">${t.title}</span>
-            <span class="text-body-sm font-body-sm text-on-surface-variant truncate">${t.artist} • ${t.genre || 'Electronic'}</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-space-sm flex-shrink-0">
-          <button class="w-9 h-9 rounded-full bg-surface-container-highest group-hover:bg-primary-container group-hover:text-on-primary-container text-on-surface flex items-center justify-center transition-colors">
-            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
-          </button>
-        </div>
-      </div>
-    `).join('');
+  bindNavigation() {
+    document.querySelectorAll('#bottom-nav a[data-path]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const path = a.getAttribute('data-path');
+        this.navigateTo(path);
+      });
+    });
   }
 
   playSpecificTrack(trackId) {
@@ -606,19 +810,10 @@ class WavenApp {
     }
   }
 
-  playPlaylist(playlistId) {
-    const tracks = this.library.getAllTracks();
-    this.player.setQueue(tracks, 0);
-    this.openNowPlaying();
-  }
-
-  seekTo(seconds) {
-    this.player.seekTo(seconds);
-  }
-
   toggleFavorite(trackId) {
     const isFav = this.library.toggleFavorite(trackId);
     this.player.updateFavoriteUI(isFav);
+    this.renderLibrary();
   }
 }
 
@@ -627,19 +822,43 @@ window.addEventListener('DOMContentLoaded', () => {
   window.wavenApp = new WavenApp();
 });
 
+// -------------------------------------------------------------
 // Native Android Callbacks
+// -------------------------------------------------------------
 window.onNativeBridgeReady = function() {
   console.log('WAVEN Native Android Bridge initialized successfully.');
-  if (window.AndroidBridge && window.AndroidBridge.scanDeviceAudio) {
-    window.AndroidBridge.scanDeviceAudio();
+  if (window.wavenApp) {
+    window.wavenApp.scanDeviceAudio();
   }
 };
 
-window.onDeviceAudioScanned = function(tracksJsonStr) {
+window.onDeviceAudioScanned = function(tracksData) {
   if (window.wavenLibrary) {
-    window.wavenLibrary.addScannedTracks(tracksJsonStr);
-    if (window.wavenApp) window.wavenApp.renderLibrary();
+    window.wavenLibrary.addScannedTracks(tracksData);
+    if (window.wavenApp) {
+      window.wavenApp.renderLibrary();
+      window.wavenApp.renderHome();
+      window.wavenApp.renderExplore();
+      window.wavenApp.updateSettingsUI();
+    }
   }
+};
+
+window.onDeviceAudioScanError = function(errMsg) {
+  console.warn('Scan error:', errMsg);
+  const scanBtnText = document.getElementById('scan-btn-text');
+  if (scanBtnText) scanBtnText.textContent = 'Scan Storage';
+};
+
+window.onPermissionsGranted = function() {
+  console.log('Storage permissions granted by user.');
+  if (window.wavenApp) {
+    window.wavenApp.scanDeviceAudio();
+  }
+};
+
+window.onPermissionsDenied = function() {
+  console.warn('Storage permission denied.');
 };
 
 window.onTrackPrepared = function(durationMs) {

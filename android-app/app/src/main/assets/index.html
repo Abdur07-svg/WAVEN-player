@@ -1,192 +1,193 @@
 <!DOCTYPE html>
 <html class="dark" lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
   <title>WAVEN — Nocturne Pulse Music Player</title>
   
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  
+  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script id="tailwind-config">
+  <script>
     tailwind.config = {
-      darkMode: "class",
+      darkMode: 'class',
       theme: {
         extend: {
           colors: {
-            "surface-container-lowest": "#0e0e13",
-            "surface-container-low": "#1b1b20",
-            "surface-container": "#1f1f24",
-            "surface-container-high": "#2a292f",
-            "surface-container-highest": "#35343a",
-            "surface": "#131318",
-            "surface-bright": "#39383e",
-            "primary": "#ffffff",
-            "primary-container": "#ccf22e",
-            "primary-fixed": "#ccf22e",
-            "primary-fixed-dim": "#b1d500",
-            "on-primary-container": "#171e00",
-            "on-primary-fixed": "#171e00",
-            "secondary": "#dbb8ff",
-            "secondary-container": "#6807ba",
-            "secondary-fixed": "#efdbff",
-            "secondary-fixed-dim": "#dbb8ff",
-            "on-secondary": "#470083",
-            "on-surface": "#e4e1e9",
-            "on-surface-variant": "#c5c9ae",
-            "outline": "#8f937a",
-            "outline-variant": "#454934",
-            "error": "#ffb4ab",
-            "error-container": "#93000a"
-          },
-          borderRadius: {
-            DEFAULT: "1rem",
-            lg: "2rem",
-            xl: "3rem",
-            full: "9999px"
-          },
-          spacing: {
-            margin: "1.25rem",
-            "margin-lg": "2.5rem",
-            "space-xs": "0.25rem",
-            "space-sm": "0.5rem",
-            "space-md": "1rem",
-            "space-lg": "1.5rem",
-            "space-xl": "2rem",
-            "space-2xl": "3rem"
+            'canvas': '#0E0E13',
+            'surface-container-lowest': '#0A0A0E',
+            'surface-container-low': '#131318',
+            'surface-container': '#18181F',
+            'surface-container-high': '#22222B',
+            'surface-container-highest': '#2D2D38',
+            'on-surface': '#E8E8ED',
+            'on-surface-variant': '#9E9EA8',
+            'primary': '#FFFFFF',
+            'primary-container': '#CCF22E',
+            'on-primary-container': '#141E00',
+            'primary-fixed': '#CCF22E',
+            'on-primary-fixed': '#141E00',
+            'secondary': '#DBB8FF',
+            'secondary-container': '#7928CA',
+            'secondary-fixed': '#DBB8FF',
+            'on-secondary-fixed': '#2B0052',
+            'secondary-fixed-dim': '#C084FC',
+            'outline': '#3A3A47',
+            'outline-variant': '#262630',
+            'error': '#FF5449'
           },
           fontFamily: {
-            "body-sm": ["Inter"],
-            "body-md": ["Inter"],
-            "body-lg": ["Inter"],
-            "label-sm": ["Plus Jakarta Sans"],
-            "label-md": ["Plus Jakarta Sans"],
-            "label-lg": ["Plus Jakarta Sans"],
-            "headline-md": ["Plus Jakarta Sans"],
-            "headline-lg": ["Plus Jakarta Sans"],
-            "headline-xl": ["Plus Jakarta Sans"],
-            "headline-xl-mobile": ["Plus Jakarta Sans"]
+            'headline-xl': ['"Plus Jakarta Sans"', 'sans-serif'],
+            'headline-lg': ['"Plus Jakarta Sans"', 'sans-serif'],
+            'headline-md': ['"Plus Jakarta Sans"', 'sans-serif'],
+            'body-lg': ['Inter', 'sans-serif'],
+            'body-md': ['Inter', 'sans-serif'],
+            'body-sm': ['Inter', 'sans-serif'],
+            'label-lg': ['Inter', 'sans-serif'],
+            'label-md': ['Inter', 'sans-serif'],
+            'label-sm': ['Inter', 'sans-serif'],
+          },
+          spacing: {
+            'space-xs': '4px',
+            'space-sm': '8px',
+            'space-md': '16px',
+            'space-lg': '24px',
+            'space-xl': '32px',
+            'margin': '16px'
+          },
+          borderRadius: {
+            'DEFAULT': '16px',
+            'lg': '24px',
+            'full': '9999px'
           }
         }
       }
-    };
+    }
   </script>
-
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css"/>
 </head>
+<body class="bg-canvas text-on-surface antialiased select-none font-body-md overflow-x-hidden selection:bg-primary-container selection:text-black">
 
-<body class="bg-surface-container-lowest text-on-surface min-h-screen relative flex flex-col selection:bg-primary-container selection:text-on-primary-container">
-  <!-- Dynamic Ambient Orbs -->
-  <div class="pointer-events-none fixed top-0 left-1/2 -translate-x-1/2 w-[340px] h-[220px] bg-secondary-container/25 blur-[100px] rounded-full z-0"></div>
-  <div class="pointer-events-none fixed top-64 right-[-40px] w-56 h-56 bg-primary-container/10 blur-[90px] rounded-full z-0"></div>
-
-  <!-- MAIN SCROLLABLE APP CONTAINER -->
-  <div class="flex-1 overflow-y-auto no-scrollbar relative z-10 pb-44">
+  <!-- Fullscreen App Container -->
+  <div class="relative w-full min-h-screen bg-canvas overflow-y-auto no-scrollbar pb-36">
 
     <!-- =========================================================================
          SCREEN 1: HOME (waven_home)
          ========================================================================= -->
     <section id="view-home" class="view-container active px-margin pt-safe">
-      <!-- User Profile & Action Bar -->
-      <div class="relative z-10 flex items-center justify-between pb-space-md pt-space-md">
-        <div class="flex items-center gap-space-sm">
-          <div class="relative w-12 h-12 rounded-full p-[2px] bg-gradient-to-tr from-secondary to-primary-container shadow-[0_4px_16px_rgba(104,7,186,0.4)]">
-            <img class="w-full h-full object-cover rounded-full" src="assets/covers/default_cover.png" alt="Profile">
-            <span class="absolute bottom-0 right-0 w-3 h-3 bg-primary-container rounded-full border-2 border-surface-container-lowest"></span>
+      <!-- Ambient Nocturne Top Glow -->
+      <div class="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-64 bg-secondary-container/20 blur-[100px] rounded-full"></div>
+
+      <!-- Top Greeting & Header Bar -->
+      <div class="relative z-10 flex items-center justify-between pt-space-md pb-space-sm">
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></span>
+            <span class="font-label-sm text-[11px] text-secondary-fixed-dim uppercase tracking-wider font-bold">WAVEN LOCAL ENGINE</span>
           </div>
-          <div class="flex flex-col">
-            <span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
-              Good evening <span class="inline-block animate-pulse text-[10px]">✨</span>
-            </span>
-            <h2 class="font-headline-lg text-headline-lg text-primary tracking-tight font-bold">Hi, Samantha</h2>
-          </div>
+          <h2 id="home-greeting" class="font-headline-lg text-2xl tracking-tight text-primary font-black mt-0.5">
+            Good day, Abdur
+          </h2>
         </div>
-        <div class="flex items-center gap-space-xs">
-          <button class="w-10 h-10 rounded-full bg-surface-container-high/60 backdrop-blur-md flex items-center justify-center text-on-surface hover:text-primary-container hover:bg-surface-container-highest transition-all duration-200 active:scale-95 shadow-sm" onclick="window.wavenApp.navigateTo('explore')">
-            <span class="material-symbols-outlined text-[20px]">search</span>
+        <div class="flex items-center gap-2">
+          <button id="home-scan-btn" onclick="window.wavenApp.scanDeviceAudio()" class="w-10 h-10 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors text-primary-fixed flex items-center justify-center shadow-md active:scale-95" title="Rescan Local Music">
+            <span class="material-symbols-outlined text-[20px]">refresh</span>
           </button>
-          <button class="w-10 h-10 rounded-full bg-surface-container-high/60 backdrop-blur-md flex items-center justify-center text-on-surface hover:text-error hover:bg-surface-container-highest transition-all duration-200 active:scale-95 shadow-sm" onclick="window.wavenApp.navigateTo('library')">
-            <span class="material-symbols-outlined text-[20px]">favorite</span>
-          </button>
+          <div onclick="window.wavenApp.openProfileModal()" class="w-10 h-10 rounded-full overflow-hidden p-0.5 bg-gradient-to-tr from-secondary-container to-primary-container cursor-pointer active:scale-95 transition-transform" title="My Profile">
+            <img id="home-profile-avatar" class="w-full h-full rounded-full object-cover bg-surface-container" src="assets/covers/default_cover.png" alt="Profile">
+          </div>
         </div>
       </div>
 
-      <!-- Categorical Filter Pills (Horizontal Scroll) -->
-      <div class="relative z-10 -mx-margin px-margin overflow-x-auto no-scrollbar flex items-center gap-space-xs py-space-xs">
-        <button class="px-space-md py-space-xs rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold tracking-wide shadow-[0_4px_18px_rgba(204,242,46,0.3)] transition-transform active:scale-95 shrink-0">
-          All
-        </button>
-        <button class="px-space-md py-space-xs rounded-full bg-surface-container-high/70 text-on-surface-variant font-label-md text-label-md hover:text-on-surface hover:bg-surface-container-highest transition-all shrink-0 active:scale-95">
-          New Release
-        </button>
-        <button class="px-space-md py-space-xs rounded-full bg-surface-container-high/70 text-on-surface-variant font-label-md text-label-md hover:text-on-surface hover:bg-surface-container-highest transition-all shrink-0 active:scale-95">
-          Trending
-        </button>
-        <button class="px-space-md py-space-xs rounded-full bg-surface-container-high/70 text-on-surface-variant font-label-md text-label-md hover:text-on-surface hover:bg-surface-container-highest transition-all shrink-0 active:scale-95">
-          Top Charts
-        </button>
-        <button class="px-space-md py-space-xs rounded-full bg-surface-container-high/70 text-on-surface-variant font-label-md text-label-md hover:text-on-surface hover:bg-surface-container-highest transition-all shrink-0 active:scale-95">
-          Electronic
-        </button>
-      </div>
-
-      <!-- Curated & Trending Hero Carousel -->
+      <!-- Curated & Trending Carousel (Future Online Streaming Preview) -->
       <div class="relative z-10 mt-space-md">
-        <div class="flex items-center justify-between pb-space-sm">
+        <div class="flex items-center justify-between pb-space-xs">
           <h3 class="font-headline-md text-headline-md text-primary tracking-tight font-bold">Curated &amp; trending</h3>
-          <span class="font-label-sm text-label-sm text-secondary tracking-wider uppercase font-semibold">Weekly drop</span>
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/40 text-[10px] text-secondary-fixed font-bold uppercase tracking-wider border border-secondary/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-ping"></span> Cloud Stream
+          </span>
         </div>
-        <div class="relative -mx-margin px-margin overflow-x-auto no-scrollbar flex items-stretch gap-space-md pb-space-xs">
-          <!-- Main Featured Card (Lavender & Neon Glow) -->
-          <div class="min-w-[300px] max-w-[320px] shrink-0 rounded-lg bg-gradient-to-r from-[#8b6dc4] via-[#b69aee] to-[#d8bbf9] p-space-md relative overflow-hidden shadow-[0_20px_40px_-12px_rgba(104,7,186,0.4)] flex flex-col justify-between text-[#1d1430]">
+        
+        <div class="relative -mx-margin px-margin overflow-x-auto no-scrollbar flex items-stretch gap-space-md py-space-xs">
+          <!-- Featured Online Drop Card 1 -->
+          <div onclick="window.wavenApp.showStreamingNotice('Discover Weekly Drop')" class="min-w-[280px] max-w-[300px] shrink-0 rounded-lg bg-gradient-to-r from-[#8b6dc4] via-[#b69aee] to-[#d8bbf9] p-space-md relative overflow-hidden shadow-[0_20px_40px_-12px_rgba(104,7,186,0.4)] flex flex-col justify-between text-[#1d1430] cursor-pointer hover:scale-[1.01] transition-transform">
             <div class="pointer-events-none absolute -top-10 -left-10 w-32 h-32 bg-white/20 blur-2xl rounded-full"></div>
-            <div class="relative z-10 max-w-[190px]">
-              <span class="inline-flex items-center gap-1 font-label-sm text-label-sm font-bold uppercase tracking-wider text-[#35195e] mb-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-[#35195e]"></span> Mix of the Day
+            <div class="relative z-10 max-w-[220px]">
+              <span class="inline-flex items-center gap-1 font-label-sm text-[10px] font-extrabold uppercase tracking-wider text-[#35195e] mb-1 px-2 py-0.5 rounded-full bg-white/40 backdrop-blur-sm">
+                🌐 Online Streaming • Coming Soon
               </span>
-              <h4 class="font-headline-lg text-headline-lg font-bold leading-tight tracking-tight text-[#160c2b]">
+              <h4 class="font-headline-lg text-headline-lg font-bold leading-tight tracking-tight text-[#160c2b] mt-1">
                 Discover weekly
               </h4>
-              <p class="font-body-sm text-body-sm text-[#3b2361] mt-1 font-medium leading-snug">
-                The original slow instrumental best playlists.
+              <p class="font-body-sm text-[12px] text-[#3b2361] mt-1 font-medium leading-snug">
+                Curated cloud mixes and artist drops will activate in future update.
               </p>
             </div>
-            <div class="relative z-10 flex items-center gap-space-sm pt-space-lg">
-              <button class="w-12 h-12 rounded-full bg-[#240c4a] text-primary flex items-center justify-center shadow-[0_8px_20px_rgba(36,12,74,0.45)] hover:scale-105 active:scale-95 transition-all" onclick="window.wavenApp.playSpecificTrack('waven_01')">
-                <span class="material-symbols-outlined text-[26px] ml-0.5 icon-filled">play_arrow</span>
-              </button>
-              <button class="w-9 h-9 rounded-full bg-white/25 hover:bg-white/40 text-[#240c4a] flex items-center justify-center backdrop-blur-sm transition-all active:scale-95" onclick="window.wavenApp.toggleFavorite('waven_01')">
-                <span class="material-symbols-outlined text-[19px]">favorite</span>
-              </button>
-              <button class="w-9 h-9 rounded-full bg-white/25 hover:bg-white/40 text-[#240c4a] flex items-center justify-center backdrop-blur-sm transition-all active:scale-95" onclick="window.wavenApp.openPlaylistDetails('pl_starlit')">
-                <span class="material-symbols-outlined text-[19px]">queue_music</span>
-              </button>
+            <div class="relative z-10 flex items-center justify-between pt-space-md">
+              <span class="text-xs font-bold text-[#240c4a] underline">Learn about online mode &rarr;</span>
+              <div class="w-10 h-10 rounded-full bg-[#240c4a] text-primary flex items-center justify-center shadow-lg">
+                <span class="material-symbols-outlined text-[20px] text-primary-container">cloud_queue</span>
+              </div>
             </div>
           </div>
 
-          <!-- Peeking Secondary Card (Neon Citron Accent) -->
-          <div class="min-w-[130px] shrink-0 rounded-lg bg-gradient-to-br from-primary-container via-[#b5e012] to-[#8fae08] p-space-md relative overflow-hidden flex flex-col justify-between text-on-primary-container shadow-[0_20px_40px_-15px_rgba(204,242,46,0.3)] cursor-pointer" onclick="window.wavenApp.playSpecificTrack('waven_03')">
+          <!-- Featured Online Drop Card 2 -->
+          <div onclick="window.wavenApp.showStreamingNotice('Pulse 24 Global Beats')" class="min-w-[170px] shrink-0 rounded-lg bg-gradient-to-br from-primary-container via-[#b5e012] to-[#8fae08] p-space-md relative overflow-hidden flex flex-col justify-between text-on-primary-container shadow-[0_20px_40px_-15px_rgba(204,242,46,0.3)] cursor-pointer hover:scale-[1.01] transition-transform">
             <div>
-              <span class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-on-primary-container/80 block">Heavy Bass</span>
-              <h4 class="font-headline-md text-headline-md font-bold leading-tight mt-1 text-on-primary-container">Pulse 24</h4>
+              <span class="font-label-sm text-[10px] font-extrabold uppercase tracking-wider text-on-primary-container/80 block px-2 py-0.5 rounded-full bg-black/15 w-max">
+                🌐 Cloud Radio
+              </span>
+              <h4 class="font-headline-md text-headline-md font-bold leading-tight mt-2 text-on-primary-container">Pulse 24</h4>
+              <p class="text-[11px] text-on-primary-container/80 mt-1">Global streaming streams</p>
             </div>
-            <div class="flex items-center gap-1 pt-space-lg">
-              <div class="w-10 h-10 rounded-full bg-surface-container-lowest text-primary-container flex items-center justify-center shadow-md">
-                <span class="material-symbols-outlined text-[22px] ml-0.5 icon-filled">play_arrow</span>
+            <div class="flex items-center justify-between pt-space-md">
+              <span class="text-[11px] font-bold">Upcoming</span>
+              <div class="w-8 h-8 rounded-full bg-surface-container-lowest text-primary-container flex items-center justify-center shadow-md">
+                <span class="material-symbols-outlined text-[18px]">stream</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Top Daily Playlists Stack -->
+      <!-- Quick Launch: Local Library Summary -->
       <div class="relative z-10 mt-space-lg flex flex-col">
-        <div class="flex items-center justify-between pb-space-sm">
-          <h3 class="font-headline-md text-headline-md text-primary tracking-tight font-bold">Top daily playlists</h3>
-          <button class="font-label-md text-label-md text-on-surface-variant hover:text-primary-container transition-colors font-medium" onclick="window.wavenApp.navigateTo('library')">See all</button>
+        <div class="flex items-center justify-between pb-space-xs">
+          <div class="flex items-center gap-2">
+            <h3 class="font-headline-md text-headline-md text-primary tracking-tight font-bold">My Music Library</h3>
+            <span id="home-local-badge" class="px-2 py-0.5 rounded-full bg-primary-container/15 text-primary-container font-label-sm text-xs font-semibold">0 Tracks</span>
+          </div>
+          <button class="font-label-md text-label-md text-primary-fixed hover:underline font-semibold" onclick="window.wavenApp.navigateTo('library')">Open Library &rarr;</button>
+        </div>
+        
+        <!-- Quick Vault Card -->
+        <div onclick="window.wavenApp.navigateTo('library')" class="p-space-md rounded-lg bg-surface-container/70 border border-white/5 flex items-center justify-between cursor-pointer hover:bg-surface-container transition-all active:scale-[0.99] mt-1 shadow-lg">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-secondary-container to-primary-container flex items-center justify-center text-on-primary-container font-black shadow-md">
+              <span class="material-symbols-outlined text-[24px]">folder_special</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-headline-md text-base text-primary font-bold">Local Device Storage</span>
+              <span id="home-storage-desc" class="font-body-sm text-xs text-on-surface-variant">Tap to scan and play all audio on device</span>
+            </div>
+          </div>
+          <button onclick="event.stopPropagation(); window.wavenApp.scanDeviceAudio()" class="px-3 py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-primary-fixed font-bold text-xs flex items-center gap-1 active:scale-95 shadow">
+            <span class="material-symbols-outlined text-[16px]">search</span>
+            <span>Scan</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Recently Added Tracks List on Home -->
+      <div class="relative z-10 mt-space-lg flex flex-col">
+        <div class="flex items-center justify-between pb-space-xs">
+          <h3 class="font-headline-md text-headline-md text-primary tracking-tight font-bold">Device Audio Tracks</h3>
+          <button class="font-label-md text-label-md text-on-surface-variant hover:text-primary-container transition-colors font-medium" onclick="window.wavenApp.navigateTo('library')">View All</button>
         </div>
         <div class="flex flex-col gap-space-xs" id="home-playlists-stack">
           <!-- Populated by JS -->
@@ -198,112 +199,55 @@
          SCREEN 2: EXPLORE (waven_explore)
          ========================================================================= -->
     <section id="view-explore" class="view-container px-margin pt-safe">
-      <header class="py-space-md flex justify-between items-center">
-        <h1 class="font-headline-lg text-headline-lg tracking-tight text-primary font-bold">Explore</h1>
+      <header class="py-space-md flex items-center justify-between">
+        <div class="flex flex-col">
+          <span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase font-semibold">Discovery</span>
+          <h1 class="font-headline-lg text-headline-lg tracking-tight text-primary font-bold">Explore Music</h1>
+        </div>
+        <!-- Non-equalizer header icon -->
         <div class="flex items-center gap-space-sm">
-          <button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface" onclick="window.wavenApp.navigateTo('settings')">
-            <span class="material-symbols-outlined text-[20px]">tune</span>
-          </button>
+          <div class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container text-primary-fixed shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">library_music</span>
+          </div>
         </div>
       </header>
 
-      <!-- Search Bar Input Section -->
-      <div class="flex flex-col gap-space-sm">
-        <div class="relative w-full flex items-center bg-surface-container rounded-full px-space-md py-space-xs shadow-md transition-all focus-within:bg-surface-container-high">
-          <span class="material-symbols-outlined text-on-surface-variant text-[22px] mr-space-sm flex-shrink-0">search</span>
-          <input id="explore-search-input" class="w-full bg-transparent text-on-surface placeholder:text-on-surface-variant text-body-md font-body-md outline-none border-none py-space-xs" placeholder="Search songs, artists, genres..." type="text">
-          <div class="flex items-center gap-space-xs flex-shrink-0">
-            <button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-colors active:scale-95" title="Audio Filter" onclick="window.wavenApp.navigateTo('settings')">
-              <span class="material-symbols-outlined text-[19px]">tune</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Quick Tags Horizontal Scroller -->
-        <div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-space-xs -mx-margin px-margin">
-          <button class="explore-tag flex-shrink-0 px-space-md py-space-xs rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold transition-all active:scale-95 shadow-sm">
-            Lo-Fi Chill
-          </button>
-          <button class="explore-tag flex-shrink-0 px-space-md py-space-xs rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all active:scale-95">
-            Synthwave
-          </button>
-          <button class="explore-tag flex-shrink-0 px-space-md py-space-xs rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all active:scale-95">
-            Electronic
-          </button>
-          <button class="explore-tag flex-shrink-0 px-space-md py-space-xs rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all active:scale-95">
-            Deep Focus
-          </button>
-          <button class="explore-tag flex-shrink-0 px-space-md py-space-xs rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all active:scale-95">
-            Workout EDM
+      <!-- Search Input Form with Clear button (no equalizer button) -->
+      <div class="relative z-10 mt-space-xs">
+        <div class="relative flex items-center w-full h-12 rounded-full bg-surface-container px-space-md focus-within:ring-2 focus-within:ring-primary-container transition-all shadow-inner">
+          <span class="material-symbols-outlined text-on-surface-variant text-[20px] mr-space-xs">search</span>
+          <input id="explore-search-input" class="w-full bg-transparent text-primary placeholder-on-surface-variant font-body-md text-body-md focus:outline-none" placeholder="Search title, artist, or album..." type="text"/>
+          <button id="clearExploreSearch" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors active:scale-95" title="Clear Search">
+            <span class="material-symbols-outlined text-[18px]">close</span>
           </button>
         </div>
       </div>
 
-      <!-- Featured Spotlight Hero Card -->
-      <div class="mt-space-md relative w-full rounded-lg overflow-hidden bg-gradient-to-r from-secondary-container to-surface-container p-space-md shadow-xl flex items-center justify-between min-h-[140px] cursor-pointer" onclick="window.wavenApp.playSpecificTrack('waven_03')">
-        <div class="flex flex-col justify-between z-10 max-w-[65%] min-w-0">
-          <div class="flex items-center gap-space-xs mb-space-xs">
-            <span class="px-space-xs py-[2px] rounded-full bg-primary-container text-on-primary-container text-label-sm font-label-sm tracking-wide uppercase font-bold">Spotlight</span>
-            <span class="text-on-surface-variant text-label-sm font-label-sm">• Trending Now</span>
-          </div>
-          <h2 class="text-headline-md font-headline-md text-primary truncate font-bold">Midnight Cyberia</h2>
-          <p class="text-body-sm font-body-sm text-secondary-fixed-dim line-clamp-1 mt-space-xs">Electric synth-bass and midnight neon textures.</p>
-          <div class="flex items-center gap-space-sm mt-space-md">
-            <button class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-lg active:scale-95 transition-transform">
-              <span class="material-symbols-outlined text-[24px] icon-filled">play_arrow</span>
-            </button>
-            <button class="w-8 h-8 rounded-full bg-surface-container-highest/60 backdrop-blur-md text-on-surface flex items-center justify-center active:scale-95 transition-all">
-              <span class="material-symbols-outlined text-[18px]">favorite</span>
-            </button>
-          </div>
-        </div>
+      <!-- Quick Filter Chips -->
+      <div class="flex gap-space-xs overflow-x-auto no-scrollbar py-space-md -mx-margin px-margin">
+        <button class="explore-tag flex-shrink-0 px-space-md py-space-xs rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold transition-all active:scale-95 shadow-sm">
+          All
+        </button>
+        <button class="explore-tag flex-shrink-0 px-space-md py-space-xs rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all active:scale-95">
+          Local Audio
+        </button>
+        <button class="explore-tag flex-shrink-0 px-space-md py-space-xs rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all active:scale-95">
+          Hi-Res Lossless
+        </button>
+        <button class="explore-tag flex-shrink-0 px-space-md py-space-xs rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all active:scale-95">
+          Favorites
+        </button>
       </div>
 
-      <!-- Browse Genres (2x2 Grid) -->
-      <div class="mt-space-lg flex flex-col gap-space-sm">
-        <div class="flex items-center justify-between">
-          <h3 class="text-headline-md font-headline-md text-primary font-bold">Browse Genres</h3>
-        </div>
-        <div class="grid grid-cols-2 gap-space-sm">
-          <div class="group relative overflow-hidden rounded-DEFAULT bg-gradient-to-br from-secondary-container/90 via-surface-container to-surface-container-high p-space-md min-h-[120px] flex flex-col justify-between shadow-md active:scale-[0.98] transition-all cursor-pointer" onclick="window.wavenApp.searchByGenre('Electronic & Dance')">
-            <div class="z-10 min-w-0 pr-space-sm">
-              <span class="text-secondary text-label-sm font-label-sm font-semibold tracking-wider uppercase">Club &amp; Bass</span>
-              <h4 class="text-label-lg font-headline-md text-primary font-bold mt-space-xs leading-snug">Electronic &amp; Dance</h4>
-            </div>
-            <div class="z-10 flex items-center justify-between mt-space-sm">
-              <span class="text-body-sm font-body-sm text-on-surface-variant">2.4k Tracks</span>
-              <div class="w-7 h-7 rounded-full bg-surface-container-highest/80 flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
-                <span class="material-symbols-outlined text-[16px]">graphic_eq</span>
-              </div>
-            </div>
-          </div>
-          <div class="group relative overflow-hidden rounded-DEFAULT bg-gradient-to-br from-surface-container-high via-surface-container to-surface-container-low p-space-md min-h-[120px] flex flex-col justify-between shadow-md active:scale-[0.98] transition-all cursor-pointer" onclick="window.wavenApp.searchByGenre('Chill & Lo-Fi')">
-            <div class="z-10 min-w-0 pr-space-sm">
-              <span class="text-primary-container text-label-sm font-label-sm font-semibold tracking-wider uppercase">Vibes &amp; Tape</span>
-              <h4 class="text-label-lg font-headline-md text-primary font-bold mt-space-xs leading-snug">Chill &amp; Lo-Fi</h4>
-            </div>
-            <div class="z-10 flex items-center justify-between mt-space-sm">
-              <span class="text-body-sm font-body-sm text-on-surface-variant">1.8k Tracks</span>
-              <div class="w-7 h-7 rounded-full bg-surface-container-highest/80 flex items-center justify-center text-primary group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors">
-                <span class="material-symbols-outlined text-[16px]">nightlife</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- Track List Header -->
+      <div class="flex items-center justify-between pb-space-sm pt-space-xs">
+        <h3 class="font-headline-md text-headline-md text-primary font-bold">Top Local Results</h3>
+        <span id="explore-count-label" class="text-xs text-on-surface-variant">0 tracks</span>
       </div>
 
-      <!-- Trending Tracks Stack -->
-      <div class="mt-space-lg flex flex-col gap-space-sm">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-space-xs">
-            <span class="material-symbols-outlined text-primary-container text-[20px]">local_fire_department</span>
-            <h3 class="text-headline-md font-headline-md text-primary font-bold">Trending &amp; Rising</h3>
-          </div>
-          <span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">Live Chart</span>
-        </div>
-        <div class="flex flex-col gap-space-xs" id="explore-tracks-stack">
-          <!-- Populated by JS -->
-        </div>
+      <!-- Explore Track Stack -->
+      <div class="flex flex-col gap-space-xs" id="explore-tracks-stack">
+        <!-- Populated by JS -->
       </div>
     </section>
 
@@ -314,29 +258,30 @@
       <header class="py-space-md flex justify-between items-center">
         <h1 class="font-headline-lg text-headline-lg tracking-tight text-primary font-bold">Library</h1>
         <div class="flex items-center gap-space-sm">
-          <button id="scan-device-btn" class="flex items-center gap-1.5 px-space-md py-1.5 rounded-full bg-surface-container-high hover:bg-surface-container-highest text-primary-fixed font-label-sm text-label-sm transition-all active:scale-95 shadow-sm">
+          <button id="scan-device-btn" onclick="window.wavenApp.scanDeviceAudio()" class="flex items-center gap-1.5 px-space-md py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold transition-all active:scale-95 shadow-md">
             <span class="material-symbols-outlined text-[18px]">folder_open</span>
-            <span>Scan Storage</span>
+            <span id="scan-btn-text">Scan Device Music</span>
           </button>
         </div>
       </header>
 
-      <!-- Sub-header Bar -->
+      <!-- Sub-header Vault Bar -->
       <div class="flex items-center justify-between pt-space-xs">
-        <div class="flex items-center gap-space-sm">
+        <div class="flex items-center gap-space-sm cursor-pointer" onclick="window.wavenApp.openProfileModal()">
           <div class="relative">
-            <img class="w-11 h-11 rounded-full object-cover shadow-md" src="assets/covers/default_cover.png" alt="User Vault">
+            <img id="vault-user-avatar" class="w-11 h-11 rounded-full object-cover shadow-md bg-surface-container" src="assets/covers/default_cover.png" alt="User Vault">
             <span class="absolute bottom-0 right-0 w-3 h-3 bg-primary-fixed rounded-full ring-2 ring-surface-container-lowest"></span>
           </div>
           <div class="flex flex-col min-w-0">
-            <span class="font-body-sm text-body-sm text-on-surface-variant leading-none">Curated Archive</span>
-            <span class="font-headline-md text-headline-md text-primary font-bold tracking-tight truncate">Samantha's Vault</span>
+            <span class="font-body-sm text-[11px] text-on-surface-variant leading-none">Local Offline Vault</span>
+            <span id="vault-user-name" class="font-headline-md text-base text-primary font-bold tracking-tight truncate">Abdur's Vault</span>
           </div>
         </div>
+        <button onclick="window.wavenApp.openProfileModal()" class="text-xs text-primary-fixed font-semibold hover:underline">Edit Profile</button>
       </div>
 
       <!-- Quick Access Master Banner: Liked Songs -->
-      <div class="mt-space-md relative overflow-hidden rounded-lg bg-gradient-to-br from-secondary-container via-surface-container-high to-surface-container p-space-md shadow-[0_16px_36px_rgba(104,7,186,0.22)] active:scale-[0.99] transition-transform cursor-pointer" onclick="window.wavenApp.playPlaylist('liked')">
+      <div class="mt-space-md relative overflow-hidden rounded-lg bg-gradient-to-br from-secondary-container via-surface-container-high to-surface-container p-space-md shadow-[0_16px_36px_rgba(104,7,186,0.22)] active:scale-[0.99] transition-transform cursor-pointer" onclick="window.wavenApp.filterLibrary('liked')">
         <div class="absolute -right-6 -bottom-6 w-36 h-36 bg-secondary/15 rounded-full blur-2xl pointer-events-none"></div>
         <div class="flex items-center justify-between relative z-10">
           <div class="flex items-center gap-space-md min-w-0">
@@ -348,29 +293,37 @@
                 <span class="font-headline-md text-headline-md text-primary font-bold">Liked Songs</span>
                 <span class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></span>
               </div>
-              <span class="font-body-sm text-body-sm text-secondary-fixed-dim" id="library-track-count">Auto-synced offline</span>
+              <span class="font-body-sm text-body-sm text-secondary-fixed-dim" id="library-liked-count">0 songs in favorites</span>
             </div>
           </div>
-          <button class="w-12 h-12 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center flex-shrink-0 shadow-[0_4px_18px_rgba(204,242,46,0.4)] transition-transform active:scale-90">
+          <button onclick="event.stopPropagation(); window.wavenApp.playLikedSongs()" class="w-12 h-12 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center flex-shrink-0 shadow-[0_4px_18px_rgba(204,242,46,0.4)] transition-transform active:scale-90" title="Play Liked Songs">
             <span class="material-symbols-outlined text-[26px] icon-filled">play_arrow</span>
           </button>
         </div>
       </div>
 
-      <!-- View Controls & Sorter -->
-      <div class="flex items-center justify-between pt-space-md pb-space-sm">
-        <button class="flex items-center gap-space-xs text-on-surface hover:text-primary transition-colors" id="sortToggleBtn">
-          <span class="material-symbols-outlined text-[18px] text-primary-fixed">swap_vert</span>
-          <span class="font-label-md text-label-md font-semibold" id="sortLabel">Recently Added</span>
+      <!-- Library Navigation Tabs: All Songs | Liked Songs | Artists | Albums -->
+      <div class="flex items-center gap-2 pt-space-md pb-space-xs overflow-x-auto no-scrollbar">
+        <button id="tab-all-songs" onclick="window.wavenApp.filterLibrary('all')" class="lib-tab px-3.5 py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-xs font-bold transition-all shrink-0">
+          All Songs
         </button>
-        <div class="flex items-center bg-surface-container rounded-full p-0.5 shadow-inner">
-          <button class="w-8 h-8 rounded-full flex items-center justify-center text-primary-fixed bg-surface-container-highest transition-all" id="viewListBtn" title="List View">
-            <span class="material-symbols-outlined text-[18px]">view_list</span>
-          </button>
-          <button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-all" id="viewGridBtn" title="Grid View">
-            <span class="material-symbols-outlined text-[18px]">grid_view</span>
-          </button>
-        </div>
+        <button id="tab-liked-songs" onclick="window.wavenApp.filterLibrary('liked')" class="lib-tab px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-label-md text-xs font-medium hover:text-white transition-all shrink-0">
+          Favorites
+        </button>
+        <button id="tab-artists" onclick="window.wavenApp.filterLibrary('artists')" class="lib-tab px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-label-md text-xs font-medium hover:text-white transition-all shrink-0">
+          Artists
+        </button>
+        <button id="tab-albums" onclick="window.wavenApp.filterLibrary('albums')" class="lib-tab px-3.5 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-label-md text-xs font-medium hover:text-white transition-all shrink-0">
+          Albums
+        </button>
+      </div>
+
+      <!-- View Controls & Sorter -->
+      <div class="flex items-center justify-between pt-space-xs pb-space-sm text-xs">
+        <span id="library-track-count" class="text-on-surface-variant font-medium">0 tracks • Ready</span>
+        <button onclick="window.wavenApp.scanDeviceAudio()" class="text-primary-fixed font-semibold hover:underline flex items-center gap-1">
+          <span class="material-symbols-outlined text-[15px]">sync</span> Rescan
+        </button>
       </div>
 
       <!-- Dynamic Playlist / Track Container -->
@@ -384,7 +337,7 @@
          ========================================================================= -->
     <section id="view-playlist-details" class="view-container px-margin pt-safe">
       <header class="py-space-md flex items-center justify-between">
-        <button id="pl-back-btn" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface active:scale-95">
+        <button id="pl-back-btn" onclick="window.wavenApp.navigateTo('library')" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface active:scale-95">
           <span class="material-symbols-outlined text-[22px]">arrow_back</span>
         </button>
         <h1 class="font-headline-md text-headline-md text-primary font-bold">Playlist Details</h1>
@@ -393,98 +346,83 @@
 
       <div class="relative w-full flex flex-col items-center">
         <!-- Hero Artwork -->
-        <div class="relative w-full max-w-[280px] aspect-square my-space-md rounded-lg overflow-hidden shadow-2xl bg-surface-container">
-          <img class="w-full h-full object-cover" src="assets/covers/default_cover.png" alt="Playlist Cover">
-          <div class="absolute top-space-md left-space-md">
-            <span class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-primary font-label-sm text-label-sm tracking-wide">
+        <div class="relative w-full max-w-[240px] aspect-square my-space-md rounded-2xl overflow-hidden shadow-2xl bg-surface-container border border-white/10">
+          <img id="pl-detail-art" class="w-full h-full object-cover" src="assets/covers/default_cover.png" alt="Playlist Cover">
+          <div class="absolute top-3 left-3">
+            <span class="inline-flex items-center gap-1.5 px-space-sm py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-primary font-label-sm text-[11px] tracking-wide">
               <span class="w-2 h-2 rounded-full bg-primary-fixed"></span>
-              LOSSLESS HI-RES
+              BIT-PERFECT
             </span>
           </div>
         </div>
 
-        <h2 id="pl-detail-title" class="font-headline-xl-mobile text-headline-xl-mobile text-primary font-bold">Starlit Reverie</h2>
-        <p id="pl-detail-curator" class="text-on-surface-variant font-body-sm text-body-sm mt-1">Curated by Budiarti • 8 Songs • 32 min</p>
+        <h2 id="pl-detail-title" class="font-headline-lg text-2xl text-primary font-bold text-center">Liked Songs</h2>
+        <p id="pl-detail-curator" class="text-on-surface-variant font-body-sm text-xs mt-1 text-center">Favorites • 0 Songs</p>
 
         <!-- Main Action Dock -->
-        <div class="w-full flex items-center justify-between px-space-md my-space-lg">
+        <div class="w-full flex items-center justify-between px-space-md my-space-md">
           <div class="flex items-center gap-space-sm">
-            <button class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface transition-transform active:scale-90" onclick="window.wavenApp.toggleFavorite('waven_01')">
-              <span class="material-symbols-outlined text-[22px]">favorite</span>
-            </button>
-            <button class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface transition-transform active:scale-90" onclick="window.wavenApp.audioEngine.showToast('Downloaded to offline storage')">
-              <span class="material-symbols-outlined text-[22px]">arrow_downward</span>
+            <button class="w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface transition-transform active:scale-90" onclick="window.wavenApp.player.toggleShuffle()">
+              <span class="material-symbols-outlined text-[20px]">shuffle</span>
             </button>
           </div>
           <div class="flex items-center gap-space-md">
-            <button class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant transition-transform active:scale-90" onclick="window.wavenApp.player.toggleShuffle()">
-              <span class="material-symbols-outlined text-[22px]">shuffle</span>
-            </button>
-            <button class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed shadow-lg shadow-primary-fixed/25 transition-transform active:scale-95" onclick="window.wavenApp.playPlaylist('pl_starlit')">
-              <span class="material-symbols-outlined text-[32px] icon-filled">play_arrow</span>
+            <button class="w-14 h-14 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed shadow-lg shadow-primary-fixed/25 transition-transform active:scale-95" onclick="window.wavenApp.playLikedSongs()">
+              <span class="material-symbols-outlined text-[30px] icon-filled">play_arrow</span>
             </button>
           </div>
         </div>
       </div>
 
       <!-- Tracks List -->
-      <div class="w-full flex flex-col gap-space-xs mt-space-sm" id="pl-detail-tracklist">
+      <div class="flex flex-col gap-space-xs mt-space-sm" id="pl-detail-tracklist">
         <!-- Populated by JS -->
       </div>
     </section>
 
     <!-- =========================================================================
-         SCREEN 7: SETTINGS & EQUALIZER (waven_settings_audio_equalizer)
+         SCREEN 7: SETTINGS HUB (waven_settings_audio_equalizer)
          ========================================================================= -->
     <section id="view-settings" class="view-container px-margin pt-safe">
       <header class="py-space-md flex items-center justify-between">
-        <div class="flex items-center gap-space-sm">
-          <button id="settings-back-btn" class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface active:scale-95 transition-all">
-            <span class="material-symbols-outlined text-[20px]">arrow_back_ios_new</span>
-          </button>
-          <div class="flex flex-col">
-            <span class="font-headline-md text-headline-md tracking-tight text-primary font-bold">Audio &amp; EQ</span>
-            <span class="font-body-sm text-body-sm text-on-surface-variant">Studio Master Tuning</span>
-          </div>
+        <div class="flex flex-col">
+          <span class="font-headline-lg text-2xl tracking-tight text-primary font-black">Settings</span>
+          <span class="font-body-sm text-xs text-on-surface-variant">Profile, DSP Equalizer &amp; Storage</span>
         </div>
-        <button id="reset-eq-btn" class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary-container active:scale-95 transition-all" title="Reset Audio Profile">
-          <span class="material-symbols-outlined text-[20px]">restart_alt</span>
-        </button>
       </header>
 
-      <!-- User Plan & Fidelity Profile Card -->
-      <div class="relative overflow-hidden rounded-lg bg-surface-container p-space-md shadow-[0_16px_36px_rgba(0,0,0,0.45)] mb-space-md">
-        <div class="absolute -right-8 -top-8 w-36 h-36 bg-secondary-container/30 rounded-full blur-2xl pointer-events-none"></div>
+      <!-- 1. User Profile Section Card -->
+      <div class="relative overflow-hidden rounded-2xl bg-surface-container p-space-md shadow-lg border border-white/5 mb-space-md">
+        <div class="absolute -right-8 -top-8 w-36 h-36 bg-secondary-container/20 rounded-full blur-2xl pointer-events-none"></div>
         <div class="relative z-10 flex items-center justify-between">
-          <div class="flex items-center gap-space-md min-w-0">
+          <div class="flex items-center gap-3 min-w-0">
             <div class="relative flex-shrink-0">
-              <img class="w-12 h-12 rounded-full object-cover" src="assets/covers/default_cover.png" alt="Profile"/>
-              <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-primary-container rounded-full ring-2 ring-surface-container flex items-center justify-center">
-                <span class="material-symbols-outlined text-[10px] text-on-primary-container font-black">bolt</span>
-              </span>
+              <img id="settings-profile-avatar" class="w-14 h-14 rounded-full object-cover bg-surface-container-high border-2 border-primary-container" src="assets/covers/default_cover.png" alt="Profile"/>
             </div>
-            <div class="flex flex-col min-w-0 pr-space-xs">
-              <div class="flex items-center gap-space-xs">
-                <span class="font-label-lg text-label-lg text-primary font-bold truncate">Samantha Miller</span>
+            <div class="flex flex-col min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span id="settings-profile-name" class="font-headline-md text-base text-primary font-bold truncate">Abdur</span>
                 <span class="material-symbols-outlined text-secondary text-[16px] icon-filled">verified</span>
               </div>
-              <span class="font-body-sm text-body-sm text-on-surface-variant truncate">Master 24-bit • Studio Tier</span>
+              <span id="settings-profile-handle" class="font-body-sm text-xs text-on-surface-variant truncate">@audiophile • Offline Listener</span>
             </div>
           </div>
-          <span class="flex-shrink-0 rounded-full bg-surface-container-high px-space-sm py-1 font-label-sm text-label-sm text-primary-container">PRO DSP</span>
+          <button onclick="window.wavenApp.openProfileModal()" class="flex-shrink-0 rounded-full bg-surface-container-high hover:bg-surface-container-highest px-3 py-1.5 font-label-sm text-xs text-primary-container font-semibold transition-colors active:scale-95">
+            Edit Profile
+          </button>
         </div>
       </div>
 
-      <!-- 6-Band Interactive Graphic Equalizer Card -->
-      <div class="relative rounded-lg bg-surface-container p-space-md flex flex-col gap-space-md overflow-hidden shadow-[0_20px_40px_-15px_rgba(104,7,186,0.35)] mb-space-md">
+      <!-- 2. 6-Band Graphic Equalizer Section Card -->
+      <div class="relative rounded-2xl bg-surface-container p-space-md flex flex-col gap-space-md overflow-hidden shadow-lg border border-white/5 mb-space-md">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-space-sm">
-            <div class="w-8 h-8 rounded-full bg-primary-container/15 flex items-center justify-center">
-              <span class="material-symbols-outlined text-primary-container text-[18px]">equalizer</span>
+            <div class="w-9 h-9 rounded-full bg-primary-container/15 flex items-center justify-center text-primary-container">
+              <span class="material-symbols-outlined text-[20px]">equalizer</span>
             </div>
             <div>
-              <span class="font-label-lg text-label-lg text-primary font-bold">Custom Equalizer</span>
-              <p class="font-body-sm text-body-sm text-on-surface-variant">Realtime DSP Processing</p>
+              <span class="font-label-lg text-sm text-primary font-bold block">6-Band DSP Equalizer</span>
+              <p class="font-body-sm text-xs text-on-surface-variant">Realtime Acoustic Mastering</p>
             </div>
           </div>
           <button class="relative w-12 h-7 rounded-full bg-primary-container flex items-center p-0.5 transition-colors focus:outline-none" id="eq-master-toggle">
@@ -496,28 +434,28 @@
 
         <!-- Presets Carousel -->
         <div class="flex gap-space-xs overflow-x-auto pb-1 -mx-space-md px-space-md no-scrollbar">
-          <button class="eq-preset active flex-shrink-0 px-space-sm py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold transition-all">
+          <button class="eq-preset active flex-shrink-0 px-3 py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-md text-xs font-semibold transition-all">
             Bass Boost
           </button>
-          <button class="eq-preset flex-shrink-0 px-space-sm py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all">
+          <button class="eq-preset flex-shrink-0 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-xs transition-all">
             Vocal Clarity
           </button>
-          <button class="eq-preset flex-shrink-0 px-space-sm py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all">
+          <button class="eq-preset flex-shrink-0 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-xs transition-all">
             Club Pulse
           </button>
-          <button class="eq-preset flex-shrink-0 px-space-sm py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all">
+          <button class="eq-preset flex-shrink-0 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-xs transition-all">
             Acoustic
           </button>
-          <button class="eq-preset flex-shrink-0 px-space-sm py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all">
+          <button class="eq-preset flex-shrink-0 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-xs transition-all">
             Rock Stage
           </button>
-          <button class="eq-preset flex-shrink-0 px-space-sm py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-all">
+          <button class="eq-preset flex-shrink-0 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-xs transition-all">
             Flat (Studio)
           </button>
         </div>
 
         <!-- Frequency Curve Canvas SVG -->
-        <div class="relative w-full h-14 bg-surface-container-lowest/80 rounded-DEFAULT overflow-hidden px-2 pt-2">
+        <div class="relative w-full h-14 bg-surface-container-lowest/80 rounded-xl overflow-hidden px-2 pt-2 border border-white/5">
           <svg class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 300 50">
             <defs>
               <linearGradient id="eqCurveGrad" x1="0%" x2="0%" y1="0%" y2="100%">
@@ -539,83 +477,132 @@
         <div class="grid grid-cols-6 gap-space-xs pt-1 pb-1">
           <!-- Band 1: 60Hz -->
           <div class="flex flex-col items-center gap-space-xs">
-            <span id="eq-val-0" class="font-label-sm text-label-sm text-primary-container font-bold">+6dB</span>
+            <span id="eq-val-0" class="font-label-sm text-[11px] text-primary-container font-bold">+6dB</span>
             <div class="eq-slider-track" data-band="0">
               <div id="eq-fill-0" class="eq-slider-fill" style="height: 80%;"></div>
               <div id="eq-thumb-0" class="eq-slider-thumb" style="bottom: 80%;"></div>
             </div>
-            <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">60Hz</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant font-medium">60Hz</span>
           </div>
 
           <!-- Band 2: 150Hz -->
           <div class="flex flex-col items-center gap-space-xs">
-            <span id="eq-val-1" class="font-label-sm text-label-sm text-primary-container font-bold">+4dB</span>
+            <span id="eq-val-1" class="font-label-sm text-[11px] text-primary-container font-bold">+4dB</span>
             <div class="eq-slider-track" data-band="1">
               <div id="eq-fill-1" class="eq-slider-fill" style="height: 70%;"></div>
               <div id="eq-thumb-1" class="eq-slider-thumb" style="bottom: 70%;"></div>
             </div>
-            <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">150Hz</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant font-medium">150Hz</span>
           </div>
 
           <!-- Band 3: 400Hz -->
           <div class="flex flex-col items-center gap-space-xs">
-            <span id="eq-val-2" class="font-label-sm text-label-sm text-secondary font-bold">+1dB</span>
+            <span id="eq-val-2" class="font-label-sm text-[11px] text-secondary font-bold">+1dB</span>
             <div class="eq-slider-track" data-band="2">
               <div id="eq-fill-2" class="eq-slider-fill" style="height: 55%;"></div>
               <div id="eq-thumb-2" class="eq-slider-thumb" style="bottom: 55%;"></div>
             </div>
-            <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">400Hz</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant font-medium">400Hz</span>
           </div>
 
           <!-- Band 4: 1kHz -->
           <div class="flex flex-col items-center gap-space-xs">
-            <span id="eq-val-3" class="font-label-sm text-label-sm text-on-surface-variant font-bold">-1dB</span>
+            <span id="eq-val-3" class="font-label-sm text-[11px] text-on-surface-variant font-bold">-1dB</span>
             <div class="eq-slider-track" data-band="3">
               <div id="eq-fill-3" class="eq-slider-fill" style="height: 45%;"></div>
               <div id="eq-thumb-3" class="eq-slider-thumb" style="bottom: 45%;"></div>
             </div>
-            <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">1kHz</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant font-medium">1kHz</span>
           </div>
 
           <!-- Band 5: 2.4kHz -->
           <div class="flex flex-col items-center gap-space-xs">
-            <span id="eq-val-4" class="font-label-sm text-label-sm text-primary-container font-bold">+3dB</span>
+            <span id="eq-val-4" class="font-label-sm text-[11px] text-primary-container font-bold">+3dB</span>
             <div class="eq-slider-track" data-band="4">
               <div id="eq-fill-4" class="eq-slider-fill" style="height: 65%;"></div>
               <div id="eq-thumb-4" class="eq-slider-thumb" style="bottom: 65%;"></div>
             </div>
-            <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">2.4k</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant font-medium">2.4k</span>
           </div>
 
           <!-- Band 6: 15kHz -->
           <div class="flex flex-col items-center gap-space-xs">
-            <span id="eq-val-5" class="font-label-sm text-label-sm text-primary-container font-bold">+5dB</span>
+            <span id="eq-val-5" class="font-label-sm text-[11px] text-primary-container font-bold">+5dB</span>
             <div class="eq-slider-track" data-band="5">
               <div id="eq-fill-5" class="eq-slider-fill" style="height: 75%;"></div>
               <div id="eq-thumb-5" class="eq-slider-thumb" style="bottom: 75%;"></div>
             </div>
-            <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">15kHz</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant font-medium">15kHz</span>
           </div>
         </div>
       </div>
 
-      <!-- Cache & Storage Card -->
-      <div class="rounded-lg bg-surface-container p-space-md flex flex-col gap-space-md mb-space-md">
+      <!-- 3. Audio Storage & Cache Card -->
+      <div class="rounded-2xl bg-surface-container p-space-md flex flex-col gap-3 mb-space-md border border-white/5 shadow-lg">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-space-xs">
+          <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-secondary text-[20px]">folder_special</span>
-            <span class="font-label-lg text-label-lg text-primary font-bold">Audio Storage &amp; Cache</span>
+            <span class="font-label-lg text-sm text-primary font-bold">Audio Storage &amp; Cache</span>
           </div>
-          <span class="font-label-sm text-label-sm text-on-surface-variant">4.8 GB of 64 GB</span>
+          <span id="settings-tracks-badge" class="font-label-sm text-xs text-primary-container font-semibold">0 tracks scanned</span>
         </div>
-        <div class="w-full h-3 bg-surface-container-lowest rounded-full overflow-hidden flex gap-1 p-0.5">
-          <div class="h-full bg-primary-container rounded-full" style="width: 25%;"></div>
-          <div class="h-full bg-secondary rounded-full" style="width: 15%;"></div>
-          <div class="h-full bg-surface-container-highest rounded-full" style="width: 60%;"></div>
+        
+        <p class="text-xs text-on-surface-variant">
+          WAVEN scans your device storage directly through Android MediaStore. No files are uploaded to any server.
+        </p>
+
+        <div class="flex items-center gap-3 pt-1">
+          <button onclick="window.wavenApp.scanDeviceAudio()" class="flex-1 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-primary-fixed font-bold text-xs flex items-center justify-center gap-1.5 transition-colors active:scale-95">
+            <span class="material-symbols-outlined text-[16px]">refresh</span>
+            <span>Rescan Local Audio</span>
+          </button>
+          <button onclick="window.wavenApp.clearLibraryCache()" class="py-2 px-4 rounded-xl bg-surface-container-high hover:bg-red-500/20 text-error font-semibold text-xs transition-colors active:scale-95">
+            Clear Cache
+          </button>
         </div>
-        <div class="flex items-center justify-between font-label-sm text-label-sm">
-          <span class="text-on-surface">FLAC Lossless Cache</span>
-          <button class="text-error font-semibold hover:underline" id="clear-cache-btn">Clear Cache</button>
+      </div>
+
+      <!-- 4. Privacy & Permissions Card -->
+      <div class="rounded-2xl bg-surface-container p-space-md flex flex-col gap-3 mb-space-md border border-white/5 shadow-lg">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary-container text-[20px]">verified_user</span>
+            <span class="font-label-lg text-sm text-primary font-bold">Privacy &amp; Permissions</span>
+          </div>
+          <span class="px-2 py-0.5 rounded-full bg-primary-container/15 text-primary-container text-[11px] font-bold">100% Offline</span>
+        </div>
+        
+        <div class="space-y-2 text-xs">
+          <div class="flex items-center justify-between py-1 border-b border-white/5">
+            <span class="text-on-surface-variant">Storage Audio Access</span>
+            <span id="perm-audio-status" class="text-primary-container font-semibold">Granted</span>
+          </div>
+          <div class="flex items-center justify-between py-1 border-b border-white/5">
+            <span class="text-on-surface-variant">Media Notification Controls</span>
+            <span class="text-primary-container font-semibold">Enabled</span>
+          </div>
+          <div class="flex items-center justify-between py-1">
+            <span class="text-on-surface-variant">Data Collection / Tracking</span>
+            <span class="text-primary-container font-bold">None (Zero Telemetry)</span>
+          </div>
+        </div>
+
+        <button onclick="window.wavenApp.openAppSettings()" class="w-full py-2 rounded-xl bg-surface-container-high text-on-surface hover:text-white font-medium text-xs flex items-center justify-center gap-1 transition-colors active:scale-95 mt-1">
+          <span class="material-symbols-outlined text-[16px]">settings</span>
+          <span>Open Android App Permissions</span>
+        </button>
+      </div>
+
+      <!-- 5. About WAVEN Card -->
+      <div class="rounded-2xl bg-surface-container p-space-md flex flex-col gap-2 mb-space-xl border border-white/5 shadow-lg text-xs text-on-surface-variant">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-white text-sm">WAVEN Android</span>
+          <span class="font-semibold text-primary-container">v1.0.3 (Build 4)</span>
+        </div>
+        <p>Bit-perfect 24-bit/192kHz master local audio engine with hardware MediaSession and 6-band DSP equalizer.</p>
+        <div class="flex items-center justify-between pt-2 border-t border-white/5 text-[11px]">
+          <span>License: Apache 2.0</span>
+          <span>Free &amp; Open Source</span>
         </div>
       </div>
     </section>
@@ -626,14 +613,15 @@
        MINI PLAYER CAPSULE (Persistent Floating Transport)
        ========================================================================= -->
   <div class="fixed bottom-24 left-0 right-0 px-margin z-40 pointer-events-none">
-    <div id="mini-player" class="pointer-events-auto mx-auto max-w-md h-14 rounded-lg bg-surface-container/95 backdrop-blur-xl px-space-sm py-space-xs flex items-center justify-between shadow-[0_16px_36px_rgba(0,0,0,0.65)] relative overflow-hidden cursor-pointer border border-white/5 active:scale-[0.99] transition-transform">
+    <div id="mini-player" onclick="window.wavenApp.openNowPlaying()" class="pointer-events-auto mx-auto max-w-md h-14 rounded-2xl bg-surface-container/95 backdrop-blur-xl px-space-sm py-space-xs flex items-center justify-between shadow-[0_16px_36px_rgba(0,0,0,0.7)] relative overflow-hidden cursor-pointer border border-white/10 active:scale-[0.99] transition-transform">
       <!-- Progress Bar line -->
-      <div class="absolute bottom-0 left-0 w-full h-[2px] bg-surface-container-highest">
+      <div class="absolute bottom-0 left-0 w-full h-[2.5px] bg-surface-container-highest">
         <div id="mini-progress-line" class="h-full bg-primary-container w-0 transition-all duration-100"></div>
       </div>
 
       <div class="flex items-center gap-space-sm min-w-0 flex-1">
-        <div class="w-10 h-10 rounded-DEFAULT bg-surface-container-high flex-shrink-0 flex items-center justify-center overflow-hidden">
+        <div class="w-10 h-10 rounded-xl bg-surface-container-high flex-shrink-0 flex items-center justify-center overflow-hidden border border-white/5">
+          <img id="mini-cover-img" class="w-full h-full object-cover hidden" src="assets/covers/default_cover.png" alt="Cover">
           <div id="mini-eq-bars" class="flex items-end gap-0.5 h-4 opacity-40 transition-opacity">
             <span class="w-[3px] bg-primary-fixed rounded-full eq-bar-1"></span>
             <span class="w-[3px] bg-primary-fixed rounded-full eq-bar-2"></span>
@@ -642,17 +630,20 @@
           </div>
         </div>
         <div class="flex flex-col min-w-0 pr-space-xs">
-          <span id="mini-title" class="font-label-md text-label-md text-on-surface truncate font-semibold">Midnight Confessions</span>
-          <span id="mini-artist" class="font-body-sm text-body-sm text-on-surface-variant truncate">Budiarti • High-Res Lossless</span>
+          <span id="mini-title" class="font-label-md text-label-md text-on-surface truncate font-bold">Select a song</span>
+          <span id="mini-artist" class="font-body-sm text-[11px] text-on-surface-variant truncate">WAVEN Local Audio</span>
         </div>
       </div>
 
-      <div class="flex items-center gap-space-xs flex-shrink-0">
-        <button id="mini-fav-btn" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface">
-          <span class="material-symbols-outlined text-[22px] fav-icon-toggle">favorite</span>
+      <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
+        <button id="mini-prev-btn" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface hover:text-primary active:scale-90 transition-transform">
+          <span class="material-symbols-outlined text-[20px]">skip_previous</span>
         </button>
-        <button id="mini-play-btn" class="w-11 h-11 flex items-center justify-center rounded-full bg-primary-container text-on-primary-container shadow-sm">
-          <span id="mini-play-icon" class="material-symbols-outlined text-[22px] icon-filled">play_arrow</span>
+        <button id="mini-play-btn" class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-md active:scale-90 transition-transform">
+          <span class="material-symbols-outlined text-[24px] ml-0.5" id="mini-play-icon" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+        </button>
+        <button id="mini-next-btn" class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface hover:text-primary active:scale-90 transition-transform">
+          <span class="material-symbols-outlined text-[20px]">skip_next</span>
         </button>
       </div>
     </div>
@@ -663,7 +654,7 @@
        ========================================================================= -->
   <nav id="bottom-nav" class="fixed bottom-0 w-full z-50 pb-safe pointer-events-none">
     <div class="pointer-events-auto px-margin pb-space-md pt-space-xs flex justify-center">
-      <div class="h-16 w-full max-w-md rounded-full bg-surface-container-high/80 backdrop-blur-xl px-space-xs flex items-center justify-between shadow-[0_16px_36px_rgba(0,0,0,0.7)] border border-white/5">
+      <div class="h-16 w-full max-w-md rounded-full bg-surface-container-high/90 backdrop-blur-xl px-space-xs flex items-center justify-between shadow-[0_16px_36px_rgba(0,0,0,0.8)] border border-white/10">
         <a class="flex items-center justify-center w-12 h-12 rounded-full transition-all bg-primary-container text-on-primary-container shadow-md" data-path="home" href="#">
           <span class="material-symbols-outlined text-[24px]">home</span>
         </a>
@@ -673,8 +664,8 @@
         <a class="flex items-center justify-center w-12 h-12 rounded-full text-on-surface-variant hover:text-on-surface transition-all" data-path="library" href="#">
           <span class="material-symbols-outlined text-[24px]">queue_music</span>
         </a>
-        <a class="flex items-center justify-center w-12 h-12 rounded-full text-on-surface-variant hover:text-on-surface transition-all" data-path="settings" href="#">
-          <span class="material-symbols-outlined text-[24px]">tune</span>
+        <a class="flex items-center justify-center w-12 h-12 rounded-full text-on-surface-variant hover:text-on-surface transition-all" data-path="settings" href="#" title="Settings & EQ">
+          <span class="material-symbols-outlined text-[24px]">settings</span>
         </a>
       </div>
     </div>
@@ -683,250 +674,251 @@
   <!-- =========================================================================
        SCREEN 4: FULL NOW PLAYING MODAL (waven_now_playing_player)
        ========================================================================= -->
-  <div id="view-now-playing" class="modal-overlay">
-    <header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl">
-      <div class="h-16 px-margin flex items-center justify-between">
-        <button id="np-dismiss-btn" aria-label="Dismiss Player" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:text-primary active:scale-95 transition-all">
-          <span class="material-symbols-outlined text-[26px]">expand_more</span>
+  <div id="view-now-playing" class="fixed inset-0 z-50 bg-canvas flex flex-col justify-between px-margin pb-safe pt-safe overflow-hidden transition-transform duration-300 translate-y-full">
+    <!-- Dynamic Atmospheric Backdrop Glow -->
+    <div class="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-secondary-container/25 blur-[120px] rounded-full"></div>
+
+    <!-- Header Actions -->
+    <header class="w-full flex items-center justify-between py-space-md z-10">
+      <button id="np-down-btn" onclick="window.wavenApp.closeNowPlaying()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface active:scale-95 transition-all">
+        <span class="material-symbols-outlined text-[28px]">keyboard_arrow_down</span>
+      </button>
+      <div class="flex flex-col items-center">
+        <span class="font-label-sm text-[11px] text-secondary tracking-widest uppercase font-bold">PLAYING FROM LOCAL STORAGE</span>
+        <span class="font-headline-md text-sm text-primary font-bold">Bit-Perfect Audio</span>
+      </div>
+      <div class="flex items-center gap-space-xs">
+        <button class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:text-primary active:scale-95 transition-all" onclick="window.wavenApp.navigateTo('settings'); window.wavenApp.closeNowPlaying();" title="Equalizer">
+          <span class="material-symbols-outlined text-[22px]">tune</span>
         </button>
-        <div class="flex flex-col items-center justify-center max-w-[60%] px-space-xs text-center">
-          <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Playing from Playlist</span>
-          <h1 class="font-headline-md text-headline-md text-on-surface truncate w-full font-bold">Now Playing</h1>
-        </div>
-        <div class="flex items-center gap-space-xs">
-          <button class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:text-primary active:scale-95 transition-all" onclick="window.wavenApp.navigateTo('settings'); window.wavenApp.closeNowPlaying();">
-            <span class="material-symbols-outlined text-[24px]">tune</span>
-          </button>
-        </div>
       </div>
     </header>
 
-    <main class="flex flex-col relative w-full pt-20 pb-safe bg-surface min-h-screen">
-      <div class="flex flex-col w-full px-margin pb-space-2xl relative select-none">
-        <!-- Fidelity Tag & Audio Peripheral Indicator -->
-        <div class="flex items-center justify-between py-space-sm">
-          <div class="inline-flex items-center gap-space-xs px-3 py-1 rounded-full bg-surface-container-high/60 backdrop-blur-md">
-            <span class="w-1.5 h-1.5 rounded-full bg-primary-fixed animate-pulse"></span>
-            <span class="font-label-sm text-label-sm tracking-wider uppercase text-on-surface font-semibold">LOSSLESS 24-BIT / 192KHZ</span>
-          </div>
-          <button class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high/60 backdrop-blur-md text-on-surface-variant hover:text-on-surface transition-colors" onclick="window.wavenApp.navigateTo('settings'); window.wavenApp.closeNowPlaying();">
-            <span class="material-symbols-outlined text-[16px] text-primary-fixed">spatial_audio</span>
-            <span class="font-label-sm text-label-sm tracking-wider uppercase">DOLBY ATMOS</span>
-          </button>
-        </div>
-
-        <!-- Center Artwork Card with Radiant Halo -->
-        <div class="relative w-full aspect-square mt-space-md mb-space-lg flex items-center justify-center">
-          <div class="absolute inset-4 rounded-xl bg-secondary-container/40 blur-2xl scale-95 opacity-70 transition-all duration-700 pointer-events-none"></div>
-          <div class="relative w-full h-full rounded-xl overflow-hidden shadow-2xl bg-surface-container-lowest">
-            <div id="np-cover-art" class="w-full h-full bg-cover bg-center transition-transform duration-700 hover:scale-105" style="background-image: url('assets/covers/default_cover.png')">
-              <div class="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-lowest/70 backdrop-blur-xl">
-                <span class="material-symbols-outlined text-[16px] text-primary-fixed icon-filled">graphic_eq</span>
-                <span class="font-label-sm text-label-sm text-on-surface tracking-wide uppercase font-bold">WAVEN MASTER</span>
-              </div>
-              <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-surface-container-lowest/80 via-surface-container-lowest/20 to-transparent"></div>
+    <!-- Center Hero Section: Artwork -->
+    <div class="flex-1 flex flex-col justify-center items-center py-space-xs z-10 w-full">
+      <div class="relative w-full max-w-[300px] aspect-square flex items-center justify-center">
+        <!-- Ambient Blur Halo Behind Vinyl -->
+        <div id="np-glow-halo" class="absolute inset-0 bg-primary-fixed/20 rounded-full blur-3xl opacity-50 transition-opacity"></div>
+        <div class="relative w-full h-full rounded-2xl overflow-hidden shadow-[0_24px_50px_rgba(0,0,0,0.85)] border border-white/10 bg-surface-container flex items-center justify-center">
+          <div id="np-cover-art" class="w-full h-full bg-cover bg-center transition-transform duration-700" style="background-image: url('assets/covers/default_cover.png')">
+            <div class="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-lowest/80 backdrop-blur-xl">
+              <span class="material-symbols-outlined text-[15px] text-primary-fixed icon-filled">graphic_eq</span>
+              <span class="font-label-sm text-[10px] text-on-surface tracking-wide uppercase font-bold">24-BIT MASTER</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Track Meta & Favorite Actions -->
-        <div class="flex items-center justify-between gap-space-md mb-space-lg">
-          <div class="flex flex-col min-w-0">
-            <h2 id="np-title" class="font-headline-lg text-headline-lg text-on-surface truncate font-bold">Midnight Confessions</h2>
-            <p id="np-artist" class="font-body-md text-body-md text-on-surface-variant truncate mt-0.5">Budiarti <span class="mx-1 opacity-40">•</span> Echoes of Solitude</p>
-          </div>
-          <div class="flex items-center gap-space-xs shrink-0">
-            <button id="np-fav-btn" class="w-11 h-11 rounded-full flex items-center justify-center bg-surface-container-high/60 backdrop-blur-md active:scale-90 transition-all hover:bg-surface-container-high">
-              <span class="material-symbols-outlined text-[24px] fav-icon-toggle">favorite</span>
-            </button>
-            <button class="w-11 h-11 rounded-full flex items-center justify-center bg-surface-container-high/60 backdrop-blur-md text-on-surface active:scale-90 transition-all hover:bg-surface-container-high" onclick="window.wavenApp.navigateTo('library'); window.wavenApp.closeNowPlaying();">
-              <span class="material-symbols-outlined text-[24px]">playlist_add</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Playback Scrubber & Time -->
-        <div class="flex flex-col gap-1.5 mb-space-lg">
-          <div class="relative w-full h-7 flex items-center cursor-pointer group" id="np-scrubber-container">
-            <div class="w-full h-1.5 rounded-full bg-surface-container-highest/80 relative overflow-hidden">
-              <div class="absolute left-0 top-0 bottom-0 w-[82%] bg-surface-variant/70 rounded-full"></div>
-              <div id="np-progress-bar" class="absolute left-0 top-0 bottom-0 w-0 bg-primary-fixed rounded-full shadow-[0_0_12px_rgba(204,242,46,0.6)]"></div>
-            </div>
-            <div id="np-scrubber-thumb" class="absolute left-0 -translate-x-1/2 w-4 h-4 rounded-full bg-primary-fixed shadow-[0_0_10px_rgba(204,242,46,0.9)] ring-4 ring-surface-container-lowest transition-transform duration-100 group-active:scale-125"></div>
-          </div>
-          <div class="flex items-center justify-between px-0.5">
-            <span id="np-time-elapsed" class="font-label-sm text-label-sm text-on-surface-variant">00:00</span>
-            <span id="np-time-remaining" class="font-label-sm text-label-sm text-on-surface-variant">-02:31</span>
-          </div>
-        </div>
-
-        <!-- Primary Playback Controls -->
-        <div class="flex items-center justify-between px-space-xs mb-space-xl">
-          <button id="np-shuffle-btn" class="btn-shuffle relative w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant active:scale-95 transition-all">
-            <span class="material-symbols-outlined text-[22px]">shuffle</span>
-          </button>
-          <button id="np-prev-btn" class="w-12 h-12 flex items-center justify-center rounded-full text-on-surface hover:text-primary active:scale-90 transition-all">
-            <span class="material-symbols-outlined text-[32px] icon-filled">skip_previous</span>
-          </button>
-          <button id="np-play-btn" class="w-20 h-20 rounded-full bg-primary-fixed flex items-center justify-center shadow-[0_12px_28px_rgba(204,242,46,0.35)] active:scale-95 hover:scale-105 transition-all">
-            <span id="np-play-icon" class="material-symbols-outlined text-on-primary-fixed text-[38px] icon-filled">play_arrow</span>
-          </button>
-          <button id="np-next-btn" class="w-12 h-12 flex items-center justify-center rounded-full text-on-surface hover:text-primary active:scale-90 transition-all">
-            <span class="material-symbols-outlined text-[32px] icon-filled">skip_next</span>
-          </button>
-          <button id="np-repeat-btn" class="btn-repeat w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface active:scale-95 transition-all">
-            <span class="material-symbols-outlined text-[22px]">repeat</span>
-          </button>
-        </div>
-
-        <!-- Peripherals Dock -->
-        <div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container/70 backdrop-blur-xl mb-space-md">
-          <div class="flex items-center gap-space-sm pl-space-xs">
-            <div class="w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center text-primary-fixed">
-              <span class="material-symbols-outlined text-[19px]">headphones</span>
-            </div>
-            <div class="flex flex-col">
-              <div class="flex items-center gap-1.5">
-                <span class="font-label-md text-label-md text-on-surface font-semibold">AirPods Pro Max</span>
-                <span class="w-1.5 h-1.5 rounded-full bg-primary-fixed"></span>
-              </div>
-              <span class="font-label-sm text-label-sm text-on-surface-variant">Connected • 84% Battery</span>
-            </div>
-          </div>
-          <div class="flex items-center gap-1">
-            <button class="relative w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface active:scale-90 transition-all" onclick="window.wavenApp.navigateTo('library'); window.wavenApp.closeNowPlaying();">
-              <span class="material-symbols-outlined text-[20px]">queue_music</span>
-              <span class="absolute top-1.5 right-1.5 px-1 py-0.2 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold leading-none">6</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Lyrics Teaser Card -->
-        <div id="np-lyrics-teaser" class="relative w-full rounded-xl bg-gradient-to-br from-secondary-container/40 via-surface-container to-surface-container p-space-md shadow-lg overflow-hidden group cursor-pointer active:scale-[0.99] transition-all">
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2">
-              <span class="px-2.5 py-0.5 rounded-full bg-secondary text-on-secondary-fixed text-[11px] font-bold tracking-wide">LYRICS</span>
-              <span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-primary-fixed animate-ping"></span> Synced
-              </span>
-            </div>
-            <span class="material-symbols-outlined text-[20px] text-on-surface-variant group-hover:-translate-y-0.5 transition-transform">keyboard_arrow_up</span>
-          </div>
-          <div class="flex flex-col gap-1 mt-1">
-            <p class="font-headline-md text-headline-md text-primary-fixed font-semibold tracking-tight drop-shadow-[0_2px_8px_rgba(204,242,46,0.25)]">
-              “Lost beneath the neon skyline glow…”
-            </p>
           </div>
         </div>
       </div>
-    </main>
+    </div>
+
+    <!-- Bottom Controls & Timeline -->
+    <div class="w-full max-w-md mx-auto flex flex-col gap-space-md z-10 pb-space-lg">
+      <!-- Title & Like Button -->
+      <div class="flex items-center justify-between">
+        <div class="flex flex-col min-w-0 pr-space-md">
+          <h2 id="np-title" class="font-headline-lg text-xl sm:text-2xl text-primary font-bold truncate">Select a song</h2>
+          <p id="np-artist" class="font-body-md text-sm text-on-surface-variant truncate mt-0.5">WAVEN Local Audio</p>
+        </div>
+        <button id="np-fav-btn" class="w-12 h-12 flex items-center justify-center rounded-full text-on-surface-variant active:scale-90 transition-transform">
+          <span class="material-symbols-outlined text-[28px]" id="np-fav-icon">favorite</span>
+        </button>
+      </div>
+
+      <!-- Scrubber Timeline -->
+      <div class="flex flex-col gap-1.5 w-full">
+        <div id="scrubber-track" class="group relative w-full h-2.5 rounded-full bg-surface-container-high cursor-pointer flex items-center">
+          <div id="scrubber-fill" class="h-full rounded-full bg-primary-container w-0"></div>
+          <div id="scrubber-thumb" class="absolute w-4 h-4 rounded-full bg-on-primary-container shadow-lg transform -translate-x-1/2 left-0 ring-4 ring-primary-container/30"></div>
+        </div>
+        <div class="flex justify-between items-center text-xs font-medium text-on-surface-variant px-0.5">
+          <span id="np-current-time">0:00</span>
+          <span id="np-duration">0:00</span>
+        </div>
+      </div>
+
+      <!-- Playback Transport Controls -->
+      <div class="flex items-center justify-between py-1">
+        <button id="np-shuffle-btn" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant active:scale-90 transition-transform">
+          <span class="material-symbols-outlined text-[24px]">shuffle</span>
+        </button>
+        <button id="np-prev-btn" class="w-12 h-12 flex items-center justify-center rounded-full text-on-surface active:scale-90 transition-transform">
+          <span class="material-symbols-outlined text-[32px]">skip_previous</span>
+        </button>
+        <button id="np-play-btn" class="w-18 h-18 w-[72px] h-[72px] flex items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed shadow-[0_8px_30px_rgba(204,242,46,0.35)] active:scale-95 transition-all">
+          <span class="material-symbols-outlined text-[40px] ml-1" id="np-play-icon" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+        </button>
+        <button id="np-next-btn" class="w-12 h-12 flex items-center justify-center rounded-full text-on-surface active:scale-90 transition-transform">
+          <span class="material-symbols-outlined text-[32px]">skip_next</span>
+        </button>
+        <button id="np-repeat-btn" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant active:scale-90 transition-transform">
+          <span class="material-symbols-outlined text-[24px]" id="np-repeat-icon">repeat</span>
+        </button>
+      </div>
+
+      <!-- Bottom Audio Output Indicator (Fixed: No hardcoded AirPods) -->
+      <div class="flex items-center justify-between pt-space-xs border-t border-white/5">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-primary-fixed">
+            <span class="material-symbols-outlined text-[17px]">speaker</span>
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-1.5">
+              <span id="output-device-name" class="font-label-md text-xs text-on-surface font-semibold">Device Speaker</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-primary-fixed"></span>
+            </div>
+            <span class="text-[10px] text-on-surface-variant">Master High-Resolution Audio</span>
+          </div>
+        </div>
+
+        <button onclick="window.wavenApp.openLyrics()" class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-xs font-semibold text-secondary-fixed active:scale-95 transition-all">
+          <span class="material-symbols-outlined text-[16px]">lyrics</span>
+          <span>Lyrics</span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- =========================================================================
-       SCREEN 5: SYNCHRONIZED KARAOKE LYRICS SHEET (waven_lyrics)
+       SCREEN 5: SYNCHRONIZED LYRICS MODAL (waven_lyrics)
        ========================================================================= -->
-  <div id="view-lyrics" class="modal-overlay">
-    <header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/80 backdrop-blur-xl shadow-md">
-      <div class="h-16 px-margin flex items-center justify-between gap-space-sm">
-        <div class="flex items-center gap-space-sm min-w-0">
-          <button id="lyrics-dismiss-btn" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:text-primary-container transition-colors">
-            <span class="material-symbols-outlined text-[26px]">keyboard_arrow_down</span>
-          </button>
-          <div class="flex flex-col min-w-0 justify-center">
-            <h1 id="lyrics-track-title" class="font-label-lg text-label-lg text-on-surface truncate font-bold">Midnight Confessions</h1>
-            <span id="lyrics-track-artist" class="font-body-sm text-body-sm text-on-surface-variant truncate">Budiarti • Starlit Reverie</span>
-          </div>
-        </div>
+  <div id="view-lyrics" class="fixed inset-0 z-50 bg-canvas flex flex-col justify-between px-margin pb-safe pt-safe overflow-hidden transition-transform duration-300 translate-y-full">
+    <!-- Header -->
+    <header class="w-full flex items-center justify-between py-space-md z-10">
+      <button onclick="window.wavenApp.closeLyrics()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface active:scale-95 transition-all">
+        <span class="material-symbols-outlined text-[28px]">keyboard_arrow_down</span>
+      </button>
+      <div class="flex flex-col items-center">
+        <span class="font-label-sm text-[11px] text-secondary tracking-widest uppercase font-bold">SYNCHRONIZED CADENCE</span>
+        <span id="lyrics-track-title" class="font-headline-md text-sm text-primary font-bold">Karaoke View</span>
       </div>
+      <div class="w-11 h-11"></div>
     </header>
 
-    <main class="flex flex-col relative w-full pt-20 pb-48 bg-surface min-h-screen">
-      <!-- Ambient Glow Orbs -->
-      <div class="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 w-80 h-80 bg-secondary-container/25 rounded-full blur-[100px] -z-10"></div>
+    <!-- Center Karaoke Stream -->
+    <div class="flex-1 flex flex-col justify-center items-center py-space-md z-10 w-full overflow-y-auto no-scrollbar text-center px-4">
+      <!-- Previous Line -->
+      <div id="lyrics-prev-container" class="opacity-40 text-on-surface-variant font-headline-md text-lg transition-all duration-300 mb-6">
+        Nocturne audio active...
+      </div>
       
-      <div class="px-margin pt-space-xs flex flex-col gap-space-sm">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-space-xs bg-surface-container-high/90 px-space-sm py-1 rounded-full shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-primary-container shadow-[0_0_8px_#ccf22e] animate-pulse"></span>
-            <span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Hi-Res Lossless • 24-bit / 192kHz</span>
-          </div>
-          <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high/60 backdrop-blur-sm text-on-surface-variant font-label-sm text-label-sm">
-            <span class="material-symbols-outlined text-[14px] text-primary-container">touch_app</span>
-            <span>Tap line to jump</span>
-          </div>
+      <!-- Current Hero Line -->
+      <div class="my-4">
+        <p id="lyrics-hero-line" class="font-headline-xl text-2xl sm:text-3xl text-primary-fixed font-black tracking-tight leading-snug drop-shadow-[0_4px_24px_rgba(204,242,46,0.35)] transition-all duration-200">
+          Listening to local audio...
+        </p>
+        <p id="lyrics-hero-translation" class="text-xs text-on-surface-variant mt-2 font-medium">
+          WAVEN Bit-Perfect Engine
+        </p>
+        <!-- Syllable Pace Meter -->
+        <div id="lyrics-pace-meter" class="flex items-center justify-center gap-1 mt-4">
+          <span class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></span>
+          <span class="w-2 h-2 rounded-full bg-primary-fixed/40"></span>
+          <span class="w-2 h-2 rounded-full bg-primary-fixed/20"></span>
         </div>
       </div>
 
-      <!-- Scroller Flow -->
-      <div class="px-margin mt-space-md flex flex-col gap-space-lg relative">
-        <!-- Previous Lyrics Container -->
-        <div id="lyrics-prev-container" class="flex flex-col gap-space-md opacity-40 transition-opacity hover:opacity-75">
-        </div>
-
-        <!-- Active Sing-Along Hero Line Card -->
-        <div class="p-space-lg rounded-xl bg-gradient-to-b from-surface-container/90 via-surface-container to-surface-container-low backdrop-blur-xl shadow-[0_16px_40px_rgba(0,0,0,0.5)] relative overflow-hidden group">
-          <div class="absolute -right-8 -top-8 w-28 h-28 bg-secondary-container/40 rounded-full blur-2xl pointer-events-none"></div>
-          <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary-container shadow-[0_0_12px_#ccf22e]"></div>
-          
-          <div class="flex items-center justify-between gap-space-xs mb-space-sm">
-            <div class="flex items-center gap-space-xs">
-              <span class="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary-container font-label-sm text-label-sm font-semibold">NOW SINGING</span>
-              <span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-ping"></span>
-            </div>
-          </div>
-
-          <div id="lyrics-hero-line" class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <!-- Active Karaoke line words injected here -->
-          </div>
-
-          <div id="lyrics-hero-translation" class="mt-space-sm pt-space-xs flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm">
-          </div>
-
-          <div class="w-full h-1 bg-surface-variant rounded-full mt-space-sm overflow-hidden">
-            <div id="lyrics-pace-meter" class="w-0 h-full bg-gradient-to-r from-secondary via-primary-container to-primary-container rounded-full shadow-[0_0_10px_#ccf22e] transition-all duration-75"></div>
-          </div>
-        </div>
-
-        <!-- Upcoming Lyrics Container -->
-        <div id="lyrics-upcoming-container" class="flex flex-col gap-space-lg opacity-85 transition-opacity">
-        </div>
+      <!-- Upcoming Line -->
+      <div id="lyrics-upcoming-container" class="opacity-40 text-on-surface-variant font-headline-md text-lg transition-all duration-300 mt-6">
+        Sing along with synchronized cadence
       </div>
-    </main>
+    </div>
 
-    <!-- Lyrics Floating Bottom Transport -->
-    <footer class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/85 backdrop-blur-xl shadow-[0_-12px_32px_rgba(0,0,0,0.6)]">
-      <div class="flex flex-col px-margin pt-space-sm pb-space-md gap-space-sm">
-        <div class="flex flex-col gap-1">
-          <div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
-            <div id="lyrics-progress-bar" class="w-0 h-full bg-primary-container rounded-full shadow-[0_0_10px_#ccf22e]"></div>
-          </div>
-          <div class="flex justify-between items-center text-on-surface-variant font-label-sm text-label-sm">
-            <span id="lyrics-time-elapsed" class="text-primary-container font-semibold">00:00</span>
-            <span id="lyrics-time-total">02:31</span>
-          </div>
-        </div>
-        <div class="flex items-center justify-between gap-space-sm px-2">
-          <button class="btn-shuffle w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary-container transition-colors" onclick="window.wavenApp.player.toggleShuffle()">
-            <span class="material-symbols-outlined text-[20px]">shuffle</span>
-          </button>
-          <button id="lyrics-prev-btn" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:text-primary-container transition-colors">
-            <span class="material-symbols-outlined text-[24px]">skip_previous</span>
-          </button>
-          <button id="lyrics-play-btn" class="w-14 h-14 flex items-center justify-center rounded-full bg-primary-container text-on-primary-container active:scale-95 transition-transform shadow-[0_0_24px_rgba(204,242,46,0.35)]">
-            <span id="lyrics-play-icon" class="material-symbols-outlined text-[28px] icon-filled">play_arrow</span>
-          </button>
-          <button id="lyrics-next-btn" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:text-primary-container transition-colors">
-            <span class="material-symbols-outlined text-[24px]">skip_next</span>
-          </button>
-          <button class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-secondary transition-colors" onclick="window.wavenApp.closeLyrics()">
-            <span class="material-symbols-outlined text-[20px]">expand_more</span>
-          </button>
-        </div>
-      </div>
-    </footer>
+    <!-- Bottom Controls -->
+    <div class="w-full max-w-md mx-auto flex items-center justify-center gap-6 z-10 pb-space-lg">
+      <button id="lyrics-prev-btn" class="w-12 h-12 flex items-center justify-center rounded-full text-on-surface active:scale-90 transition-transform">
+        <span class="material-symbols-outlined text-[28px]">skip_previous</span>
+      </button>
+      <button id="lyrics-play-btn" class="w-16 h-16 flex items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed shadow-lg active:scale-95 transition-all">
+        <span class="material-symbols-outlined text-[36px] ml-0.5" id="lyrics-play-icon" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+      </button>
+      <button id="lyrics-next-btn" class="w-12 h-12 flex items-center justify-center rounded-full text-on-surface active:scale-90 transition-transform">
+        <span class="material-symbols-outlined text-[28px]">skip_next</span>
+      </button>
+    </div>
   </div>
 
-  <!-- APPLICATION SCRIPTS -->
+  <!-- =========================================================================
+       MODAL 1: FIRST-TIME ONBOARDING & PROFILE SETUP MODAL
+       (NO email / phone required - 100% private & offline)
+       ========================================================================= -->
+  <div id="profile-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 transition-opacity duration-300 hidden">
+    <div class="relative w-full max-w-sm rounded-3xl bg-surface-container p-6 shadow-2xl border border-white/10 flex flex-col items-center text-center">
+      
+      <!-- Close button (if already setup) -->
+      <button id="profile-modal-close" onclick="window.wavenApp.closeProfileModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-white">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+
+      <span class="w-2 h-2 rounded-full bg-primary-fixed mb-1 animate-pulse"></span>
+      <h3 class="font-headline-lg text-xl text-primary font-black">Welcome to WAVEN</h3>
+      <p class="text-xs text-on-surface-variant mt-1 mb-5">Set up your private offline profile. No email or phone number required.</p>
+
+      <!-- Profile Avatar Picker -->
+      <div class="relative w-20 h-20 rounded-full p-0.5 bg-gradient-to-tr from-secondary-container to-primary-container mb-3 shadow-lg">
+        <img id="profile-preview-avatar" class="w-full h-full rounded-full object-cover bg-surface-container-high" src="assets/covers/default_cover.png" alt="Avatar">
+        <label for="profile-image-upload" class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-primary-container text-black flex items-center justify-center cursor-pointer shadow-md hover:scale-105 active:scale-95 transition-transform" title="Upload Photo">
+          <span class="material-symbols-outlined text-[15px]">photo_camera</span>
+        </label>
+        <input type="file" id="profile-image-upload" accept="image/*" class="hidden">
+      </div>
+      <span class="text-[11px] text-primary-fixed mb-4 cursor-pointer hover:underline" onclick="document.getElementById('profile-image-upload').click()">Tap camera to choose photo</span>
+
+      <!-- Preset Avatars Quick Select -->
+      <div class="flex items-center gap-2 mb-4">
+        <button type="button" onclick="window.wavenApp.selectPresetAvatar('assets/covers/default_cover.png')" class="w-8 h-8 rounded-full border border-white/20 overflow-hidden hover:scale-110 transition-transform">
+          <img src="assets/covers/default_cover.png" class="w-full h-full object-cover">
+        </button>
+        <button type="button" onclick="window.wavenApp.selectPresetAvatar('assets/img/logo-192.png')" class="w-8 h-8 rounded-full border border-white/20 overflow-hidden hover:scale-110 transition-transform">
+          <img src="assets/img/logo-192.png" class="w-full h-full object-cover">
+        </button>
+      </div>
+
+      <!-- Inputs Form -->
+      <div class="w-full space-y-3 text-left">
+        <div>
+          <label class="block text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Your Name</label>
+          <input type="text" id="profile-name-input" class="w-full h-11 rounded-xl bg-surface-container-high px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary-container" placeholder="e.g. Abdur" value="Abdur">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">Music Handle / Tag</label>
+          <input type="text" id="profile-handle-input" class="w-full h-11 rounded-xl bg-surface-container-high px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary-container" placeholder="e.g. @audiophile" value="@audiophile">
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button onclick="window.wavenApp.saveProfileFromModal()" class="w-full mt-6 py-3 rounded-2xl bg-primary-container text-black font-headline font-bold text-sm tracking-wide shadow-lg active:scale-95 transition-transform">
+        Save &amp; Start Listening
+      </button>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: ONLINE STREAMING EXPLANATORY NOTICE
+       ========================================================================= -->
+  <div id="streaming-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 transition-opacity duration-300 hidden">
+    <div class="relative w-full max-w-sm rounded-3xl bg-surface-container p-6 shadow-2xl border border-white/10 flex flex-col items-center text-center">
+      <div class="w-14 h-14 rounded-2xl bg-secondary-container/30 border border-secondary/30 text-secondary-fixed flex items-center justify-center mb-3">
+        <span class="material-symbols-outlined text-[28px]">cloud_queue</span>
+      </div>
+
+      <span class="inline-block px-2.5 py-0.5 rounded-full bg-secondary-container/40 text-secondary-fixed text-[10px] font-extrabold uppercase tracking-wider mb-2">
+        Future Online Streaming
+      </span>
+      <h3 id="streaming-modal-title" class="font-headline-lg text-lg text-primary font-bold">Cloud Drops &amp; Streaming</h3>
+      
+      <p class="text-xs text-on-surface-variant mt-2 leading-relaxed">
+        WAVEN is currently operating as your <strong>100% Bit-Perfect Local Offline Music Player</strong>.
+      </p>
+      <p class="text-xs text-on-surface-variant mt-2 leading-relaxed">
+        Cloud catalog streaming, weekly curated artist drops, and cloud sync will be activated in an upcoming online streaming update without altering your local audio setup.
+      </p>
+
+      <button onclick="window.wavenApp.closeStreamingNotice()" class="w-full mt-6 py-3 rounded-2xl bg-primary-container text-black font-headline font-bold text-sm tracking-wide shadow-lg active:scale-95 transition-transform">
+        Got It, Back to Local Music
+      </button>
+    </div>
+  </div>
+
+  <!-- Application Logic Scripts -->
   <script src="js/audio-engine.js"></script>
   <script src="js/library.js"></script>
   <script src="js/lyrics.js"></script>

@@ -210,8 +210,15 @@ class PlayerController {
     // Update Mini Player
     const miniTitle = document.getElementById('mini-title');
     const miniArtist = document.getElementById('mini-artist');
+    const miniCover = document.getElementById('mini-cover-img');
+    const miniEqBars = document.getElementById('mini-eq-bars');
     if (miniTitle) miniTitle.textContent = track.title;
     if (miniArtist) miniArtist.textContent = `${track.artist} • High-Res Lossless`;
+    if (miniCover && track.coverArt) {
+      miniCover.src = track.coverArt;
+      miniCover.classList.remove('hidden');
+      if (miniEqBars) miniEqBars.classList.add('hidden');
+    }
 
     // Update Favorite Buttons state
     const isFav = this.library.isFavorite(track.id);

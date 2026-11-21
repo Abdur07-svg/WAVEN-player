@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://abdur07-svg.github.io/WAVEN/"><strong>🌐 Live Landing Page</strong></a> •
-  <a href="https://abdur07-svg.github.io/WAVEN/downloads/waven-latest.apk"><strong>📱 Download Android APK (3.97 MB)</strong></a> •
+  <a href="https://abdur07-svg.github.io/WAVEN/downloads/waven-latest.apk"><strong>📱 Download Android APK</strong></a> •
   <a href="https://github.com/Abdur07-svg/WAVEN"><strong>💻 GitHub Repository</strong></a>
 </p>
 
@@ -25,7 +25,7 @@ WAVEN consists strictly of **TWO production deliverables**:
    - Desktop viewports receive a luxury desktop showcase with interactive screen previews, specifications, comparison tables, and mobile QR code.
    - Mobile viewports receive a thumb-optimized mobile layout with high-contrast typography, screenshot swipe carousel, 3-step installation guide, and sticky bottom download bar.
    - **Promotional & Download Portal Only**: Contains **NO** audio playback, **NO** web player, and **NO** streaming overhead.
-   - **Direct APK Download**: Primary CTA immediately downloads `waven-latest.apk` (3.97 MB, v1.0.3 Stable).
+   - **Direct APK Download**: Primary CTA immediately downloads `waven-latest.apk` (v1.0.3 Stable, Ultra-Lightweight).
 
 2. **Native Android Music Player (`android-app/`)**:
    - Genuine installable Android APK (`com.waven.musicplayer`).

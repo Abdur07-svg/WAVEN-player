@@ -2,8 +2,10 @@ package com.waven.musicplayer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 import org.json.JSONObject;
@@ -11,6 +13,7 @@ import org.json.JSONObject;
 public class WavenNativeBridge {
     private final MainActivity activity;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private volatile String lastScannedTracksJson = "[]";
 
     public WavenNativeBridge(MainActivity activity) {
         this.activity = activity;
@@ -42,24 +45,41 @@ public class WavenNativeBridge {
     }
 
     @JavascriptInterface
+    public String getLastScannedAudio() {
+        return lastScannedTracksJson;
+    }
+
+    @JavascriptInterface
+    public String scanAndGetDeviceAudio() {
+        if (!activity.hasAudioPermission()) {
+            activity.requestAudioPermissions();
+            return "[]";
+        }
+        lastScannedTracksJson = AudioScanner.scanLocalMusic(activity);
+        return lastScannedTracksJson;
+    }
+
+    @JavascriptInterface
     public void scanDeviceAudio() {
         if (!activity.hasAudioPermission()) {
             activity.requestAudioPermissions();
-            activity.sendJsMessage("if(window.onDeviceAudioScanError) window.onDeviceAudioScanError('Permission required');");
+            activity.sendJsMessage("if(window.onDeviceAudioScanError) window.onDeviceAudioScanError('Storage permission required. Please allow audio access.');");
             return;
         }
 
         new Thread(() -> {
             try {
                 String tracksJson = AudioScanner.scanLocalMusic(activity);
+                lastScannedTracksJson = tracksJson;
                 mainHandler.post(() -> {
-                    String escapedJson = tracksJson.replace("\\", "\\\\").replace("'", "\\'");
-                    activity.sendJsMessage("if(window.onDeviceAudioScanned) window.onDeviceAudioScanned('" + escapedJson + "');");
+                    // Safe invocation passing the Java string safely via the Bridge method
+                    activity.sendJsMessage("if(window.onDeviceAudioScanned){ window.onDeviceAudioScanned(window.AndroidBridge.getLastScannedAudio()); }");
                 });
             } catch (Exception e) {
                 e.printStackTrace();
+                final String err = e.getMessage() != null ? e.getMessage() : "Unknown scanning error";
                 mainHandler.post(() -> {
-                    activity.sendJsMessage("if(window.onDeviceAudioScanError) window.onDeviceAudioScanError('" + e.getMessage() + "');");
+                    activity.sendJsMessage("if(window.onDeviceAudioScanError) window.onDeviceAudioScanError('" + err.replace("'", "\\'") + "');");
                 });
             }
         }).start();
@@ -132,6 +152,15 @@ public class WavenNativeBridge {
     public boolean isPlaying() {
         WavenPlaybackService svc = WavenPlaybackService.getInstance();
         return svc != null && svc.isPlaying();
+    }
+
+    @JavascriptInterface
+    public void openAppSettings() {
+        try {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.setData(Uri.fromParts("package", activity.getPackageName(), null));
+            activity.startActivity(intent);
+        } catch (Exception ignored) {}
     }
 
     @JavascriptInterface

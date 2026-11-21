@@ -1,143 +1,53 @@
 /**
  * WAVEN — Music Library & Storage Manager
+ * Exclusively Local Music Player Architecture
  */
 
 class LibraryManager {
   constructor() {
-    this.storageKey = 'waven_library_data';
+    this.storageKey = 'waven_device_tracks';
     this.favoritesKey = 'waven_favorites';
     this.historyKey = 'waven_playback_history';
 
-    // Curated catalog based on Nocturne Pulse reference specifications
-    this.defaultTracks = [
-      {
-        id: 'waven_01',
-        title: 'Midnight Confessions',
-        artist: 'Budiarti',
-        album: 'Echoes of Solitude',
-        duration: 151, // 2:31
-        coverArt: 'assets/covers/default_cover.png',
-        file: 'demo_preview.wav',
-        isAsset: true,
-        genre: 'Electronic & Dance',
-        hires: true
-      },
-      {
-        id: 'waven_02',
-        title: 'Sunset Drive',
-        artist: 'Midnight Chill',
-        album: 'Neon Horizon',
-        duration: 198, // 3:18
-        coverArt: 'assets/covers/default_cover.png',
-        file: 'Midnight Chill - Sunset Drive.wav',
-        isAsset: true,
-        genre: 'Chill & Lo-Fi',
-        hires: true
-      },
-      {
-        id: 'waven_03',
-        title: 'Cyber Beats',
-        artist: 'Neon Echoes',
-        album: 'Pulse 24',
-        duration: 252, // 4:12
-        coverArt: 'assets/covers/default_cover.png',
-        file: 'Neon Echoes - Cyber Beats.wav',
-        isAsset: true,
-        genre: 'Electronic & Dance',
-        hires: true
-      },
-      {
-        id: 'waven_04',
-        title: 'Starlit Reverie',
-        artist: 'Budiarti',
-        album: 'Starlit Reverie EP',
-        duration: 185,
-        coverArt: 'assets/covers/default_cover.png',
-        file: 'demo_preview.wav',
-        isAsset: true,
-        genre: 'Chill & Lo-Fi',
-        hires: true
-      },
-      {
-        id: 'waven_05',
-        title: 'Lost in the Echo',
-        artist: 'Romanov',
-        album: 'Subterranean Drift',
-        duration: 225,
-        coverArt: 'assets/covers/default_cover.png',
-        file: 'Neon Echoes - Cyber Beats.wav',
-        isAsset: true,
-        genre: 'Hip-Hop & R&B',
-        hires: true
-      },
-      {
-        id: 'waven_06',
-        title: 'Velvet Hypnosis',
-        artist: 'Sora & Kai',
-        album: 'Ultraviolet Dreams',
-        duration: 175,
-        coverArt: 'assets/covers/default_cover.png',
-        file: 'Midnight Chill - Sunset Drive.wav',
-        isAsset: true,
-        genre: 'Acoustic & Indie',
-        hires: true
-      }
-    ];
+    // No hardcoded fake demo songs
+    this.defaultTracks = [];
 
-    this.playlists = [
-      {
-        id: 'pl_starlit',
-        title: 'Starlit Reverie',
-        curator: 'Budiarti',
-        trackCount: 8,
-        duration: '32 min',
-        pinned: true,
-        description: 'The original slow instrumental best playlists.',
-        coverArt: 'assets/covers/default_cover.png'
-      },
-      {
-        id: 'pl_midnight',
-        title: 'Midnight Confessions',
-        curator: 'Echoes',
-        trackCount: 12,
-        duration: '45 min',
-        pinned: false,
-        description: 'Atmospheric nocturnal synth & introspective vibes.',
-        coverArt: 'assets/covers/default_cover.png'
-      },
-      {
-        id: 'pl_lost',
-        title: 'Lost in the Echo',
-        curator: 'Romanov',
-        trackCount: 15,
-        duration: '52 min',
-        pinned: false,
-        description: 'Heavy basslines and dark club aesthetics.',
-        coverArt: 'assets/covers/default_cover.png'
-      },
-      {
-        id: 'pl_velvet',
-        title: 'Velvet Hypnosis',
-        curator: 'Sora & Kai',
-        trackCount: 10,
-        duration: '38 min',
-        pinned: false,
-        description: 'Futuristic synthesizer setups and purple lighting.',
-        coverArt: 'assets/covers/default_cover.png'
-      }
-    ];
-
-    this.deviceTracks = [];
+    // Load persisted local device tracks
+    this.deviceTracks = this.loadPersistedTracks();
     this.favorites = this.loadFavorites();
     this.history = this.loadHistory();
+    this.playlists = this.loadPlaylists();
+  }
+
+  loadPersistedTracks() {
+    try {
+      const data = localStorage.getItem(this.storageKey);
+      if (data) {
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('Could not read cached tracks:', e);
+    }
+    return [];
+  }
+
+  savePersistedTracks() {
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(this.deviceTracks));
+    } catch (e) {
+      console.warn('Could not save tracks to localStorage:', e);
+    }
   }
 
   loadFavorites() {
     try {
       const data = localStorage.getItem(this.favoritesKey);
-      return data ? JSON.parse(data) : ['waven_01', 'waven_02'];
+      return data ? JSON.parse(data) : [];
     } catch (e) {
-      return ['waven_01', 'waven_02'];
+      return [];
     }
   }
 
@@ -148,10 +58,12 @@ class LibraryManager {
   }
 
   isFavorite(trackId) {
+    if (!trackId) return false;
     return this.favorites.includes(trackId);
   }
 
   toggleFavorite(trackId) {
+    if (!trackId) return false;
     const idx = this.favorites.indexOf(trackId);
     if (idx >= 0) {
       this.favorites.splice(idx, 1);
@@ -172,6 +84,7 @@ class LibraryManager {
   }
 
   addToHistory(track) {
+    if (!track || !track.id) return;
     this.history = this.history.filter(t => t.id !== track.id);
     this.history.unshift(track);
     if (this.history.length > 50) this.history.pop();
@@ -181,32 +94,93 @@ class LibraryManager {
   }
 
   getAllTracks() {
-    return [...this.defaultTracks, ...this.deviceTracks];
+    return this.deviceTracks;
   }
 
   getLikedTracks() {
-    return this.getAllTracks().filter(t => this.isFavorite(t.id));
+    return this.deviceTracks.filter(t => this.isFavorite(t.id));
   }
 
   getPlaylists() {
-    return this.playlists;
+    const likedCount = this.getLikedTracks().length;
+    return [
+      {
+        id: 'liked',
+        title: 'Liked Songs',
+        curator: 'My Favorites',
+        trackCount: likedCount,
+        duration: `${likedCount} songs`,
+        pinned: true,
+        isLikedCollection: true,
+        description: 'Your favorite tracks marked with heart.',
+        coverArt: 'assets/covers/default_cover.png'
+      },
+      ...this.playlists
+    ];
   }
 
-  addScannedTracks(scannedJsonString) {
+  loadPlaylists() {
     try {
-      const tracks = typeof scannedJsonString === 'string' ? JSON.parse(scannedJsonString) : scannedJsonString;
+      const data = localStorage.getItem('waven_user_playlists');
+      if (data) return JSON.parse(data);
+    } catch (e) {}
+    return [
+      {
+        id: 'pl_recent',
+        title: 'Recently Added',
+        curator: 'Local Storage',
+        trackCount: this.deviceTracks.length,
+        duration: 'Device Vault',
+        pinned: false,
+        description: 'Recently scanned audio files from device storage.',
+        coverArt: 'assets/covers/default_cover.png'
+      }
+    ];
+  }
+
+  addScannedTracks(scannedData) {
+    try {
+      let tracks = scannedData;
+      if (typeof scannedData === 'string') {
+        tracks = JSON.parse(scannedData);
+      }
       if (Array.isArray(tracks)) {
-        this.deviceTracks = tracks.map(t => ({
-          ...t,
-          duration: Math.round((t.duration || 0) / 1000),
-          coverArt: t.coverArt || 'assets/covers/default_cover.png',
-          hires: true
-        }));
-        console.log(`WAVEN Library updated: ${this.deviceTracks.length} local device tracks added.`);
+        this.deviceTracks = tracks.map(t => {
+          let dur = t.duration || 0;
+          if (dur > 1000) {
+            dur = Math.round(dur / 1000);
+          }
+          if (dur <= 0) dur = 180;
+
+          return {
+            id: t.id || ('track_' + Math.random().toString(36).substr(2, 9)),
+            title: t.title || 'Unknown Track',
+            artist: t.artist || 'Unknown Artist',
+            album: t.album || 'Local Audio',
+            duration: dur,
+            uri: t.uri || '',
+            filePath: t.filePath || '',
+            coverArt: t.coverArt || 'assets/covers/default_cover.png',
+            dateAdded: t.dateAdded || Date.now(),
+            genre: t.genre || 'Local Audio',
+            isLocalDevice: true,
+            hires: true
+          };
+        });
+
+        this.savePersistedTracks();
+        console.log(`WAVEN Library updated: ${this.deviceTracks.length} local device tracks saved.`);
       }
     } catch (e) {
       console.error('Failed to parse scanned audio tracks:', e);
     }
+  }
+
+  clearScannedTracks() {
+    this.deviceTracks = [];
+    try {
+      localStorage.removeItem(this.storageKey);
+    } catch (ignored) {}
   }
 
   search(query) {
@@ -218,6 +192,39 @@ class LibraryManager {
       (t.album && t.album.toLowerCase().includes(q)) ||
       (t.genre && t.genre.toLowerCase().includes(q))
     );
+  }
+
+  getArtists() {
+    const map = new Map();
+    this.deviceTracks.forEach(t => {
+      const art = t.artist || 'Unknown Artist';
+      if (!map.has(art)) {
+        map.set(art, []);
+      }
+      map.get(art).push(t);
+    });
+    return Array.from(map.entries()).map(([artist, songs]) => ({
+      artist,
+      songs,
+      count: songs.length
+    }));
+  }
+
+  getAlbums() {
+    const map = new Map();
+    this.deviceTracks.forEach(t => {
+      const alb = t.album || 'Local Audio';
+      if (!map.has(alb)) {
+        map.set(alb, {
+          album: alb,
+          artist: t.artist,
+          coverArt: t.coverArt,
+          songs: []
+        });
+      }
+      map.get(alb).songs.push(t);
+    });
+    return Array.from(map.values());
   }
 }
 

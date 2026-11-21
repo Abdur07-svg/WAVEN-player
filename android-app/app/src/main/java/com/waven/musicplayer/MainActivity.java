@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
 
         webView.loadUrl("file:///android_asset/index.html");
 
-        // Check and request permissions
+        // Check and request permissions on start if needed
         if (!hasAudioPermission()) {
             requestAudioPermissions();
         }
@@ -111,14 +111,7 @@ public class MainActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQ_CODE) {
-            boolean granted = false;
-            for (int res : grantResults) {
-                if (res == PackageManager.PERMISSION_GRANTED) {
-                    granted = true;
-                    break;
-                }
-            }
-            if (granted) {
+            if (hasAudioPermission()) {
                 sendJsMessage("if(window.onPermissionsGranted) window.onPermissionsGranted();");
                 if (nativeBridge != null) {
                     nativeBridge.scanDeviceAudio();
@@ -136,27 +129,27 @@ public class MainActivity extends Activity {
     }
 
     public void togglePlayPause() {
-        sendJsMessage("if(window.wavenApp) window.wavenApp.player.togglePlayPause();");
+        sendJsMessage("if(window.wavenApp && window.wavenApp.player) window.wavenApp.player.togglePlayPause();");
     }
 
     public void resumePlayback() {
-        sendJsMessage("if(window.wavenApp) window.wavenApp.player.resume();");
+        sendJsMessage("if(window.wavenApp && window.wavenApp.player) window.wavenApp.player.resume();");
     }
 
     public void pausePlayback() {
-        sendJsMessage("if(window.wavenApp) window.wavenApp.player.pause();");
+        sendJsMessage("if(window.wavenApp && window.wavenApp.player) window.wavenApp.player.pause();");
     }
 
     public void playNextTrack() {
-        sendJsMessage("if(window.wavenApp) window.wavenApp.player.playNext();");
+        sendJsMessage("if(window.wavenApp && window.wavenApp.player) window.wavenApp.player.playNext();");
     }
 
     public void playPreviousTrack() {
-        sendJsMessage("if(window.wavenApp) window.wavenApp.player.playPrevious();");
+        sendJsMessage("if(window.wavenApp && window.wavenApp.player) window.wavenApp.player.playPrevious();");
     }
 
     public void onPlaybackStopped() {
-        sendJsMessage("if(window.wavenApp) window.wavenApp.player.pause();");
+        sendJsMessage("if(window.wavenApp && window.wavenApp.player) window.wavenApp.player.pause();");
     }
 
     public void onTrackPrepared(int durationMs) {

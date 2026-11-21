@@ -250,8 +250,13 @@ public class WavenPlaybackService extends Service implements
                     mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                     afd.close();
                 } else {
-                    Uri trackUri = Uri.parse(uriStr);
-                    mediaPlayer.setDataSource(getApplicationContext(), trackUri);
+                    if (uriStr.startsWith("content://")) {
+                        mediaPlayer.setDataSource(getApplicationContext(), Uri.parse(uriStr));
+                    } else if (uriStr.startsWith("file://")) {
+                        mediaPlayer.setDataSource(Uri.parse(uriStr).getPath());
+                    } else {
+                        mediaPlayer.setDataSource(uriStr);
+                    }
                 }
                 mediaPlayer.prepareAsync();
             }
